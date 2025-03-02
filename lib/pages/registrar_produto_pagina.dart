@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:teste/pages/mostrar_produtos_pagina.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -7,7 +7,8 @@ class ProductRegistrationPage extends StatefulWidget {
   ProductRegistrationPage({super.key, required this.username});
 
   @override
-  _ProductRegistrationPageState createState() => _ProductRegistrationPageState();
+  _ProductRegistrationPageState createState() =>
+      _ProductRegistrationPageState();
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
@@ -15,6 +16,14 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productImageController = TextEditingController();
   final TextEditingController productPriceController = TextEditingController();
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   void _registerProduct() {
     if (_formKey.currentState?.validate() ?? false) {
@@ -33,7 +42,8 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
+      body: _selectedIndex == 0
+          ? Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: Center(
           child: Form(
@@ -67,7 +77,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),  // Consistent spacing
+                SizedBox(height: 16),
 
                 // Campo do Valor do Produto
                 TextFormField(
@@ -79,7 +89,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     ),
                   ),
                   keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira o valor do produto';
@@ -87,7 +96,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),  // Consistent spacing
+                SizedBox(height: 16),
 
                 // Campo da Imagem do Produto
                 TextFormField(
@@ -106,27 +115,44 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 32),  // Consistent spacing
+                SizedBox(height: 32),
 
                 // Botão de Cadastro
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF8B5E3B),
-                    padding: EdgeInsets.symmetric(horizontal: 90, vertical: 13),
+                    padding: EdgeInsets.symmetric(horizontal: 110, vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    elevation: 5,
                   ),
                   onPressed: _registerProduct,
                   child: Text(
                     "Cadastrar Produto",
-                    style: TextStyle(fontSize: 16, color: Color(0xFFFFFFFF)),
+                    style: TextStyle(fontSize: 18, color: Color(0xFFFFFFFF)),
                   ),
                 ),
               ],
             ),
           ),
         ),
+      )
+          : ShowProductPage(),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Registrar Produto',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Mostrar Produto',
+          ),
+        ],
       ),
     );
   }

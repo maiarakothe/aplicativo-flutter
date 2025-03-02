@@ -16,12 +16,11 @@ class _LoginPageState extends State<LoginPage> {
   void _login() {
     if (_formKey.currentState!.validate()) {
       print("Login bem-sucedido!");
-      // Passando o nome do usuário para a página de registro de produto
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ProductRegistrationPage(
-            username: usernameController.text,  // Passando o nome para a próxima página
+            username: usernameController.text,
           ),
         ),
       );
@@ -31,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF9F9F9),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: Form(
@@ -108,4 +107,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
