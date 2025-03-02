@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teste/pages/registrar_produto_pagina.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
@@ -13,8 +14,17 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   void _login() {
-    if (_formKey.currentState!.validate()){
+    if (_formKey.currentState!.validate()) {
       print("Login bem-sucedido!");
+      // Passando o nome do usuário para a página de registro de produto
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductRegistrationPage(
+            username: usernameController.text,  // Passando o nome para a próxima página
+          ),
+        ),
+      );
     }
   }
 
