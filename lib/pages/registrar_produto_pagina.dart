@@ -121,7 +121,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF8B5E3B),
-                    padding: EdgeInsets.symmetric(horizontal: 110, vertical: 18),
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
