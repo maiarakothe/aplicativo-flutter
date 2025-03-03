@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:teste/pages/mostrar_produtos_pagina.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
@@ -16,8 +17,10 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productImageController = TextEditingController();
   final TextEditingController productPriceController = TextEditingController();
+  final List<Map<String, String>> produtos = [];
 
   int _selectedIndex = 0;
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -27,7 +30,16 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
   void _registerProduct() {
     if (_formKey.currentState?.validate() ?? false) {
-      print("Produto cadastrado com sucesso");
+      setState(() {
+        produtos.add({
+          'nome': productNameController.text,
+          'imagem': productImageController.text,
+          'preco': productPriceController.text,
+        });
+        productNameController.clear();
+        productImageController.clear();
+        productPriceController.clear();
+      });
     }
   }
 
@@ -88,7 +100,10 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]+$')),
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira o valor do produto';
@@ -103,7 +118,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   controller: productImageController,
                   decoration: InputDecoration(
                     labelText: "Imagem do Produto (URL)",
-                    hintText: 'http://www.site.com',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -119,6 +133,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
                 // Botão de Cadastro
                 ElevatedButton(
+                  onPressed: _registerProduct,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF8B5E3B),
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
@@ -127,31 +142,22 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     ),
                     elevation: 5,
                   ),
-                  onPressed: _registerProduct,
                   child: Text(
                     "Cadastrar Produto",
-                    style: TextStyle(fontSize: 18, color: Color(0xFFFFFFFF)),
-                  ),
+                    style: TextStyle(fontSize: 18, color: Color(0xFFFFFFFF)),),
                 ),
               ],
             ),
           ),
         ),
       )
-          : ShowProductPage(),
-
+          : ShowProductPage(produtos: produtos),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Registrar Produto',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Mostrar Produto',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Registrar'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Produtos'),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teste/pages/registrar_produto_pagina.dart';
 import 'pages/login_pagina.dart';
 
 void main() {
