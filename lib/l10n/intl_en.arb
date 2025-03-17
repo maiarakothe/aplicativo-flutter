@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "login": "Login",
+  "title": "User Registration",
+  "username": "Username",
+  "password": "Password",
+  "email": "Email",
+  "register": "Register",
+  "formError": "Please fill in all fields correctly.",
+  "successMessage": "Registration successful!"
+}

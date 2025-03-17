@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:teste/pages/registrar_produto_pagina.dart';
+import 'package:teste/pages/product_registration.dart';
+import 'package:teste/core/colors.dart';
+import 'package:teste/configs.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor: DefaultColors.backgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: Form(
@@ -40,8 +40,8 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               CircleAvatar(
                 radius: 80,
-                backgroundColor: Color(0xFFDFD5C3),
-                child: Icon(Icons.person, size: 120, color: Color(0xFF5D4037)),
+                backgroundColor: DefaultColors.circleAvatar,
+                child: Icon(Icons.person, size: 120, color: DefaultColors.iconPerson),
               ),
               SizedBox(height: 40),
 
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   labelText: "Usuário",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: Configs.radiusBorder,
                   ),
                 ),
                 validator: (value) {
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   labelText: "Senha",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: Configs.radiusBorder,
                   ),
                 ),
                 validator: (value) {
@@ -88,16 +88,16 @@ class _LoginPageState extends State<LoginPage> {
               // Botão de Login
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF8B5E3B),
+                  backgroundColor: DefaultColors.backgroundButton,
                   padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: Configs.buttonBorderRadius,
                   ),
                 ),
                 onPressed: _login,
                 child: Text(
-                  "Login",
-                  style: TextStyle(fontSize: 16, color: Color(0xFFFFFFFF)),
+                  "Entrar",
+                  style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton ),
                 ),
               ),
             ],

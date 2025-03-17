@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teste/pages/mostrar_produtos_pagina.dart';
+import 'product_list.dart';
+import 'package:teste/core/colors.dart';
+import 'package:teste/configs.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -20,7 +22,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   final List<Map<String, String>> produtos = [];
 
   int _selectedIndex = 0;
-
 
   void _onItemTapped(int index) {
     setState(() {
@@ -47,7 +48,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF8B5E3B),
+        backgroundColor: DefaultColors.backgroundButton,
         title: Text(
           "Olá, ${widget.username}!",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -68,7 +69,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF8B5E3B),
+                    color: DefaultColors.backgroundButton,
                   ),
                 ),
                 SizedBox(height: 40),
@@ -79,7 +80,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   decoration: InputDecoration(
                     labelText: "Nome do Produto",
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                        borderRadius: Configs.radiusBorder,
                     ),
                   ),
                   validator: (value) {
@@ -97,12 +98,12 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   decoration: InputDecoration(
                     labelText: "Valor do Produto",
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                        borderRadius: Configs.radiusBorder,
                     ),
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]+$')),
+                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]+$')) ,
                   ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -119,7 +120,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   decoration: InputDecoration(
                     labelText: "Imagem do Produto (URL)",
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: Configs.radiusBorder,
                     ),
                   ),
                   validator: (value) {
@@ -135,16 +136,17 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                 ElevatedButton(
                   onPressed: _registerProduct,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF8B5E3B),
+                    backgroundColor: DefaultColors.backgroundButton,
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: Configs.buttonBorderRadius,
                     ),
                     elevation: 5,
                   ),
                   child: Text(
                     "Cadastrar Produto",
-                    style: TextStyle(fontSize: 18, color: Color(0xFFFFFFFF)),),
+                    style: TextStyle(fontSize: 18, color: DefaultColors.textColorButton),
+                  ),
                 ),
               ],
             ),

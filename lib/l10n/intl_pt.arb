@@ -1,0 +1,11 @@
+{
+  "@@locale": "pt",
+  "login": "Entrar",
+  "title": "Cadastro de Usuário",
+  "username": "Nome de Usuário",
+  "password": "Senha",
+  "email": "E-mail",
+  "register": "Cadastrar",
+  "formError": "Por favor, preencha todos os campos corretamente.",
+  "successMessage": "Cadastro realizado com sucesso!"
+}
