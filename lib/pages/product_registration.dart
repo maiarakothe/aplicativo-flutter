@@ -102,9 +102,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     ),
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9,.]+$')) ,
-                  ],
+                  inputFormatters: [Configs.productPriceFormatter],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira o valor do produto';
@@ -123,11 +121,16 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                       borderRadius: Configs.radiusBorder,
                     ),
                   ),
+                  keyboardType: TextInputType.url,
+                  inputFormatters: [Configs.urlFormatter],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira a URL da imagem';
                     }
-                    return null;
+                  if (!value.startsWith('http://') && !value.startsWith('https://')) {
+                  return 'A URL deve começar com http:// ou https://';
+                  }
+                  return null;
                   },
                 ),
                 SizedBox(height: 32),
