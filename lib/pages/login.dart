@@ -35,7 +35,8 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Bem vindo!'),
+        centerTitle: true,
         actions: [ThemeToggleButton()],
       ),
       backgroundColor: themeProvider.isDark
@@ -48,10 +49,10 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 80,
-                backgroundColor: DefaultColors.circleAvatar,
-                child: Icon(Icons.person, size: 120, color: DefaultColors.iconPerson),
+              Image.asset(
+                "assets/mobilelogin.png",
+                width: 200,
+                height: 200,
               ),
               SizedBox(height: 40),
               TextFormField(
