@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'product_list.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
+import 'package:teste/theme_toggle_button.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -10,8 +11,7 @@ class ProductRegistrationPage extends StatefulWidget {
   ProductRegistrationPage({super.key, required this.username});
 
   @override
-  _ProductRegistrationPageState createState() =>
-      _ProductRegistrationPageState();
+  _ProductRegistrationPageState createState() => _ProductRegistrationPageState();
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
@@ -53,6 +53,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           "Olá, ${widget.username}!",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        actions: [ThemeToggleButton()], //
       ),
       backgroundColor: Colors.white,
       body: _selectedIndex == 0
@@ -73,14 +74,12 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   ),
                 ),
                 SizedBox(height: 40),
-
-                // Campo de Nome do Produto
                 TextFormField(
                   controller: productNameController,
                   decoration: InputDecoration(
                     labelText: "Nome do Produto",
                     border: OutlineInputBorder(
-                        borderRadius: Configs.radiusBorder,
+                      borderRadius: Configs.radiusBorder,
                     ),
                   ),
                   validator: (value) {
@@ -91,14 +90,12 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   },
                 ),
                 SizedBox(height: 16),
-
-                // Campo do Valor do Produto
                 TextFormField(
                   controller: productPriceController,
                   decoration: InputDecoration(
                     labelText: "Valor do Produto",
                     border: OutlineInputBorder(
-                        borderRadius: Configs.radiusBorder,
+                      borderRadius: Configs.radiusBorder,
                     ),
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -111,8 +108,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   },
                 ),
                 SizedBox(height: 16),
-
-                // Campo da Imagem do Produto
                 TextFormField(
                   controller: productImageController,
                   decoration: InputDecoration(
@@ -127,15 +122,13 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira a URL da imagem';
                     }
-                  if (!value.startsWith('http://') && !value.startsWith('https://')) {
-                  return 'A URL deve começar com http:// ou https://';
-                  }
-                  return null;
+                    if (!value.startsWith('http://') && !value.startsWith('https://')) {
+                      return 'A URL deve começar com http:// ou https://';
+                    }
+                    return null;
                   },
                 ),
                 SizedBox(height: 32),
-
-                // Botão de Cadastro
                 ElevatedButton(
                   onPressed: _registerProduct,
                   style: ElevatedButton.styleFrom(

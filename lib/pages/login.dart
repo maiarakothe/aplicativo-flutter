@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teste/pages/product_registration.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
+import 'package:teste/theme_toggle_button.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      print("Login bem-sucedido!");
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -30,6 +30,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Login'),
+        actions: [ThemeToggleButton()], //
+      ),
       backgroundColor: DefaultColors.backgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -44,8 +48,6 @@ class _LoginPageState extends State<LoginPage> {
                 child: Icon(Icons.person, size: 120, color: DefaultColors.iconPerson),
               ),
               SizedBox(height: 40),
-
-              // Campo de Usuário
               TextFormField(
                 controller: usernameController,
                 decoration: InputDecoration(
@@ -62,8 +64,6 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               SizedBox(height: 16),
-
-              // Campo de Senha
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
@@ -84,8 +84,6 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               SizedBox(height: 32),
-
-              // Botão de Login
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: DefaultColors.backgroundButton,
@@ -97,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _login,
                 child: Text(
                   "Entrar",
-                  style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton ),
+                  style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
                 ),
               ),
             ],
