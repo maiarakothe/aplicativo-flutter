@@ -17,6 +17,14 @@ dependencies:
 
 dev_dependencies:
   intl_utils: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.jpg"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icon.jpg"
 
 flutter:
   uses-material-design: true
