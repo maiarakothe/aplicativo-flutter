@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teste/core/themes.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:teste/pages/login.dart';
+import 'package:teste/pages/splach_screen.dart';
 
 void main() {
   runApp(
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeProvider.isDark ? themeDarkData() : themeLightData(),
-      home: LoginPage(),
+      home: SplashScreen(),
     );
   }
 }
