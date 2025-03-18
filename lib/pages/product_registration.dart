@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'product_list.dart';
+import 'package:teste/pages/product_list.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
+import 'package:provider/provider.dart';
+import 'package:teste/core/theme_provider.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -46,16 +47,22 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: DefaultColors.backgroundButton,
+        backgroundColor: themeProvider.isDark
+            ? DefaultColors.darkAppBar
+            : DefaultColors.backgroundButton,
         title: Text(
           "Olá, ${widget.username}!",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        actions: [ThemeToggleButton()], //
+        actions: [ThemeToggleButton()],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: themeProvider.isDark
+          ? DefaultColors.darkLoginBackground
+          : DefaultColors.backgroundColor,
       body: _selectedIndex == 0
           ? Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -70,7 +77,9 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: DefaultColors.backgroundButton,
+                    color: themeProvider.isDark
+                        ? DefaultColors.darkText // 🔹 Texto claro no modo escuro
+                        : DefaultColors.backgroundButton,
                   ),
                 ),
                 SizedBox(height: 40),
@@ -151,6 +160,9 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       )
           : ShowProductPage(produtos: produtos),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: themeProvider.isDark
+            ? DefaultColors.darkAppBar
+            : DefaultColors.backgroundColor,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [

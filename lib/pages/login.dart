@@ -3,6 +3,8 @@ import 'package:teste/pages/product_registration.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
+import 'package:provider/provider.dart';
+import 'package:teste/core/theme_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -29,12 +31,16 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
-        actions: [ThemeToggleButton()], //
+        actions: [ThemeToggleButton()],
       ),
-      backgroundColor: DefaultColors.backgroundColor,
+      backgroundColor: themeProvider.isDark
+          ? DefaultColors.darkLoginBackground //
+          : DefaultColors.backgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: Form(
