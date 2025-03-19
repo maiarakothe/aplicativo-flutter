@@ -5,8 +5,13 @@ import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teste/core/theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
+  final void Function(Locale) changeLanguage;
+
+  const LoginPage({Key? key, required this.changeLanguage}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -23,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (context) => ProductRegistrationPage(
             username: usernameController.text,
+            changeLanguage: widget.changeLanguage,
           ),
         ),
       );
@@ -32,12 +38,36 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bem vindo!'),
+        title: Text(localizations.welcome),
         centerTitle: true,
-        actions: [ThemeToggleButton()],
+        actions: [
+          // Botão para mudar o idioma
+          DropdownButton<Locale>(
+            icon: Icon(Icons.language, color: Colors.white),
+            dropdownColor: Colors.black,
+            underline: SizedBox.shrink(),
+            onChanged: (Locale? newValue) {
+              if (newValue != null) {
+                widget.changeLanguage(newValue);
+              }
+            },
+            items: [
+              DropdownMenuItem(
+                value: Locale('en'),
+                child: Text('English', style: TextStyle(color: Colors.white)),
+              ),
+              DropdownMenuItem(
+                value: Locale('pt'),
+                child: Text('Português', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+          ThemeToggleButton(),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -55,14 +85,14 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: usernameController,
                 decoration: InputDecoration(
-                  labelText: "Usuário",
+                  labelText: localizations.username,
                   border: OutlineInputBorder(
                     borderRadius: Configs.radiusBorder,
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu usuário';
+                    return localizations.enterUsername;
                   }
                   return null;
                 },
@@ -72,17 +102,17 @@ class _LoginPageState extends State<LoginPage> {
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: "Senha",
+                  labelText: localizations.password,
                   border: OutlineInputBorder(
                     borderRadius: Configs.radiusBorder,
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira sua senha';
+                    return localizations.enterPassword;
                   }
                   if (value.length < 6) {
-                    return 'A senha deve ter pelo menos 6 caracteres';
+                    return localizations.passwordTooShort;
                   }
                   return null;
                 },
@@ -98,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 onPressed: _login,
                 child: Text(
-                  "Entrar",
+                  localizations.login,
                   style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
                 ),
               ),

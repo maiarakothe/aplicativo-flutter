@@ -3,6 +3,10 @@ import 'package:teste/pages/login.dart';
 import 'package:teste/core/colors.dart';
 
 class SplashScreen extends StatefulWidget {
+  final void Function(Locale) changeLanguage;
+
+  const SplashScreen({Key? key, required this.changeLanguage}) : super(key: key);
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -14,7 +18,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(
+          builder: (context) => LoginPage(changeLanguage: widget.changeLanguage),
+        ),
       );
     });
   }

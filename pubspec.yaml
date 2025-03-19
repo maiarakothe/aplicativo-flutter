@@ -37,4 +37,10 @@ flutter:
   generate: true
   assets:
     - assets/mobilelogin.png
-    - lib/l10n/
+    - lib/l10n/intl_en.arb
+    - lib/l10n/intl_pt.arb
+
+l10n:
+  arb-dir: lib/l10n
+  template-arb-file: intl_en.arb
+  output-localization-file: app_localizations.dart

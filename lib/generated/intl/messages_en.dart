@@ -22,17 +22,45 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "email": MessageLookupByLibrary.simpleMessage("Email"),
-    "formError": MessageLookupByLibrary.simpleMessage(
-      "Please fill in all fields correctly.",
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "enterPassword": MessageLookupByLibrary.simpleMessage(
+      "Please enter your password",
+    ),
+    "enterUsername": MessageLookupByLibrary.simpleMessage(
+      "Please enter your username",
+    ),
+    "hello": MessageLookupByLibrary.simpleMessage("Hello"),
+    "insertProductImageURL": MessageLookupByLibrary.simpleMessage(
+      "Please insert the product image URL",
+    ),
+    "insertProductName": MessageLookupByLibrary.simpleMessage(
+      "Please insert the product name",
+    ),
+    "insertProductPrice": MessageLookupByLibrary.simpleMessage(
+      "Please insert the product price",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "noProducts": MessageLookupByLibrary.simpleMessage("No products available"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
-    "register": MessageLookupByLibrary.simpleMessage("Register"),
-    "successMessage": MessageLookupByLibrary.simpleMessage(
-      "Registration successful!",
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "Password should be at least 6 characters long",
     ),
-    "title": MessageLookupByLibrary.simpleMessage("User Registration"),
+    "pressButtonToAddProduct": MessageLookupByLibrary.simpleMessage(
+      "Press the button to add a product",
+    ),
+    "productImageURL": MessageLookupByLibrary.simpleMessage(
+      "Product Image URL",
+    ),
+    "productName": MessageLookupByLibrary.simpleMessage("Product Name"),
+    "productPrice": MessageLookupByLibrary.simpleMessage("Product Price"),
+    "products": MessageLookupByLibrary.simpleMessage("Products"),
+    "register": MessageLookupByLibrary.simpleMessage("Register"),
+    "registerProduct": MessageLookupByLibrary.simpleMessage("Register Product"),
+    "save": MessageLookupByLibrary.simpleMessage("Save"),
+    "urlMustStartWithHTTP": MessageLookupByLibrary.simpleMessage(
+      "The URL must start with http:// or https://",
+    ),
     "username": MessageLookupByLibrary.simpleMessage("Username"),
+    "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
   };
 }

@@ -22,17 +22,49 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "email": MessageLookupByLibrary.simpleMessage("E-mail"),
-    "formError": MessageLookupByLibrary.simpleMessage(
-      "Por favor, preencha todos os campos corretamente.",
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancelar"),
+    "enterPassword": MessageLookupByLibrary.simpleMessage(
+      "Por favor, insira a senha",
+    ),
+    "enterUsername": MessageLookupByLibrary.simpleMessage(
+      "Por favor, insira o nome de usuário",
+    ),
+    "hello": MessageLookupByLibrary.simpleMessage("Olá"),
+    "insertProductImageURL": MessageLookupByLibrary.simpleMessage(
+      "Por favor, insira a URL da imagem do produto",
+    ),
+    "insertProductName": MessageLookupByLibrary.simpleMessage(
+      "Por favor, insira o nome do produto",
+    ),
+    "insertProductPrice": MessageLookupByLibrary.simpleMessage(
+      "Por favor, insira o preço do produto",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Entrar"),
-    "password": MessageLookupByLibrary.simpleMessage("Senha"),
-    "register": MessageLookupByLibrary.simpleMessage("Cadastrar"),
-    "successMessage": MessageLookupByLibrary.simpleMessage(
-      "Cadastro realizado com sucesso!",
+    "noProducts": MessageLookupByLibrary.simpleMessage(
+      "Nenhum produto disponível",
     ),
-    "title": MessageLookupByLibrary.simpleMessage("Cadastro de Usuário"),
-    "username": MessageLookupByLibrary.simpleMessage("Nome de Usuário"),
+    "password": MessageLookupByLibrary.simpleMessage("Senha"),
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "A senha deve ter pelo menos 6 caracteres",
+    ),
+    "pressButtonToAddProduct": MessageLookupByLibrary.simpleMessage(
+      "Pressione o botão para adicionar um produto",
+    ),
+    "productImageURL": MessageLookupByLibrary.simpleMessage(
+      "URL da Imagem do Produto",
+    ),
+    "productName": MessageLookupByLibrary.simpleMessage("Nome do Produto"),
+    "productPrice": MessageLookupByLibrary.simpleMessage("Preço do Produto"),
+    "products": MessageLookupByLibrary.simpleMessage("Produtos"),
+    "register": MessageLookupByLibrary.simpleMessage("Cadastrar"),
+    "registerProduct": MessageLookupByLibrary.simpleMessage(
+      "Cadastrar Produto",
+    ),
+    "save": MessageLookupByLibrary.simpleMessage("Salvar"),
+    "urlMustStartWithHTTP": MessageLookupByLibrary.simpleMessage(
+      "A URL deve começar com http:// ou https://",
+    ),
+    "username": MessageLookupByLibrary.simpleMessage("Nome de usuário"),
+    "welcome": MessageLookupByLibrary.simpleMessage("Bem-vindo"),
   };
 }

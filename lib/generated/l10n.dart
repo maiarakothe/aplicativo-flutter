@@ -55,14 +55,14 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `Login`
-  String get login {
-    return Intl.message('Login', name: 'login', desc: '', args: []);
+  /// `Hello`
+  String get hello {
+    return Intl.message('Hello', name: 'hello', desc: '', args: []);
   }
 
-  /// `User Registration`
-  String get title {
-    return Intl.message('User Registration', name: 'title', desc: '', args: []);
+  /// `Welcome`
+  String get welcome {
+    return Intl.message('Welcome', name: 'welcome', desc: '', args: []);
   }
 
   /// `Username`
@@ -75,9 +75,139 @@ class S {
     return Intl.message('Password', name: 'password', desc: '', args: []);
   }
 
-  /// `Email`
-  String get email {
-    return Intl.message('Email', name: 'email', desc: '', args: []);
+  /// `Please enter your username`
+  String get enterUsername {
+    return Intl.message(
+      'Please enter your username',
+      name: 'enterUsername',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your password`
+  String get enterPassword {
+    return Intl.message(
+      'Please enter your password',
+      name: 'enterPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password should be at least 6 characters long`
+  String get passwordTooShort {
+    return Intl.message(
+      'Password should be at least 6 characters long',
+      name: 'passwordTooShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login`
+  String get login {
+    return Intl.message('Login', name: 'login', desc: '', args: []);
+  }
+
+  /// `Register Product`
+  String get registerProduct {
+    return Intl.message(
+      'Register Product',
+      name: 'registerProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Name`
+  String get productName {
+    return Intl.message(
+      'Product Name',
+      name: 'productName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please insert the product name`
+  String get insertProductName {
+    return Intl.message(
+      'Please insert the product name',
+      name: 'insertProductName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Price`
+  String get productPrice {
+    return Intl.message(
+      'Product Price',
+      name: 'productPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please insert the product price`
+  String get insertProductPrice {
+    return Intl.message(
+      'Please insert the product price',
+      name: 'insertProductPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Image URL`
+  String get productImageURL {
+    return Intl.message(
+      'Product Image URL',
+      name: 'productImageURL',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please insert the product image URL`
+  String get insertProductImageURL {
+    return Intl.message(
+      'Please insert the product image URL',
+      name: 'insertProductImageURL',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The URL must start with http:// or https://`
+  String get urlMustStartWithHTTP {
+    return Intl.message(
+      'The URL must start with http:// or https://',
+      name: 'urlMustStartWithHTTP',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message('Save', name: 'save', desc: '', args: []);
+  }
+
+  /// `Press the button to add a product`
+  String get pressButtonToAddProduct {
+    return Intl.message(
+      'Press the button to add a product',
+      name: 'pressButtonToAddProduct',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Register`
@@ -85,21 +215,16 @@ class S {
     return Intl.message('Register', name: 'register', desc: '', args: []);
   }
 
-  /// `Please fill in all fields correctly.`
-  String get formError {
-    return Intl.message(
-      'Please fill in all fields correctly.',
-      name: 'formError',
-      desc: '',
-      args: [],
-    );
+  /// `Products`
+  String get products {
+    return Intl.message('Products', name: 'products', desc: '', args: []);
   }
 
-  /// `Registration successful!`
-  String get successMessage {
+  /// `No products available`
+  String get noProducts {
     return Intl.message(
-      'Registration successful!',
-      name: 'successMessage',
+      'No products available',
+      name: 'noProducts',
       desc: '',
       args: [],
     );
