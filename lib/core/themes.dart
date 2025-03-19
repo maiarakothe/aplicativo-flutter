@@ -7,7 +7,7 @@ ThemeData themeLightData() {
     scaffoldBackgroundColor: DefaultColors.backgroundColor,
     appBarTheme: AppBarTheme(backgroundColor: DefaultColors.backgroundButton),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: DefaultColors.backgroundButton,
+      backgroundColor: DefaultColors.backgroundColor,
     ),
     textTheme: const TextTheme(
       bodyMedium: TextStyle(color: Colors.black),

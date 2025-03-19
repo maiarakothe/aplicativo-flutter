@@ -51,18 +51,15 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: themeProvider.isDark
-            ? DefaultColors.darkAppBar
-            : DefaultColors.backgroundButton,
+
         title: Text(
           "Olá, ${widget.username}!",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         actions: [ThemeToggleButton()],
       ),
-      backgroundColor: themeProvider.isDark
-          ? DefaultColors.darkLoginBackground
-          : DefaultColors.backgroundColor,
+
+
       body: _selectedIndex == 0
           ? Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -77,9 +74,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
-                    color: themeProvider.isDark
-                        ? DefaultColors.darkText // 🔹 Texto claro no modo escuro
-                        : DefaultColors.backgroundButton,
                   ),
                 ),
                 SizedBox(height: 40),
@@ -160,9 +154,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       )
           : ShowProductPage(produtos: produtos),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: themeProvider.isDark
-            ? DefaultColors.darkAppBar
-            : DefaultColors.backgroundColor,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [

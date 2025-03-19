@@ -39,9 +39,6 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         actions: [ThemeToggleButton()],
       ),
-      backgroundColor: themeProvider.isDark
-          ? DefaultColors.darkLoginBackground //
-          : DefaultColors.backgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: Form(
