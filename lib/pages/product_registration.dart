@@ -3,8 +3,6 @@ import 'package:teste/pages/product_list.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
-import 'package:provider/provider.dart';
-import 'package:teste/core/theme_provider.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -30,53 +28,17 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     });
   }
 
-  void _registerProduct() {
-    if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        produtos.add({
-          'nome': productNameController.text,
-          'imagem': productImageController.text,
-          'preco': productPriceController.text,
-        });
-        productNameController.clear();
-        productImageController.clear();
-        productPriceController.clear();
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
-    return Scaffold(
-      appBar: AppBar(
-
-        title: Text(
-          "Olá, ${widget.username}!",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        actions: [ThemeToggleButton()],
-      ),
-
-
-      body: _selectedIndex == 0
-          ? Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Center(
+  void _showProductDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Cadastrar Produto"),
+        content: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Registre o seu produto:",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 40),
                 TextFormField(
                   controller: productNameController,
                   decoration: InputDecoration(
@@ -109,6 +71,11 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     }
                     return null;
                   },
+                  onEditingComplete: () {
+                    setState(() {
+                      productPriceController.text = Configs.formatPrice(productPriceController.text);
+                    });
+                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -131,28 +98,59 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _registerProduct,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: DefaultColors.backgroundButton,
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: Configs.buttonBorderRadius,
-                    ),
-                    elevation: 5,
-                  ),
-                  child: Text(
-                    "Cadastrar Produto",
-                    style: TextStyle(fontSize: 18, color: DefaultColors.textColorButton),
-                  ),
-                ),
               ],
             ),
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                setState(() {
+                  produtos.add({
+                    'nome': productNameController.text,
+                    'imagem': productImageController.text,
+                    'preco': productPriceController.text,
+                  });
+                  productNameController.clear();
+                  productImageController.clear();
+                  productPriceController.clear();
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: Text("Salvar"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Olá, ${widget.username}!"),
+        actions: [ThemeToggleButton()],
+      ),
+      body: _selectedIndex == 0
+          ? Center(
+        child: Text(
+          "Pressione o botão para adicionar um produto",
+          style: TextStyle(fontSize: 16),
+        ),
       )
           : ShowProductPage(produtos: produtos),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showProductDialog,
+        backgroundColor: DefaultColors.backgroundButton,
+        child: Icon(Icons.add, color: DefaultColors.textColorButton),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

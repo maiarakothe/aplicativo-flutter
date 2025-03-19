@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:intl/intl.dart';
 
 class Configs {
   // BorderRadius
@@ -10,13 +10,14 @@ class Configs {
   static BorderRadius buttonBorderRadius = BorderRadius.circular(28);
 
   // Máscara para valores de produto
-  static List<String> productPriceMask = ['R\$ ###,##'];
+  static final productPriceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+([,]\d{0,2})?$'));
 
   // Formatador para valores de produto
-  static final productPriceFormatter = MaskTextInputFormatter(
-    mask: productPriceMask[0],
-    filter: {"#": RegExp(r'[0-9]')},
-  );
+  static String formatPrice(String value) {
+    if (value.isEmpty) return '';
+      double price = double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
+    return NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(price);
+    }
 
   // Máscara para URL da imagem
   static List<String> imageURLMask = ['http://*', 'https://*'];
