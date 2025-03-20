@@ -12,7 +12,7 @@ class ShowProductPage extends StatelessWidget {
       body: produtos.isEmpty
           ? Center(
         child: Text(
-          AppLocalizations.of(context)!.noProducts,
+          AppLocalizations.of(context).noProducts,
           style: TextStyle(fontSize: 18),
         ),
       )
@@ -22,7 +22,7 @@ class ShowProductPage extends StatelessWidget {
           return ListTile(
             leading: Image.network(produtos[index]['imagem']!),
             title: Text(produtos[index]['nome']!),
-            subtitle: Text('${AppLocalizations.of(context)!.price}: R\$ ${produtos[index]['preco']}'),
+            subtitle: Text('${AppLocalizations.of(context).price}: R\$ ${produtos[index]['preco']}'),
           );
         },
       ),

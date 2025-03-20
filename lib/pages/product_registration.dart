@@ -1,25 +1,29 @@
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/pages/product_list.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
   final void Function(Locale) changeLanguage;
 
-  ProductRegistrationPage({super.key, required this.username, required this.changeLanguage});
+  ProductRegistrationPage(
+      {super.key, required this.username, required this.changeLanguage});
 
   @override
-  _ProductRegistrationPageState createState() => _ProductRegistrationPageState();
+  _ProductRegistrationPageState createState() =>
+      _ProductRegistrationPageState();
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productImageController = TextEditingController();
-  final TextEditingController productPriceController = TextEditingController();
+  final MoneyMaskedTextController productPriceController =
+      Configs.productPriceFormatter;
   final List<Map<String, String>> produtos = [];
 
   int _selectedIndex = 0;
@@ -34,7 +38,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.registerProduct),
+        title: Text(AppLocalizations.of(context).registerProduct),
         content: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -44,14 +48,14 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                 TextFormField(
                   controller: productNameController,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.productName,
+                    labelText: AppLocalizations.of(context).productName,
                     border: OutlineInputBorder(
                       borderRadius: Configs.radiusBorder,
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.insertProductName;
+                      return AppLocalizations.of(context).insertProductName;
                     }
                     return null;
                   },
@@ -60,30 +64,27 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                 TextFormField(
                   controller: productPriceController,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.productPrice,
+                    labelText: AppLocalizations.of(context).productPrice,
                     border: OutlineInputBorder(
                       borderRadius: Configs.radiusBorder,
                     ),
                   ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [Configs.productPriceFormatter],
+                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.insertProductPrice;
+                      return AppLocalizations.of(context).insertProductPrice;
                     }
                     return null;
                   },
                   onEditingComplete: () {
-                    setState(() {
-                      productPriceController.text = Configs.formatPrice(productPriceController.text);
-                    });
+                    print(productPriceController);
                   },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
                   controller: productImageController,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.productImageURL,
+                    labelText: AppLocalizations.of(context).productImageURL,
                     border: OutlineInputBorder(
                       borderRadius: Configs.radiusBorder,
                     ),
@@ -92,10 +93,11 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   inputFormatters: [Configs.urlFormatter],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.insertProductImageURL;
+                      return AppLocalizations.of(context).insertProductImageURL;
                     }
-                    if (!value.startsWith('http://') && !value.startsWith('https://')) {
-                      return AppLocalizations.of(context)!.urlMustStartWithHTTP;
+                    if (!value.startsWith('http://') &&
+                        !value.startsWith('https://')) {
+                      return AppLocalizations.of(context).urlMustStartWithHTTP;
                     }
                     return null;
                   },
@@ -107,7 +109,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -125,7 +127,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                 Navigator.pop(context);
               }
             },
-            child: Text(AppLocalizations.of(context)!.save),
+            child: Text(AppLocalizations.of(context).save),
           ),
         ],
       ),
@@ -136,7 +138,8 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${AppLocalizations.of(context)!.hello}, ${widget.username}!"),
+        title:
+            Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
         actions: [
           // Botão para mudar o idioma
           DropdownButton<Locale>(
@@ -164,11 +167,11 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       ),
       body: _selectedIndex == 0
           ? Center(
-        child: Text(
-          AppLocalizations.of(context)!.pressButtonToAddProduct,
-          style: TextStyle(fontSize: 16),
-        ),
-      )
+              child: Text(
+                AppLocalizations.of(context).pressButtonToAddProduct,
+                style: TextStyle(fontSize: 16),
+              ),
+            )
           : ShowProductPage(produtos: produtos),
       floatingActionButton: FloatingActionButton(
         onPressed: _showProductDialog,
@@ -181,15 +184,14 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
-            label: AppLocalizations.of(context)!.register,
+            label: AppLocalizations.of(context).register,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: AppLocalizations.of(context)!.products,
+            label: AppLocalizations.of(context).products,
           ),
         ],
       ),
     );
   }
 }
-
