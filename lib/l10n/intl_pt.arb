@@ -21,5 +21,6 @@
   "register": "Cadastrar",
   "products": "Produtos",
   "price": "Preço",
-  "noProducts": "Nenhum produto disponível"
+  "noProducts": "Nenhum produto disponível",
+  "productRegisteredSuccessfully": "Produto cadastrado com sucesso!"
 }

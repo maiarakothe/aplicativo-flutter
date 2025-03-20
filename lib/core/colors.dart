@@ -7,12 +7,13 @@ class DefaultColors {
   static const Color backgroundButton = Color(0xFF8B5E3B);
   static const Color iconPerson = Color(0xFF5D4037);
   static const Color circleAvatar = Color(0xFFDFD5C3);
+  static const Color snackBar = Color(0xFFA1724F);
 
   // Cores do Modo Escuro
-  static const Color darkBackground = Color(0xFF121212); //
-  static const Color darkAppBar = Colors.black; //
-  static const Color darkText = Color(0xFFF5F5F5); //
-  static const Color darkCard = Color(0xFF1E1E1E); //
-  static const Color darkLoginBackground = Color(0xFF1A1A1A); //
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkAppBar = Colors.black;
+  static const Color darkText = Color(0xFFF5F5F5);
+  static const Color darkCard = Color(0xFF1E1E1E);
+  static const Color darkLoginBackground = Color(0xFF1A1A1A);
 }
 

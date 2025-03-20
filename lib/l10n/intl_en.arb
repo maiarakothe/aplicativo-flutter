@@ -21,5 +21,6 @@
   "register": "Register",
   "products": "Products",
   "price": "Price",
-  "noProducts": "No products available"
+  "noProducts": "No products available",
+  "productRegisteredSuccessfully": "Product registered successfully!"
 }

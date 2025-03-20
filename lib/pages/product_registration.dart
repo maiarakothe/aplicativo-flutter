@@ -67,9 +67,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   ),
                   keyboardType: TextInputType.number,
                   validator: (value) => Validators.validateProductPrice(value, AppLocalizations.of(context)),
-                  onEditingComplete: () {
-                    print(productPriceController);
-                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -106,7 +103,16 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   productImageController.clear();
                   productPriceController.clear();
                 });
+
                 Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context).productRegisteredSuccessfully),
+                    backgroundColor: DefaultColors.snackBar,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               }
             },
             child: Text(AppLocalizations.of(context).save),
@@ -121,9 +127,8 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     return Scaffold(
       appBar: AppBar(
         title:
-            Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
+        Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
         actions: [
-          // Botão para mudar o idioma
           DropdownButton<Locale>(
             icon: Icon(Icons.language, color: Colors.white),
             underline: SizedBox.shrink(),
@@ -149,11 +154,11 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       ),
       body: _selectedIndex == 0
           ? Center(
-              child: Text(
-                AppLocalizations.of(context).pressButtonToAddProduct,
-                style: TextStyle(fontSize: 16),
-              ),
-            )
+        child: Text(
+          AppLocalizations.of(context).pressButtonToAddProduct,
+          style: TextStyle(fontSize: 16),
+        ),
+      )
           : ShowProductPage(produtos: produtos),
       floatingActionButton: FloatingActionButton(
         onPressed: _showProductDialog,
