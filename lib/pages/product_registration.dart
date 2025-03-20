@@ -5,6 +5,7 @@ import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:teste/utils/validators.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -53,12 +54,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                       borderRadius: Configs.radiusBorder,
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context).insertProductName;
-                    }
-                    return null;
-                  },
+                  validator: (value) => Validators.validateProductName(value, AppLocalizations.of(context)),
                 ),
                 SizedBox(height: 16),
                 TextFormField(
@@ -70,12 +66,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     ),
                   ),
                   keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context).insertProductPrice;
-                    }
-                    return null;
-                  },
+                  validator: (value) => Validators.validateProductPrice(value, AppLocalizations.of(context)),
                   onEditingComplete: () {
                     print(productPriceController);
                   },
@@ -91,16 +82,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   ),
                   keyboardType: TextInputType.url,
                   inputFormatters: [Configs.urlFormatter],
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context).insertProductImageURL;
-                    }
-                    if (!value.startsWith('http://') &&
-                        !value.startsWith('https://')) {
-                      return AppLocalizations.of(context).urlMustStartWithHTTP;
-                    }
-                    return null;
-                  },
+                  validator: (value) => Validators.validateProductImageURL(value, AppLocalizations.of(context)),
                 ),
               ],
             ),

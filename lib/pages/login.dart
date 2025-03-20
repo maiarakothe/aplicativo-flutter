@@ -6,6 +6,7 @@ import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:teste/utils/validators.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -90,12 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: Configs.radiusBorder,
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return localizations.enterUsername;
-                  }
-                  return null;
-                },
+                validator: (value) => Validators.validateUsername(value, localizations),
               ),
               SizedBox(height: 16),
               TextFormField(
@@ -107,15 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: Configs.radiusBorder,
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return localizations.enterPassword;
-                  }
-                  if (value.length < 6) {
-                    return localizations.passwordTooShort;
-                  }
-                  return null;
-                },
+                validator: (value) => Validators.validatePassword(value, localizations),
               ),
               SizedBox(height: 32),
               ElevatedButton(
