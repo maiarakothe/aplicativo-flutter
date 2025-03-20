@@ -1,14 +1,16 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Validators {
-  static String? validateUsername(String? value, AppLocalizations localizations) {
+  static String? validateUsername(
+      String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.enterUsername;
     }
     return null;
   }
 
-  static String? validatePassword(String? value, AppLocalizations localizations) {
+  static String? validatePassword(
+      String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.enterPassword;
     }
@@ -18,21 +20,27 @@ class Validators {
     return null;
   }
 
-  static String? validateProductName(String? value, AppLocalizations localizations) {
+  static String? validateProductName(
+      String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.insertProductName;
     }
     return null;
   }
 
-  static String? validateProductPrice(String? value, AppLocalizations localizations) {
+  static String? validateProductPrice(
+      String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.insertProductPrice;
+    }
+    if (value.replaceAll('R\$ ', '') == '0,00') {
+      return localizations.requiredField;
     }
     return null;
   }
 
-  static String? validateProductImageURL(String? value, AppLocalizations localizations) {
+  static String? validateProductImageURL(
+      String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.insertProductImageURL;
     }

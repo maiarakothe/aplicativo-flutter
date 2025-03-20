@@ -22,5 +22,6 @@
   "products": "Produtos",
   "price": "Preço",
   "noProducts": "Nenhum produto disponível",
-  "productRegisteredSuccessfully": "Produto cadastrado com sucesso!"
+  "productRegisteredSuccessfully": "Produto cadastrado com sucesso!",
+  "requiredField": "Campo obrigatório"
 }

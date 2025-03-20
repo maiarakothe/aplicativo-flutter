@@ -22,5 +22,6 @@
   "products": "Products",
   "price": "Price",
   "noProducts": "No products available",
-  "productRegisteredSuccessfully": "Product registered successfully!"
+  "productRegisteredSuccessfully": "Product registered successfully!",
+  "requiredField": "Required field"
 }

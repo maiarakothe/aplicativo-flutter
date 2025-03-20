@@ -7,16 +7,12 @@ class ThemeToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
 
-    return Positioned(
-      top: 20,
-      right: 20,
-      child: IconButton(
-        icon: Icon(themeProvider.isDark ? Icons.dark_mode : Icons.light_mode),
-        color: Colors.white,
-        onPressed: () {
-          themeProvider.toggleTheme();
-        },
-      ),
+    return IconButton(
+      icon: Icon(themeProvider.isDark ? Icons.dark_mode : Icons.light_mode),
+      color: Colors.white,
+      onPressed: () {
+        themeProvider.toggleTheme();
+      },
     );
   }
 }
