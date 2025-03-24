@@ -7,6 +7,7 @@ import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
 import 'package:teste/routes.dart';
+import 'package:teste/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -22,18 +23,27 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void _login() {
+  final AuthService _authService = AuthService();
+
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.pushNamed(
-        context,
-        Routes.productRegistration,
-        arguments: {
-          'username': usernameController.text,
-          'changeLanguage': widget.changeLanguage,
-        },
-      );
+      String username = usernameController.text;
+      String password = passwordController.text;
+
+      try {
+        await _authService.login(username, password);
+
+        Navigator.pushReplacementNamed(context, Routes.productRegistration, arguments: {
+        'username': usernameController.text,
+        'changeLanguage': widget.changeLanguage,});
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.loginError)),
+        );
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.welcome),
+        title: Text(localizations!.welcome),
         centerTitle: true,
         actions: [
           DropdownButton<Locale>(

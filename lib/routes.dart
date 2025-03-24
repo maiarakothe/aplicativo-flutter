@@ -6,17 +6,20 @@ import 'package:teste/pages/login.dart';
 class Routes {
   static const String splash = '/';
   static const String login = '/login';
-  static const String productRegistration = '/registrarproduto';
-  static const String productList = '/registrarproduto/listadeprodutos';
+  static const String productRegistration = '/product_registration';
 
   static Route<dynamic> generateRoute(RouteSettings settings, void Function(Locale) changeLanguage) {
     switch (settings.name) {
       case splash:
-        return MaterialPageRoute(builder: (_) => SplashScreen(changeLanguage: changeLanguage));
+        return MaterialPageRoute(builder: (_) => SplashScreen());
       case login:
         return MaterialPageRoute(builder: (_) => LoginPage(changeLanguage: changeLanguage));
       case productRegistration:
-        return MaterialPageRoute(builder: (_) => ProductRegistrationPage(username: "", changeLanguage: changeLanguage));
+        final args = settings.arguments as Map<String, dynamic>;
+        final username = args['username'];
+        return MaterialPageRoute(
+          builder: (_) => ProductRegistrationPage( username: username, changeLanguage: changeLanguage),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

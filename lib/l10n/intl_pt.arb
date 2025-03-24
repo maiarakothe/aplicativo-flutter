@@ -30,5 +30,7 @@
   "areYouSureDelete": "Tem certeza de que deseja excluir este produto?",
   "productDeletedSuccessfully": "Produto excluído com sucesso",
   "productUpdatedSuccessfully": "Produto atualizado com sucesso",
-  "editProduct": "Editar Produto"
+  "editProduct": "Editar Produto",
+  "loginError": "Usuário ou senha inválidos",
+  "logout": "Sair"
 }

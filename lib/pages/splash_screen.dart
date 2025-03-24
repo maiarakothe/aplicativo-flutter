@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:teste/routes.dart';
 import 'package:teste/core/colors.dart';
+import 'package:teste/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
-  final void Function(Locale) changeLanguage;
-
-  const SplashScreen({Key? key, required this.changeLanguage}) : super(key: key);
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final AuthService _authService = AuthService();
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(
-        context,
-        Routes.login,
-      );
-    });
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    bool isLoggedIn = await _authService.isLoggedIn();
+
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, Routes.productRegistration);
+    } else {
+      Navigator.pushReplacementNamed(context, Routes.login);
+    }
   }
 
   @override

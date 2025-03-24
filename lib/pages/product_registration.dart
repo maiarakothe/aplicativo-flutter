@@ -6,6 +6,7 @@ import 'package:teste/pages/product_list.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
+import 'package:teste/services/auth_service.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -26,6 +27,8 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
   int? _editingIndex;
   int _selectedIndex = 0;
+
+  final AuthService _authService = AuthService();
 
   void _showProductDialog({int? editingIndex}) {
     if (editingIndex != null) {
@@ -204,6 +207,11 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     });
   }
 
+  void _logout() async {
+    await _authService.logout();
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,6 +239,13 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
             ],
           ),
           ThemeToggleButton(),
+          Tooltip(
+            message: AppLocalizations.of(context).logout,
+            child: IconButton(
+              icon: Icon(Icons.exit_to_app, color: Colors.white),
+              onPressed: _logout,
+            ),
+          ),
         ],
       ),
       body: _selectedIndex == 0
