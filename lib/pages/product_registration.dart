@@ -1,8 +1,8 @@
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
-import 'package:teste/pages/product_list.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
+import 'package:teste/pages/product_list.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
