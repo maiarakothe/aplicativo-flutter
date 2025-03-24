@@ -185,7 +185,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(AppLocalizations.of(context).productDeletedSuccessfully),
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.green,
                     duration: Duration(seconds: 2),
                   ),
                 );
