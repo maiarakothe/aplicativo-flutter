@@ -18,12 +18,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
+    await Future.delayed(Duration(seconds: 2));
     bool isLoggedIn = await _authService.isLoggedIn();
 
-    if (isLoggedIn) {
-      Navigator.pushReplacementNamed(context, Routes.productRegistration);
-    } else {
-      Navigator.pushReplacementNamed(context, Routes.login);
+    if (mounted) { 
+      if (isLoggedIn) {
+        Navigator.pushReplacementNamed(context, Routes.productRegistration);
+      } else {
+        Navigator.pushReplacementNamed(context, Routes.login);
+      }
     }
   }
 

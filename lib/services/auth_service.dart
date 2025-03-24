@@ -4,7 +4,8 @@ class AuthService {
   // Método para verificar se o usuário está logado
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token') != null;
+    String? token = prefs.getString('auth_token');
+    return token != null;
   }
 
   // Método de login
@@ -22,6 +23,6 @@ class AuthService {
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
-    await prefs.remove('userData');
+    await prefs.remove('username');
   }
 }
