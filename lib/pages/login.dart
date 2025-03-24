@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teste/pages/product_registration.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
+import 'package:teste/routes.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -24,14 +24,13 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(
+      Navigator.pushNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => ProductRegistrationPage(
-            username: usernameController.text,
-            changeLanguage: widget.changeLanguage,
-          ),
-        ),
+        Routes.productRegistration,
+        arguments: {
+          'username': usernameController.text,
+          'changeLanguage': widget.changeLanguage,
+        },
       );
     }
   }
@@ -46,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
         title: Text(localizations.welcome),
         centerTitle: true,
         actions: [
-          // Botão para mudar o idioma
           DropdownButton<Locale>(
             icon: Icon(Icons.language, color: Colors.white),
             dropdownColor: Colors.black,

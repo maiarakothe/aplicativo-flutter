@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:teste/core/themes.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:teste/core/l10n.dart';
-import 'package:teste/pages/splash_screen.dart';
+import 'package:teste/routes.dart';
 
 void main() {
   runApp(
@@ -47,7 +47,8 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: themeProvider.isDark ? themeDarkData() : themeLightData(),
-      home: SplashScreen(changeLanguage: _changeLanguage),
+      initialRoute: Routes.splash,
+      onGenerateRoute: (settings) => Routes.generateRoute(settings, _changeLanguage),
     );
   }
 }

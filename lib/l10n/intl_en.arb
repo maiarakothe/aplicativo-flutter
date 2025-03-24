@@ -23,5 +23,12 @@
   "price": "Price",
   "noProducts": "No products available",
   "productRegisteredSuccessfully": "Product registered successfully!",
-  "requiredField": "Required field"
+  "requiredField": "Required field",
+  "delete": "Delete",
+  "edit": "Edit",
+  "confirmDelete": "Confirm Deletion",
+  "areYouSureDelete": "Are you sure you want to delete this product?",
+  "productDeletedSuccessfully": "Product deleted successfully",
+  "productUpdatedSuccessfully": "Product updated successfully",
+  "editProduct": "Edit Product"
 }

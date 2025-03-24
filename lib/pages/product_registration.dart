@@ -11,104 +11,130 @@ class ProductRegistrationPage extends StatefulWidget {
   final String username;
   final void Function(Locale) changeLanguage;
 
-  ProductRegistrationPage(
-      {super.key, required this.username, required this.changeLanguage});
+  ProductRegistrationPage({super.key, required this.username, required this.changeLanguage});
 
   @override
-  _ProductRegistrationPageState createState() =>
-      _ProductRegistrationPageState();
+  _ProductRegistrationPageState createState() => _ProductRegistrationPageState();
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productImageController = TextEditingController();
-  final MoneyMaskedTextController productPriceController =
-      Configs.productPriceFormatter;
+  final MoneyMaskedTextController productPriceController = Configs.productPriceFormatter;
   final List<Map<String, String>> produtos = [];
 
+  int? _editingIndex;
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  void _showProductDialog({int? editingIndex}) {
+    if (editingIndex != null) {
+      productNameController.text = produtos[editingIndex]['nome']!;
+      productImageController.text = produtos[editingIndex]['imagem']!;
+      productPriceController.text = produtos[editingIndex]['preco']!;
+    } else {
+      _formKey.currentState?.reset();
+      productNameController.clear();
+      productImageController.clear();
+      productPriceController.updateValue(0.0);
+    }
 
-  void _showProductDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).registerProduct),
+        title: Center(
+          child: Text(
+            editingIndex != null
+                ? AppLocalizations.of(context).editProduct
+                : AppLocalizations.of(context).registerProduct,
+          ),
+        ),
         content: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: productNameController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context).productName,
-                    border: OutlineInputBorder(
-                      borderRadius: Configs.radiusBorder,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 800,
+              maxHeight: 400,
+              minWidth: 300,
+              minHeight: 200,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: productNameController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).productName,
+                      border: OutlineInputBorder(
+                        borderRadius: Configs.radiusBorder,
+                      ),
                     ),
+                    validator: (value) => Validators.validateProductName(value, AppLocalizations.of(context)),
                   ),
-                  validator: (value) => Validators.validateProductName(value, AppLocalizations.of(context)),
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: productPriceController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context).productPrice,
-                    border: OutlineInputBorder(
-                      borderRadius: Configs.radiusBorder,
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: productPriceController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).productPrice,
+                      border: OutlineInputBorder(
+                        borderRadius: Configs.radiusBorder,
+                      ),
                     ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) => Validators.validateProductPrice(value, AppLocalizations.of(context)),
                   ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) => Validators.validateProductPrice(value, AppLocalizations.of(context)),
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: productImageController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context).productImageURL,
-                    border: OutlineInputBorder(
-                      borderRadius: Configs.radiusBorder,
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: productImageController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).productImageURL,
+                      border: OutlineInputBorder(
+                        borderRadius: Configs.radiusBorder,
+                      ),
                     ),
+                    keyboardType: TextInputType.url,
+                    inputFormatters: [Configs.urlFormatter],
+                    validator: (value) => Validators.validateProductImageURL(value, AppLocalizations.of(context)),
                   ),
-                  keyboardType: TextInputType.url,
-                  inputFormatters: [Configs.urlFormatter],
-                  validator: (value) => Validators.validateProductImageURL(value, AppLocalizations.of(context)),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+            },
             child: Text(AppLocalizations.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 setState(() {
-                  produtos.add({
-                    'nome': productNameController.text,
-                    'imagem': productImageController.text,
-                    'preco': productPriceController.text,
-                  });
-                  productNameController.clear();
-                  productImageController.clear();
-                  productPriceController.clear();
+                  if (editingIndex != null) {
+                    produtos[editingIndex] = {
+                      'nome': productNameController.text,
+                      'imagem': productImageController.text,
+                      'preco': productPriceController.text,
+                    };
+                  } else {
+                    produtos.add({
+                      'nome': productNameController.text,
+                      'imagem': productImageController.text,
+                      'preco': productPriceController.text,
+                    });
+                  }
                 });
 
                 Navigator.pop(context);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context).productRegisteredSuccessfully),
+                    content: Text(editingIndex != null
+                        ? AppLocalizations.of(context).productUpdatedSuccessfully
+                        : AppLocalizations.of(context).productRegisteredSuccessfully),
                     backgroundColor: DefaultColors.snackBar,
                     duration: Duration(seconds: 2),
                   ),
@@ -122,12 +148,67 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     );
   }
 
+  void _editProduct(int index) {
+    _showProductDialog(editingIndex: index);
+  }
+
+  void _confirmDelete(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 700,
+          maxHeight: 400,
+          minWidth: 400,
+          minHeight: 200,
+        ),
+        child: AlertDialog(
+          title: Center(
+            child: Text(
+              AppLocalizations.of(context).confirmDelete,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          content: Text(AppLocalizations.of(context).areYouSureDelete),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context).cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  produtos.removeAt(index);
+                });
+                Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context).productDeletedSuccessfully),
+                    backgroundColor: Colors.red,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              child: Text(AppLocalizations.of(context).delete, style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
+        title: Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
         actions: [
           DropdownButton<Locale>(
             icon: Icon(Icons.language, color: Colors.white),
@@ -154,12 +235,16 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       ),
       body: _selectedIndex == 0
           ? Center(
-              child: Text(
-                AppLocalizations.of(context).pressButtonToAddProduct,
-                style: TextStyle(fontSize: 16),
-              ),
-            )
-          : ShowProductPage(produtos: produtos),
+        child: Text(
+          AppLocalizations.of(context).pressButtonToAddProduct,
+          style: TextStyle(fontSize: 16),
+        ),
+      )
+          : ShowProductPage(
+        produtos: produtos,
+        onEdit: _editProduct,
+        onDelete: _confirmDelete,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showProductDialog,
         backgroundColor: DefaultColors.backgroundButton,

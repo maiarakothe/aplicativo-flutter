@@ -23,5 +23,12 @@
   "price": "Preço",
   "noProducts": "Nenhum produto disponível",
   "productRegisteredSuccessfully": "Produto cadastrado com sucesso!",
-  "requiredField": "Campo obrigatório"
+  "requiredField": "Campo obrigatório",
+  "delete": "Excluir",
+  "edit": "Editar",
+  "confirmDelete": "Confirmar Exclusão",
+  "areYouSureDelete": "Tem certeza de que deseja excluir este produto?",
+  "productDeletedSuccessfully": "Produto excluído com sucesso",
+  "productUpdatedSuccessfully": "Produto atualizado com sucesso",
+  "editProduct": "Editar Produto"
 }
