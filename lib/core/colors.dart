@@ -4,10 +4,11 @@ class DefaultColors {
   // Cores do Modo Claro
   static const Color backgroundColor = Color(0xFFF9F9F9);
   static const Color textColorButton = Colors.white;
-  static const Color backgroundButton = Color(0xFF8B5E3B);
+  static const Color backgroundButton = Color(0xFF9F724F);
   static const Color iconPerson = Color(0xFF5D4037);
   static const Color circleAvatar = Color(0xFFDFD5C3);
   static const Color snackBar = Color(0xFFA1724F);
+  static const Color green = Colors.green;
 
   // Cores do Modo Escuro
   static const Color darkBackground = Color(0xFF121212);

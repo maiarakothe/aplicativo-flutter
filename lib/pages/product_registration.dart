@@ -139,7 +139,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                     content: Text(editingIndex != null
                         ? AppLocalizations.of(context).productUpdatedSuccessfully
                         : AppLocalizations.of(context).productRegisteredSuccessfully),
-                    backgroundColor: DefaultColors.snackBar,
+                    backgroundColor: DefaultColors.green,
                     duration: Duration(seconds: 2),
                   ),
                 );
