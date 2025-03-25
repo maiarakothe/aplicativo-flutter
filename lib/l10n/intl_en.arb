@@ -36,7 +36,7 @@
   "noAccount": "Don't have an account? ",
   "signUp": "Sign up",
   "alreadyHaveAccount": "Already have an account? ",
-  "doLogin": "Faça login",
+  "doLogin": "Login",
   "forgotPassword": "Forgot your password?",
   "email": "Email",
   "name": "Name",
@@ -45,5 +45,8 @@
   "titleRegister": "Create your account",
   "enterYourEmail": "Enter your email to reset your password",
   "send": "Send",
-  "resetLinkSent": "Reset link sent to your email"
+  "resetLinkSent": "Reset link sent to your email",
+  "profile": "Profile",
+  "confirmLogout": "Confirm Logout",
+  "areYouSureLogout": "Are you sure you want to log out?"
 }

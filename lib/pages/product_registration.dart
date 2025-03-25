@@ -7,6 +7,7 @@ import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
 import 'package:teste/services/auth_service.dart';
+import 'package:teste/pages/profile_page.dart';  // Importando a página de perfil
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -207,16 +208,10 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     });
   }
 
-  void _logout() async {
-    await _authService.logout();
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
         automaticallyImplyLeading: false,
         actions: [
           DropdownButton<Locale>(
@@ -240,13 +235,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
             ],
           ),
           ThemeToggleButton(),
-          Tooltip(
-            message: AppLocalizations.of(context).logout,
-            child: IconButton(
-              icon: Icon(Icons.exit_to_app, color: Colors.white),
-              onPressed: _logout,
-            ),
-          ),
         ],
       ),
       body: _selectedIndex == 0
@@ -256,16 +244,20 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           style: TextStyle(fontSize: 16),
         ),
       )
-          : ShowProductPage(
+          : _selectedIndex == 1
+          ? ShowProductPage(
         produtos: produtos,
         onEdit: _editProduct,
         onDelete: _confirmDelete,
-      ),
-      floatingActionButton: FloatingActionButton(
+      )
+          : ProfilePage(),
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionButton(
         onPressed: _showProductDialog,
         backgroundColor: DefaultColors.backgroundButton,
         child: Icon(Icons.add, color: DefaultColors.textColorButton),
-      ),
+      )
+          : null,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -277,6 +269,10 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: AppLocalizations.of(context).products,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: AppLocalizations.of(context).profile,
           ),
         ],
       ),

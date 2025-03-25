@@ -45,5 +45,8 @@
   "titleRegister": "Crie sua conta",
   "enterYourEmail": "Digite seu e-mail para redefinir sua senha",
   "send": "Enviar",
-  "resetLinkSent": "Link de redefinição enviado para seu e-mail"
+  "resetLinkSent": "Link de redefinição enviado para seu e-mail",
+  "profile": "Perfil",
+  "confirmLogout": "Confirmar Saída",
+  "areYouSureLogout": "Você tem certeza que deseja sair?"
 }
