@@ -133,7 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   text: TextSpan(
                     style: TextStyle(
                       fontSize: 16,
-                      color: DefaultColors.circleAvatar,
+                      color: DefaultColors.snackBar,
                     ),
                     children: [
                       TextSpan(

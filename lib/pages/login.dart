@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                   text: TextSpan(
                     style: TextStyle(
                       fontSize: 16,
-                      color: DefaultColors.circleAvatar,
+                      color: DefaultColors.snackBar,
                     ),
                     children: [
                       TextSpan(
