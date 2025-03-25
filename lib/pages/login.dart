@@ -22,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   final AuthService _authService = AuthService();
 
   void _login() async {
@@ -32,16 +31,72 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         await _authService.login(username, password);
-
         Navigator.pushReplacementNamed(context, Routes.productRegistration, arguments: {
           'username': usernameController.text,
-          'changeLanguage': widget.changeLanguage,});
+          'changeLanguage': widget.changeLanguage,
+        });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.loginError)),
         );
       }
     }
+  }
+
+  void _showForgotPasswordDialog(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final localizations = AppLocalizations.of(context);
+        return AlertDialog(
+          title: Text(localizations.forgotPassword),
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(localizations.enterYourEmail),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: localizations.email,
+                    border: OutlineInputBorder(
+                      borderRadius: Configs.radiusBorder,
+                    ),
+                  ),
+                  validator: (value) => Validators.validateEmail(value, localizations),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(localizations.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  String email = emailController.text.trim();
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(localizations.resetLinkSent)),
+                  );
+                }
+              },
+              child: Text(localizations.send),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -118,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-
+                    _showForgotPasswordDialog(context);
                   },
                   child: Text(localizations.forgotPassword),
                 ),
@@ -161,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                )
+                ),
               )
             ],
           ),

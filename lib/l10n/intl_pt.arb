@@ -42,5 +42,8 @@
   "name": "Nome",
   "enterEmail": "Por favor, insira o email",
   "invalidEmail": "Formato de e-mail inválido",
-  "titleRegister": "Crie sua conta"
+  "titleRegister": "Crie sua conta",
+  "enterYourEmail": "Digite seu e-mail para redefinir sua senha",
+  "send": "Enviar",
+  "resetLinkSent": "Link de redefinição enviado para seu e-mail"
 }

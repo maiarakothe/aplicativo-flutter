@@ -38,9 +38,12 @@
   "alreadyHaveAccount": "Already have an account? ",
   "doLogin": "Faça login",
   "forgotPassword": "Forgot your password?",
-  "email": "E-mail",
+  "email": "Email",
   "name": "Name",
   "enterEmail": "Please enter your username",
   "invalidEmail": "Invalid email format",
-  "titleRegister": "Create your account"
+  "titleRegister": "Create your account",
+  "enterYourEmail": "Enter your email to reset your password",
+  "send": "Send",
+  "resetLinkSent": "Reset link sent to your email"
 }
