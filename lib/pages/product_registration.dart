@@ -217,6 +217,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("${AppLocalizations.of(context).hello}, ${widget.username}!"),
+        automaticallyImplyLeading: false,
         actions: [
           DropdownButton<Locale>(
             icon: Icon(Icons.language, color: Colors.white),

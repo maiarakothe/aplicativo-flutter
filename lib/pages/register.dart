@@ -7,40 +7,25 @@ import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
 import 'package:teste/routes.dart';
-import 'package:teste/services/auth_service.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
 
-  const LoginPage({Key? key, required this.changeLanguage}) : super(key: key);
+  const RegisterPage({Key? key, required this.changeLanguage}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final AuthService _authService = AuthService();
-
-  void _login() async {
+  void _register() {
     if (_formKey.currentState!.validate()) {
-      String username = usernameController.text;
-      String password = passwordController.text;
-
-      try {
-        await _authService.login(username, password);
-
-        Navigator.pushReplacementNamed(context, Routes.productRegistration, arguments: {
-          'username': usernameController.text,
-          'changeLanguage': widget.changeLanguage,});
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.loginError)),
-        );
-      }
+      Navigator.pushNamed(context, Routes.productRegistration);
     }
   }
 
@@ -51,9 +36,9 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations!.welcome),
-        automaticallyImplyLeading: false,
+        title: Text(localizations!.titleRegister),
         centerTitle: true,
+        automaticallyImplyLeading: false, // Remove a flecha de voltar
         actions: [
           DropdownButton<Locale>(
             icon: Icon(Icons.language, color: Colors.white),
@@ -85,21 +70,32 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                "assets/mobilelogin.png",
-                width: 200,
-                height: 200,
+              CircleAvatar(
+                radius: 80,
+                backgroundColor: Color(0xFFDFD5C3),
+                child: Icon(Icons.person, size: 120, color: Color(0xFF5D4037)),
               ),
               SizedBox(height: 40),
               TextFormField(
-                controller: usernameController,
+                controller: nameController,
                 decoration: InputDecoration(
-                  labelText: localizations.username,
+                  labelText: localizations.name,
                   border: OutlineInputBorder(
                     borderRadius: Configs.radiusBorder,
                   ),
                 ),
                 validator: (value) => Validators.validateUsername(value, localizations),
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: localizations.email,
+                  border: OutlineInputBorder(
+                    borderRadius: Configs.radiusBorder,
+                  ),
+                ),
+                validator: (value) => Validators.validateEmail(value, localizations),
               ),
               SizedBox(height: 16),
               TextFormField(
@@ -113,17 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 validator: (value) => Validators.validatePassword(value, localizations),
               ),
-              SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-
-                  },
-                  child: Text(localizations.forgotPassword),
-                ),
-              ),
-              SizedBox(height: 16),
+              SizedBox(height: 32),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: DefaultColors.backgroundButton,
@@ -132,16 +118,16 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: Configs.buttonBorderRadius,
                   ),
                 ),
-                onPressed: _login,
+                onPressed: _register,
                 child: Text(
-                  localizations.login,
+                  localizations.register,
                   style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
                 ),
               ),
               SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.register);
+                  Navigator.pushNamed(context, Routes.login);
                 },
                 child: RichText(
                   text: TextSpan(
@@ -151,17 +137,17 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     children: [
                       TextSpan(
-                        text: AppLocalizations.of(context)!.noAccount,
+                        text: AppLocalizations.of(context)!.alreadyHaveAccount,
                       ),
                       TextSpan(
-                        text: AppLocalizations.of(context)!.signUp,
+                        text: AppLocalizations.of(context)!.doLogin,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                )
+                ),
               )
             ],
           ),

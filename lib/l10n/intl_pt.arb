@@ -32,5 +32,15 @@
   "productUpdatedSuccessfully": "Produto atualizado com sucesso",
   "editProduct": "Editar Produto",
   "loginError": "Usuário ou senha inválidos",
-  "logout": "Sair"
+  "logout": "Sair",
+  "noAccount": "Não tem uma conta? ",
+  "signUp": "Cadastre-se",
+  "alreadyHaveAccount": "Já tem uma conta? ",
+  "doLogin": "Faça login",
+  "forgotPassword": "Esqueceu a senha?",
+  "email": "E-mail",
+  "name": "Nome",
+  "enterEmail": "Por favor, insira o email",
+  "invalidEmail": "Formato de e-mail inválido",
+  "titleRegister": "Crie sua conta"
 }

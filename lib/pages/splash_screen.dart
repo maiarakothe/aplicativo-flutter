@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 2));
     bool isLoggedIn = await _authService.isLoggedIn();
 
-    if (mounted) { 
+    if (mounted) {
       if (isLoggedIn) {
         Navigator.pushReplacementNamed(context, Routes.productRegistration);
       } else {

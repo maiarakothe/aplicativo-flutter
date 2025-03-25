@@ -32,5 +32,15 @@
   "productUpdatedSuccessfully": "Product updated successfully",
   "editProduct": "Edit Product",
   "loginError": "Invalid username or password",
-  "logout": "Exit"
+  "logout": "Exit",
+  "noAccount": "Don't have an account? ",
+  "signUp": "Sign up",
+  "alreadyHaveAccount": "Already have an account? ",
+  "doLogin": "Faça login",
+  "forgotPassword": "Forgot your password?",
+  "email": "E-mail",
+  "name": "Name",
+  "enterEmail": "Please enter your username",
+  "invalidEmail": "Invalid email format",
+  "titleRegister": "Create your account"
 }

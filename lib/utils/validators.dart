@@ -1,3 +1,4 @@
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Validators {
@@ -49,4 +50,19 @@ class Validators {
     }
     return null;
   }
+
+  static String? validateEmail(String? value, AppLocalizations localizations) {
+    if (value == null || value.isEmpty) {
+      return localizations.enterEmail;
+    }
+
+    // Expressão regular para validar o formato de e-mail
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+    if (!emailRegex.hasMatch(value)) {
+      return localizations.invalidEmail;
+    }
+    return null;
+  }
+
 }
