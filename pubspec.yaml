@@ -17,6 +17,10 @@ dependencies:
   extended_masked_text: ^3.0.1
   provider: ^6.1.2
   shared_preferences: ^2.0.15
+  awidgets:
+    git:
+      url: https://gitlab.com/almeidatech/awidgets.git
+      ref: main
 
 dev_dependencies:
   intl_utils: ^2.0.0

@@ -1,3 +1,5 @@
+import 'package:awidgets/fields/a_field_money.dart';
+import 'package:awidgets/fields/a_field_text.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
@@ -7,7 +9,7 @@ import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/utils/validators.dart';
 import 'package:teste/services/auth_service.dart';
-import 'package:teste/pages/profile_page.dart';  // Importando a página de perfil
+import 'package:teste/pages/profile_page.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final String username;
@@ -66,28 +68,13 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextFormField(
-                    controller: productNameController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).productName,
-                      border: OutlineInputBorder(
-                        borderRadius: Configs.radiusBorder,
-                      ),
-                    ),
-                    validator: (value) => Validators.validateProductName(value, AppLocalizations.of(context)),
+                  AFieldText(
+                     identifier: 'Product name', label: 'Nome do produto',
                   ),
                   SizedBox(height: 16),
-                  TextFormField(
-                    controller: productPriceController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).productPrice,
-                      border: OutlineInputBorder(
-                        borderRadius: Configs.radiusBorder,
-                      ),
+                  AFieldMoney(
+                    identifier: 'Price', label: 'Preço do produto',
                     ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) => Validators.validateProductPrice(value, AppLocalizations.of(context)),
-                  ),
                   SizedBox(height: 16),
                   TextFormField(
                     controller: productImageController,

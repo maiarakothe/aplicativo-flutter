@@ -1,3 +1,5 @@
+import 'package:awidgets/fields/a_field_email.dart';
+import 'package:awidgets/fields/a_field_password.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
@@ -5,7 +7,6 @@ import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:teste/utils/validators.dart';
 import 'package:teste/routes.dart';
 import 'package:teste/services/auth_service.dart';
 
@@ -20,19 +21,18 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      String username = usernameController.text;
+      String email = emailController.text;
       String password = passwordController.text;
-
       try {
-        await _authService.login(username, password);
+        await _authService.login(email, password);
         Navigator.pushReplacementNamed(context, Routes.productRegistration, arguments: {
-          'username': usernameController.text,
+          'email': emailController.text,
           'changeLanguage': widget.changeLanguage,
         });
       } catch (e) {
@@ -60,16 +60,11 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Text(localizations.enterYourEmail),
                 SizedBox(height: 10),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: localizations.email,
-                    border: OutlineInputBorder(
-                      borderRadius: Configs.radiusBorder,
-                    ),
-                  ),
-                  validator: (value) => Validators.validateEmail(value, localizations),
+                AFieldEmail(
+                  onChanged: (value) {
+                    emailController.text = value ?? '';
+                  },
+                  required: true,
                 ),
               ],
             ),
@@ -83,8 +78,15 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () {
+                String email = emailController.text.trim();
+                if (email.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(localizations.enterYourEmail)),
+                  );
+                  return;
+                }
+
                 if (_formKey.currentState!.validate()) {
-                  String email = emailController.text.trim();
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(localizations.resetLinkSent)),
@@ -146,27 +148,13 @@ class _LoginPageState extends State<LoginPage> {
                 height: 200,
               ),
               SizedBox(height: 40),
-              TextFormField(
-                controller: usernameController,
-                decoration: InputDecoration(
-                  labelText: localizations.username,
-                  border: OutlineInputBorder(
-                    borderRadius: Configs.radiusBorder,
-                  ),
-                ),
-                validator: (value) => Validators.validateUsername(value, localizations),
+              AFieldEmail(
+                onChanged: (value) => emailController.text = value ?? "",
+                required: true,
               ),
               SizedBox(height: 16),
-              TextFormField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: localizations.password,
-                  border: OutlineInputBorder(
-                    borderRadius: Configs.radiusBorder,
-                  ),
-                ),
-                validator: (value) => Validators.validatePassword(value, localizations),
+              AFieldPassword(
+                onChanged: (value) => passwordController.text = value ?? "",
               ),
               SizedBox(height: 16),
               Align(

@@ -9,13 +9,13 @@ class AuthService {
   }
 
   // Método de login
-  Future<void> login(String username, String password) async {
+  Future<void> login(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
-    if (username == 'maiara' && password == '123456') {
+    if (email == 'm@gmail.com' && password == '12345678') {
       await prefs.setString('auth_token', 'some_auth_token');
-      await prefs.setString('username', username);
+      await prefs.setString('email', email);
     } else {
-      throw Exception('Invalid username or password');
+      throw Exception('Invalid email or password');
     }
   }
 
@@ -23,6 +23,6 @@ class AuthService {
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
-    await prefs.remove('username');
+    await prefs.remove('email');
   }
 }

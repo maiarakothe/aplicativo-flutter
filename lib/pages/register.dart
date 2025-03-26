@@ -1,3 +1,6 @@
+import 'package:awidgets/fields/a_field_email.dart';
+import 'package:awidgets/fields/a_field_password.dart';
+import 'package:awidgets/fields/a_field_name.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
@@ -5,7 +8,6 @@ import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:teste/utils/validators.dart';
 import 'package:teste/routes.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -38,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: Text(localizations!.titleRegister),
         centerTitle: true,
-        automaticallyImplyLeading: false, // Remove a flecha de voltar
+        automaticallyImplyLeading: false,
         actions: [
           DropdownButton<Locale>(
             icon: Icon(Icons.language, color: Colors.white),
@@ -76,38 +78,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Icon(Icons.person, size: 120, color: Color(0xFF5D4037)),
               ),
               SizedBox(height: 40),
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: localizations.name,
-                  border: OutlineInputBorder(
-                    borderRadius: Configs.radiusBorder,
-                  ),
-                ),
-                validator: (value) => Validators.validateUsername(value, localizations),
+              AFieldName(
+                label: localizations.name,
+                required: true,
               ),
               SizedBox(height: 16),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: localizations.email,
-                  border: OutlineInputBorder(
-                    borderRadius: Configs.radiusBorder,
-                  ),
-                ),
-                validator: (value) => Validators.validateEmail(value, localizations),
+              AFieldEmail(
+                label: localizations.email,
+                required: true,
               ),
               SizedBox(height: 16),
-              TextFormField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: localizations.password,
-                  border: OutlineInputBorder(
-                    borderRadius: Configs.radiusBorder,
-                  ),
-                ),
-                validator: (value) => Validators.validatePassword(value, localizations),
+              AFieldPassword(
+                label: localizations.password,
               ),
               SizedBox(height: 32),
               ElevatedButton(
