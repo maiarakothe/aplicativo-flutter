@@ -1,6 +1,7 @@
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import 'package:awidgets/fields/a_field_name.dart';
+import 'package:awidgets/general/a_form.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
@@ -20,21 +21,22 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  void _register(Map<String, dynamic> data) {
+    final name = data['name']?.trim() ?? '';
+    final email = data['email']?.trim() ?? '';
+    final password = data['password']?.trim() ?? '';
 
-  void _register() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pushNamed(context, Routes.productRegistration);
-    }
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.productRegistration,
+          (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -65,69 +67,101 @@ class _RegisterPageState extends State<RegisterPage> {
           ThemeToggleButton(),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 80,
-                backgroundColor: Color(0xFFDFD5C3),
-                child: Icon(Icons.person, size: 120, color: Color(0xFF5D4037)),
+      body: Center(
+        child: Container(
+          child: AForm<Map<String, dynamic>>(
+            fromJson: (json) => json as Map<String, dynamic>,
+            showDefaultAction: false,
+            submitText: localizations.register,
+            onSubmit: (data) async {
+              _register(data);
+              return null;
+            },
+            fields: [
+              Center(
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Color(0xFFDFD5C3),
+                  child: Icon(Icons.person, size: 120, color: Color(0xFF5D4037)),
+                ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               AFieldName(
+                identifier: 'name',
                 label: localizations.name,
                 required: true,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 10),
               AFieldEmail(
-                label: localizations.email,
+                identifier: 'email',
                 required: true,
+                label: localizations.email,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 10),
               AFieldPassword(
+                identifier: 'password',
                 label: localizations.password,
+                minLength: 6,
               ),
-              SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: DefaultColors.backgroundButton,
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: Configs.buttonBorderRadius,
-                  ),
-                ),
-                onPressed: _register,
-                child: Text(
-                  localizations.register,
-                  style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
-                ),
-              ),
-              SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.login);
-                },
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: DefaultColors.snackBar,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.alreadyHaveAccount,
-                      ),
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.doLogin,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              Builder(
+                builder: (context) {
+                  return Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: DefaultColors.backgroundButton,
+                        padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: Configs.buttonBorderRadius,
                         ),
                       ),
-                    ],
+                      onPressed: () {
+                        final formState = AForm.maybeOf(context);
+                        if (formState == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(localizations.formNotFound),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          formState.onSubmit();
+                        }
+                      },
+                      child: Text(
+                        localizations.register,
+                        style: const TextStyle(
+                          fontSize: 19, color: DefaultColors.textColorButton,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, Routes.login);
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: DefaultColors.snackBar,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.alreadyHaveAccount,
+                        ),
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.doLogin,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
