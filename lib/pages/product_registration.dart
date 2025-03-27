@@ -48,7 +48,9 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
         title: editingIndex != null
             ? AppLocalizations.of(context).editProduct
             : AppLocalizations.of(context).registerProduct,
-        submitText: AppLocalizations.of(context)!.register,
+        submitText: editingIndex != null
+            ? AppLocalizations.of(context).edit
+            : AppLocalizations.of(context)!.register,
         onSubmit: (data) async {
           setState(() {
             if (editingIndex != null) {
@@ -193,7 +195,14 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
         ),
       )
           : _selectedIndex == 1
-          ? ShowProductPage(
+          ? products.isEmpty
+          ? Center(
+        child: Text(
+          AppLocalizations.of(context).noProducts,
+            style: TextStyle(fontSize: 20)
+        ),
+      )
+          : ShowProductPage(
         products: products,
         onEdit: _editProduct,
         onDelete: _confirmDelete,

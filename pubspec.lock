@@ -46,7 +46,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: fe7f05904e0f7f797b80e038d3ac2916a2fa3410
+      resolved-ref: "26bbd6acbf46bb34d21b700ec16cb2dd1a7f378d"
       url: "https://gitlab.com/almeidatech/awidgets.git"
     source: git
     version: "0.0.1"
@@ -426,10 +426,10 @@ packages:
     dependency: "direct main"
     description:
       name: provider
-      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      sha256: "489024f942069c2920c844ee18bb3d467c69e48955a4f32d1677f71be103e310"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.2"
+    version: "6.1.4"
   pub_semver:
     dependency: transitive
     description:
