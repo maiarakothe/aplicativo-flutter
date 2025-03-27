@@ -1,5 +1,7 @@
 import 'package:awidgets/fields/a_field_money.dart';
 import 'package:awidgets/fields/a_field_text.dart';
+import 'package:awidgets/fields/a_field_url.dart';
+import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
@@ -22,121 +24,92 @@ class ProductRegistrationPage extends StatefulWidget {
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
-  final _formKey = GlobalKey<FormState>();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productImageController = TextEditingController();
   final MoneyMaskedTextController productPriceController = Configs.productPriceFormatter;
-  final List<Map<String, String>> produtos = [];
 
-  int? _editingIndex;
+  List<Map<String, String>> products = [];
   int _selectedIndex = 0;
-
-  final AuthService _authService = AuthService();
 
   void _showProductDialog({int? editingIndex}) {
     if (editingIndex != null) {
-      productNameController.text = produtos[editingIndex]['nome']!;
-      productImageController.text = produtos[editingIndex]['imagem']!;
-      productPriceController.text = produtos[editingIndex]['preco']!;
+      productNameController.text = products[editingIndex]['name']!;
+      productImageController.text = products[editingIndex]['image']!;
+      productPriceController.text = products[editingIndex]['price']!;
     } else {
-      _formKey.currentState?.reset();
       productNameController.clear();
       productImageController.clear();
       productPriceController.updateValue(0.0);
     }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Center(
-          child: Text(
-            editingIndex != null
-                ? AppLocalizations.of(context).editProduct
-                : AppLocalizations.of(context).registerProduct,
-          ),
-        ),
-        content: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 800,
-              maxHeight: 400,
-              minWidth: 300,
-              minHeight: 200,
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AFieldText(
-                     identifier: 'Product name', label: 'Nome do produto',
-                  ),
-                  SizedBox(height: 16),
-                  AFieldMoney(
-                    identifier: 'Price', label: 'Preço do produto',
-                    ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: productImageController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).productImageURL,
-                      border: OutlineInputBorder(
-                        borderRadius: Configs.radiusBorder,
-                      ),
-                    ),
-                    keyboardType: TextInputType.url,
-                    inputFormatters: [Configs.urlFormatter],
-                    validator: (value) => Validators.validateProductImageURL(value, AppLocalizations.of(context)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(AppLocalizations.of(context).cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                setState(() {
-                  if (editingIndex != null) {
-                    produtos[editingIndex] = {
-                      'nome': productNameController.text,
-                      'imagem': productImageController.text,
-                      'preco': productPriceController.text,
-                    };
-                  } else {
-                    produtos.add({
-                      'nome': productNameController.text,
-                      'imagem': productImageController.text,
-                      'preco': productPriceController.text,
-                    });
-                  }
-                });
+    Future<void> showProductDialog(BuildContext context, {Map<String, dynamic>? product}) async {
+      await AFormDialog.show<Map<String, dynamic>>(
+        context,
+        title: editingIndex != null
+            ? AppLocalizations.of(context).editProduct
+            : AppLocalizations.of(context).registerProduct,
+        submitText: AppLocalizations.of(context)!.register,
+        onSubmit: (data) async {
+          setState(() {
+            if (editingIndex != null) {
+              products[editingIndex] = {
+                'name': productNameController.text,
+                'image': productImageController.text,
+                'price': productPriceController.numberValue.toString(),
+              };
+            } else {
+              products.add({
+                'name': productNameController.text,
+                'image': productImageController.text,
+                'price': productPriceController.numberValue.toString(),
+              });
+            }
+          });
 
-                Navigator.pop(context);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(editingIndex != null
-                        ? AppLocalizations.of(context).productUpdatedSuccessfully
-                        : AppLocalizations.of(context).productRegisteredSuccessfully),
-                    backgroundColor: DefaultColors.green,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-            child: Text(AppLocalizations.of(context).save),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(editingIndex != null
+                  ? AppLocalizations.of(context).productUpdatedSuccessfully
+                  : AppLocalizations.of(context).productRegisteredSuccessfully),
+              backgroundColor: DefaultColors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        },
+        fields: [
+          AFieldText(
+            identifier: 'product_name',
+            label: AppLocalizations.of(context)!.productName,
+            required: true,
+            initialValue: productNameController.text,
+          ),
+          const SizedBox(height: 16),
+          AFieldMoney(
+            identifier: 'product_price',
+            label: AppLocalizations.of(context)!.productPrice,
+            required: true,
+            initialValue: productPriceController.text,
+          ),
+          const SizedBox(height: 16),
+          AFieldURL(
+            identifier: 'product_image_url',
+            label: AppLocalizations.of(context)!.productImageURL,
+            required: true,
+            initialValue: productImageController.text,
           ),
         ],
-      ),
-    );
+        persistent: false,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+    }
+
+    showProductDialog(context);
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   void _editProduct(int index) {
@@ -146,14 +119,8 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   void _confirmDelete(int index) {
     showDialog(
       context: context,
-      builder: (context) => ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: 700,
-          maxHeight: 400,
-          minWidth: 400,
-          minHeight: 200,
-        ),
-        child: AlertDialog(
+      builder: (BuildContext context) {
+        return AlertDialog(
           title: Center(
             child: Text(
               AppLocalizations.of(context).confirmDelete,
@@ -169,7 +136,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  produtos.removeAt(index);
+                  products.removeAt(index);
                 });
                 Navigator.pop(context);
 
@@ -184,15 +151,9 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               child: Text(AppLocalizations.of(context).delete, style: TextStyle(color: Colors.red)),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
@@ -233,14 +194,15 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       )
           : _selectedIndex == 1
           ? ShowProductPage(
-        produtos: produtos,
+        products: products,
         onEdit: _editProduct,
         onDelete: _confirmDelete,
       )
           : ProfilePage(),
+
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
-        onPressed: _showProductDialog,
+        onPressed: () => _showProductDialog(),
         backgroundColor: DefaultColors.backgroundButton,
         child: Icon(Icons.add, color: DefaultColors.textColorButton),
       )

@@ -48,5 +48,6 @@
   "resetLinkSent": "Link de redefinição enviado para seu e-mail",
   "profile": "Perfil",
   "confirmLogout": "Confirmar Saída",
-  "areYouSureLogout": "Você tem certeza que deseja sair?"
+  "areYouSureLogout": "Você tem certeza que deseja sair?",
+  "formNotFound": "Erro"
 }

@@ -19,10 +19,8 @@ class Routes {
       case register:
         return MaterialPageRoute(builder: (_) => RegisterPage(changeLanguage: changeLanguage));
       case productRegistration:
-        final args = settings.arguments as Map<String, dynamic>? ?? {};
-        final username = args['username'] ?? 'Usuário';
         return MaterialPageRoute(
-          builder: (_) => ProductRegistrationPage(username: username, changeLanguage: changeLanguage),
+          builder: (_) => ProductRegistrationPage(changeLanguage: changeLanguage, username: '',),
         );
       default:
         return MaterialPageRoute(

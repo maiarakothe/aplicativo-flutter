@@ -48,5 +48,6 @@
   "resetLinkSent": "Reset link sent to your email",
   "profile": "Profile",
   "confirmLogout": "Confirm Logout",
-  "areYouSureLogout": "Are you sure you want to log out?"
+  "areYouSureLogout": "Are you sure you want to log out?",
+  "formNotFound": "Error"
 }
