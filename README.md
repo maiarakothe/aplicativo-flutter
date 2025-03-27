@@ -1,16 +1,61 @@
-# teste
+# 📱 **Aplicativo Flutter de Registro de Produtos**
 
-A new Flutter project.
+Este é um **aplicativo Flutter** que permite aos usuários registrar produtos, visualizá-los em uma lista, gerenciar seu perfil e fazer login/registro.
 
-## Getting Started
+## 🚀 Funcionalidades
 
-This project is a starting point for a Flutter application.
+- **Login**: Permite que usuários existentes façam login com e-mail e senha.
+- **Registro**: Permite que novos usuários criem uma conta com nome, e-mail e senha.
+- **Registro de Produtos**: Usuários registrados podem adicionar novos produtos com nome, preço e URL da imagem.
+- **Listagem de Produtos**: Exibe uma lista de produtos registrados, permitindo edição e exclusão.
+- **Perfil**: Exibe informações do usuário e permite logout.
+- **Splash Screen**: Tela inicial que verifica o estado de login e navega para a página apropriada.
+- **Internacionalização**: Suporte para múltiplos idiomas (inglês e português).
+- **Temas**: Suporte para alternância entre temas claro e escuro.
 
-A few resources to get you started if this is your first Flutter project:
+## 🗂️ Estrutura do Projeto
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### **lib/**
+- `main.dart`: Ponto de entrada do aplicativo, onde o tema e a internacionalização são configurados.
+- `routes.dart`: Define as rotas de navegação do aplicativo.
+- `login_page.dart`: Página de login.
+- `register_page.dart`: Página de registro de novos usuários.
+- `product_registration_page.dart`: Página de registro de novos produtos.
+- `show_product_page.dart`: Página de listagem de produtos.
+- `profile_page.dart`: Página de perfil do usuário.
+- `splash_screen.dart`: Tela de splash que define o estado de login e navega conforme necessário.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### **core/**
+- `colors.dart`: Define as cores utilizadas em todo o aplicativo.
+- `theme_provider.dart`: Gerencia o tema do aplicativo (claro e escuro).
+- `configs.dart`: Configurações gerais do aplicativo.
+- `theme_toggle_button.dart`: Widget para alternar entre os temas claro e escuro.
+
+### **services/**
+- `auth_service.dart`: Lógica de autenticação (login, registro, logout).
+
+### **utils/**
+- `validators.dart`: Contém as funções de validação para os formulários.
+
+### **l10n/**
+- `app_en.arb`: Arquivo com as strings em inglês.
+- `app_pt.arb`: Arquivo com as strings em português.
+- `l10n.dart`: Configuração de internacionalização do app.
+
+### **assets/**
+- Contém imagens e outros recursos estáticos.
+
+## 📦 Dependências
+
+- `flutter_localizations`: Suporte para internacionalização.
+- `provider`: Para gerenciamento de estado.
+- `shared_preferences`: Para persistência de dados.
+- `awidgets`: Pacote de widgets customizados.
+- `mask_text_input_formatter`: Para formatação de entrada de texto.
+
+## 🏃‍♂️ Como Executar
+
+1. Clone o repositório.
+2. Certifique-se de ter o **Flutter** instalado.
+3. Execute `flutter pub get` para instalar as dependências.
+4. Execute `flutter run` para iniciar o aplicativo.
