@@ -1,5 +1,3 @@
-import 'package:awidgets/fields/a_field_email.dart';
-import 'package:awidgets/fields/a_field_password.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
@@ -9,6 +7,9 @@ import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/routes.dart';
 import 'package:teste/services/auth_service.dart';
+import 'package:awidgets/general/a_form.dart';
+import 'package:awidgets/fields/a_field_email.dart';
+import 'package:awidgets/fields/a_field_password.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -20,25 +21,35 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
+  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
-  void _login() async {
+  void _login(BuildContext context, Map<String, dynamic> data) async {
     if (_formKey.currentState!.validate()) {
-      String email = emailController.text;
-      String password = passwordController.text;
+      setState(() => _isLoading = true);
+      final navigator = Navigator.of(context);
+      final messenger = ScaffoldMessenger.of(context);
+      final localizations = AppLocalizations.of(context)!;
+
       try {
+        final email = data['email']?.trim() ?? '';
+        final password = data['password']?.trim() ?? '';
+
         await _authService.login(email, password);
-        Navigator.pushReplacementNamed(context, Routes.productRegistration, arguments: {
-          'email': emailController.text,
-          'changeLanguage': widget.changeLanguage,
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.loginError)),
+
+        navigator.pushReplacementNamed(
+          Routes.productRegistration,
+          arguments: {
+            'changeLanguage': widget.changeLanguage,
+          },
         );
+      } catch (e) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(localizations.loginError)),
+        );
+      } finally {
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -52,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (BuildContext context) {
         final localizations = AppLocalizations.of(context);
         return AlertDialog(
-          title: Text(localizations.forgotPassword),
+          title: Text(localizations!.forgotPassword),
           content: Form(
             key: _formKey,
             child: Column(
@@ -78,15 +89,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                String email = emailController.text.trim();
-                if (email.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(localizations.enterYourEmail)),
-                  );
-                  return;
-                }
-
                 if (_formKey.currentState!.validate()) {
+                  String email = emailController.text.trim();
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(localizations.resetLinkSent)),
@@ -137,76 +141,118 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/mobilelogin.png",
-                width: 200,
-                height: 200,
-              ),
-              SizedBox(height: 40),
-              AFieldEmail(
-                onChanged: (value) => emailController.text = value ?? "",
-                required: true,
-              ),
-              SizedBox(height: 16),
-              AFieldPassword(
-                onChanged: (value) => passwordController.text = value ?? "",
-              ),
-              SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    _showForgotPasswordDialog(context);
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/mobilelogin.png",
+                  width: 200,
+                  height: 200,
+                ),
+                SizedBox(height: 40),
+                AForm<Map<String, dynamic>>(
+                  fromJson: (json) => json as Map<String, dynamic>,
+                  showDefaultAction: false,
+                  submitText: localizations.login,
+                  onSubmit: (data) async {
+                    _login(context, data);
+                    return null;
                   },
-                  child: Text(localizations.forgotPassword),
-                ),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: DefaultColors.backgroundButton,
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: Configs.buttonBorderRadius,
-                  ),
-                ),
-                onPressed: _login,
-                child: Text(
-                  localizations.login,
-                  style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
-                ),
-              ),
-              SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.register);
-                },
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: DefaultColors.snackBar,
+                  fields: [
+                    AFieldEmail(
+                      identifier: 'email',
+                      label: localizations.email,
+                      required: true,
                     ),
-                    children: [
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.noAccount,
+                    SizedBox(height: 16),
+                    AFieldPassword(
+                      identifier: 'password',
+                      label: localizations.password,
+                      minLength: 8,
+                    ),
+                    SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          _showForgotPasswordDialog(context);
+                        },
+                        child: Text(localizations.forgotPassword),
                       ),
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.signUp,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                    ),
+                    SizedBox(height: 16),
+                    Builder(
+                      builder: (context) {
+                        return Center(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: DefaultColors.backgroundButton,
+                              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: Configs.buttonBorderRadius,
+                              ),
+                            ),
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                              final formState = AForm.maybeOf(context);
+                              if (formState == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(localizations.formNotFound),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                formState.onSubmit();
+                              }
+                            },
+                            child: _isLoading
+                                ? CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(DefaultColors.textColorButton),
+                            )
+                                : Text(
+                              localizations.login,
+                              style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Center(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, Routes.register);
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: DefaultColors.snackBar,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: AppLocalizations.of(context)!.noAccount,
+                              ),
+                              TextSpan(
+                                text: AppLocalizations.of(context)!.signUp,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-            ],
+              ],
+            ),
           ),
         ),
       ),
