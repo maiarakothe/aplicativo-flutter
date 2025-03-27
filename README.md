@@ -17,19 +17,21 @@ Este é um **aplicativo Flutter** que permite aos usuários registrar produtos, 
 
 ### **lib/**
 - `main.dart`: Ponto de entrada do aplicativo, onde o tema e a internacionalização são configurados.
-- `routes.dart`: Define as rotas de navegação do aplicativo.
-- `login_page.dart`: Página de login.
-- `register_page.dart`: Página de registro de novos usuários.
-- `product_registration_page.dart`: Página de registro de novos produtos.
-- `show_product_page.dart`: Página de listagem de produtos.
-- `profile_page.dart`: Página de perfil do usuário.
-- `splash_screen.dart`: Tela de splash que define o estado de login e navega conforme necessário.
-
-### **core/**
-- `colors.dart`: Define as cores utilizadas em todo o aplicativo.
-- `theme_provider.dart`: Gerencia o tema do aplicativo (claro e escuro).
 - `configs.dart`: Configurações gerais do aplicativo.
+- `routes.dart`: Define as rotas de navegação do aplicativo.
 - `theme_toggle_button.dart`: Widget para alternar entre os temas claro e escuro.
+
+#### **core/**
+- `colors.dart`: Define as cores utilizadas em todo o aplicativo.
+- `themes.dart`: Define o gerenciamento de temas para o aplicativo (claro e escuro).
+
+#### **pages/**
+- `login.dart`: Página de login.
+- `product_list.dart`: Página de listagem de produtos registrados.
+- `product_registration.dart`: Página de registro de novos produtos.
+- `profile_page.dart`: Página de perfil do usuário.
+- `register.dart`: Página de registro de novos usuários.
+- `splash_screen.dart`: Tela de splash que define o estado de login e navega conforme necessário.
 
 ### **services/**
 - `auth_service.dart`: Lógica de autenticação (login, registro, logout).
