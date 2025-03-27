@@ -1,3 +1,4 @@
+import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
@@ -55,54 +56,35 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _showForgotPasswordDialog(BuildContext context) {
-    TextEditingController emailController = TextEditingController();
-    final _formKey = GlobalKey<FormState>();
+    final emailController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final localizations = AppLocalizations.of(context);
-        return AlertDialog(
-          title: Text(localizations!.forgotPassword),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(localizations.enterYourEmail),
-                SizedBox(height: 10),
-                AFieldEmail(
-                  onChanged: (value) {
-                    emailController.text = value ?? '';
-                  },
-                  required: true,
-                ),
-              ],
+    Future<void> showForgotPasswordDialog(BuildContext context) async {
+      await AFormDialog.show<Map<String, dynamic>>(
+        context,
+        title: AppLocalizations.of(context).forgotPassword,
+        submitText: AppLocalizations.of(context).send,
+        onSubmit: (dynamic data) async {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context).resetLinkSent),
+              backgroundColor: DefaultColors.green,
+              duration: Duration(seconds: 2),
             ),
+          );
+        },
+        fields: [
+          AFieldEmail(
+            identifier: 'email',
+            label: AppLocalizations.of(context).email,
+            required: true,
+            initialValue: emailController.text,
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(localizations.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  String email = emailController.text.trim();
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(localizations.resetLinkSent)),
-                  );
-                }
-              },
-              child: Text(localizations.send),
-            ),
-          ],
-        );
-      },
-    );
+        ],
+        persistent: false,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+    }
+    showForgotPasswordDialog(context);
   }
 
   @override
