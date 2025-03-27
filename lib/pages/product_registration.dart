@@ -9,8 +9,6 @@ import 'package:teste/configs.dart';
 import 'package:teste/pages/product_list.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:teste/utils/validators.dart';
-import 'package:teste/services/auth_service.dart';
 import 'package:teste/pages/profile_page.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
@@ -50,20 +48,20 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
             : AppLocalizations.of(context).registerProduct,
         submitText: editingIndex != null
             ? AppLocalizations.of(context).edit
-            : AppLocalizations.of(context)!.register,
-        onSubmit: (data) async {
+            : AppLocalizations.of(context).register,
+        onSubmit: (dynamic data) async {
           setState(() {
             if (editingIndex != null) {
               products[editingIndex] = {
-                'name': productNameController.text,
-                'image': productImageController.text,
-                'price': productPriceController.numberValue.toString(),
+                'name': data['product_name'],
+                'image': data['product_image_url'],
+                'price': data['product_price'],
               };
             } else {
               products.add({
-                'name': productNameController.text,
-                'image': productImageController.text,
-                'price': productPriceController.numberValue.toString(),
+                'name': data['product_name'],
+                'image': data['product_image_url'],
+                'price': data['product_price'],
               });
             }
           });
@@ -77,25 +75,26 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               duration: Duration(seconds: 2),
             ),
           );
+          return null;
         },
         fields: [
           AFieldText(
             identifier: 'product_name',
-            label: AppLocalizations.of(context)!.productName,
+            label: AppLocalizations.of(context).productName,
             required: true,
             initialValue: productNameController.text,
           ),
           const SizedBox(height: 16),
           AFieldMoney(
             identifier: 'product_price',
-            label: AppLocalizations.of(context)!.productPrice,
+            label: AppLocalizations.of(context).productPrice,
             required: true,
             initialValue: productPriceController.text,
           ),
           const SizedBox(height: 16),
           AFieldURL(
             identifier: 'product_image_url',
-            label: AppLocalizations.of(context)!.productImageURL,
+            label: AppLocalizations.of(context).productImageURL,
             required: true,
             initialValue: productImageController.text,
           ),
@@ -160,6 +159,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(products);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
