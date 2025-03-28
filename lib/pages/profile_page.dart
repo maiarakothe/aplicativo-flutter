@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _logout(BuildContext context) async {
-    await _authService.logout();
+    await AuthService.logout();
     Navigator.pushReplacementNamed(context, '/login');
   }
 

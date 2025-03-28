@@ -1,3 +1,4 @@
+import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
@@ -15,45 +16,14 @@ import 'package:awidgets/fields/a_field_password.dart';
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
 
-  const LoginPage({Key? key, required this.changeLanguage}) : super(key: key);
+  const LoginPage({super.key, required this.changeLanguage});
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final AuthService _authService = AuthService();
   bool _isLoading = false;
-  final _formKey = GlobalKey<FormState>();
-
-  void _login(BuildContext context, Map<String, dynamic> data) async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      final navigator = Navigator.of(context);
-      final messenger = ScaffoldMessenger.of(context);
-      final localizations = AppLocalizations.of(context)!;
-
-      try {
-        final email = data['email']?.trim() ?? '';
-        final password = data['password']?.trim() ?? '';
-
-        await _authService.login(email, password);
-
-        navigator.pushReplacementNamed(
-          Routes.productRegistration,
-          arguments: {
-            'changeLanguage': widget.changeLanguage,
-          },
-        );
-      } catch (e) {
-        messenger.showSnackBar(
-          SnackBar(content: Text(localizations.loginError)),
-        );
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
 
   void _showForgotPasswordDialog(BuildContext context) {
     AFormDialog.show<Map<String, dynamic>>(
@@ -80,7 +50,6 @@ class _LoginPageState extends State<LoginPage> {
       fromJson: (json) => json as Map<String, dynamic>,
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,117 +88,130 @@ class _LoginPageState extends State<LoginPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/mobilelogin.png",
-                  width: 200,
-                  height: 200,
-                ),
-                SizedBox(height: 40),
-                AForm<Map<String, dynamic>>(
-                  fromJson: (json) => json as Map<String, dynamic>,
-                  showDefaultAction: false,
-                  submitText: localizations.login,
-                  onSubmit: (data) async {
-                    _login(context, data);
-                    return null;
-                  },
-                  fields: [
-                    AFieldEmail(
-                      identifier: 'email',
-                      label: localizations.email,
-                      required: true,
-                    ),
-                    SizedBox(height: 16),
-                    AFieldPassword(
-                      identifier: 'password',
-                      label: localizations.password,
-                      minLength: 8,
-                    ),
-                    SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          _showForgotPasswordDialog(context);
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "assets/mobilelogin.png",
+                width: 200,
+                height: 200,
+              ),
+              SizedBox(height: 40),
+              AForm<Map<String, dynamic>>(
+                fromJson: (json) => json as Map<String, dynamic>,
+                showDefaultAction: false,
+                submitText: AppLocalizations.of(context)!.login,
+                onSubmit: (data) async {
+                  setState(() => _isLoading = true);
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  final localizations = AppLocalizations.of(context)!;
+
+                  try {
+                    final email = data['email']?.trim() ?? '';
+                    final password = data['password']?.trim() ?? '';
+
+                    if (email == "m@gmail.com" && password == "12345678") {
+                      await AuthService.login(email);
+                      navigator.pushNamedAndRemoveUntil(
+                        Routes.productRegistration,
+                        arguments: {
+                          'changeLanguage': widget.changeLanguage,
                         },
-                        child: Text(localizations.forgotPassword),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Builder(
-                      builder: (context) {
-                        return Center(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: DefaultColors.backgroundButton,
-                              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: Configs.buttonBorderRadius,
-                              ),
-                            ),
-                            onPressed: _isLoading
-                                ? null
-                                : () {
-                              final formState = AForm.maybeOf(context);
-                              if (formState == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(localizations.formNotFound),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              } else {
-                                formState.onSubmit();
-                              }
-                            },
-                            child: _isLoading
-                                ? CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(DefaultColors.textColorButton),
-                            )
-                                : Text(
-                              localizations.login,
-                              style: TextStyle(fontSize: 19, color: DefaultColors.textColorButton),
-                            ),
-                          ),
-                        );
+                            (route) => false,
+                      );
+                    } else {
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text(localizations.formNotFound),
+                        ),
+                      );
+                    }
+                  } finally {
+                    setState(() => _isLoading = false);
+                  }
+                  return null;
+                },
+                fields: [
+                  AFieldEmail(
+                    identifier: 'email',
+                    label: localizations.email,
+                    required: true,
+                  ),
+                  SizedBox(height: 16),
+                  AFieldPassword(
+                    identifier: 'password',
+                    label: localizations.password,
+                    minLength: 8,
+                  ),
+                  SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        _showForgotPasswordDialog(context);
                       },
+                      child: Text(localizations.forgotPassword),
                     ),
-                    SizedBox(height: 16),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, Routes.register);
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: DefaultColors.snackBar,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: AppLocalizations.of(context)!.noAccount,
-                              ),
-                              TextSpan(
-                                text: AppLocalizations.of(context)!.signUp,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                  ),
+                  SizedBox(height: 16),
+                  Builder(
+                    builder: (context) {
+                      return Center(
+                        child: AButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            final formState = AForm.maybeOf(context);
+                            if (formState == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(localizations.formNotFound),
+                                  backgroundColor: Colors.red,
                                 ),
-                              ),
-                            ],
+                              );
+                            } else {
+                              formState.onSubmit();
+                            }
+                          },
+                          text: localizations.login,
+                          loading: _isLoading,
+                          textColor: DefaultColors.textColorButton,
+                          fontSize: 19,
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, Routes.register);
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: DefaultColors.snackBar,
                           ),
+                          children: [
+                            TextSpan(
+                              text: AppLocalizations.of(context)!.noAccount,
+                            ),
+                            TextSpan(
+                              text: AppLocalizations.of(context)!.signUp,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
