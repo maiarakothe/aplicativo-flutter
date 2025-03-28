@@ -20,7 +20,7 @@ class Routes {
         return MaterialPageRoute(builder: (_) => RegisterPage(changeLanguage: changeLanguage));
       case productRegistration:
         return MaterialPageRoute(
-          builder: (_) => ProductRegistrationPage(changeLanguage: changeLanguage, username: '',),
+          builder: (_) => ProductRegistrationPage(changeLanguage: changeLanguage),
         );
       default:
         return MaterialPageRoute(

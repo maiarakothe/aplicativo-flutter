@@ -17,6 +17,7 @@
   "urlMustStartWithHTTP": "A URL deve começar com http:// ou https://",
   "cancel": "Cancelar",
   "save": "Salvar",
+  "image": "Imagem",
   "pressButtonToAddProduct": "Pressione o botão para adicionar um produto",
   "register": "Cadastrar",
   "products": "Produtos",
