@@ -56,36 +56,31 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _showForgotPasswordDialog(BuildContext context) {
-    final emailController = TextEditingController();
-
-    Future<void> showForgotPasswordDialog(BuildContext context) async {
-      await AFormDialog.show<Map<String, dynamic>>(
-        context,
-        title: AppLocalizations.of(context).forgotPassword,
-        submitText: AppLocalizations.of(context).send,
-        onSubmit: (dynamic data) async {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).resetLinkSent),
-              backgroundColor: DefaultColors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        },
-        fields: [
-          AFieldEmail(
-            identifier: 'email',
-            label: AppLocalizations.of(context).email,
-            required: true,
-            initialValue: emailController.text,
+    AFormDialog.show<Map<String, dynamic>>(
+      context,
+      title: AppLocalizations.of(context)!.forgotPassword,
+      submitText: AppLocalizations.of(context)!.send,
+      onSubmit: (data) async {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.resetLinkSent),
+            backgroundColor: DefaultColors.green,
+            duration: Duration(seconds: 2),
           ),
-        ],
-        persistent: false,
-        fromJson: (json) => json as Map<String, dynamic>,
-      );
-    }
-    showForgotPasswordDialog(context);
+        );
+      },
+      fields: [
+        AFieldEmail(
+          identifier: 'email',
+          label: AppLocalizations.of(context)!.email,
+          required: true,
+        ),
+      ],
+      persistent: false,
+      fromJson: (json) => json as Map<String, dynamic>,
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
