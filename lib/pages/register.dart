@@ -1,6 +1,7 @@
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import 'package:awidgets/fields/a_field_name.dart';
+import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
@@ -107,14 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
               Builder(
                 builder: (context) {
                   return Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: DefaultColors.backgroundButton,
-                        padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: Configs.buttonBorderRadius,
-                        ),
-                      ),
+                    child: AButton(
                       onPressed: () {
                         final formState = AForm.maybeOf(context);
                         if (formState == null) {
@@ -128,17 +122,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           formState.onSubmit();
                         }
                       },
-                      child: Text(
-                        localizations.register,
-                        style: const TextStyle(
-                          fontSize: 19, color: DefaultColors.textColorButton,
-                        ),
+                      text: localizations.register,
+                      textStyle: TextStyle(
+                        fontSize: 17,
+                        color: DefaultColors.textColorButton,
                       ),
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 10),
               Center(
                 child: TextButton(
                   onPressed: () {
