@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/routes.dart';
+import '../models/register.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -22,10 +23,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  void _register(Map<String, dynamic> data) {
-    final name = data['name']?.trim() ?? '';
-    final email = data['email']?.trim() ?? '';
-    final password = data['password']?.trim() ?? '';
+  void _register(RegisterData data) {
+    final name = data.name.trim();
+    final email = data.email.trim();
+    final password = data.password.trim();
 
     Navigator.pushNamedAndRemoveUntil(
       context,
@@ -41,7 +42,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations!.titleRegister),
+        title: Text(localizations.titleRegister),
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
@@ -70,11 +71,11 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Center(
         child: Container(
-          child: AForm<Map<String, dynamic>>(
-            fromJson: (json) => json as Map<String, dynamic>,
+          child: AForm<RegisterData>(
+            fromJson: (json) => RegisterData.fromJson(json as Map<String, dynamic>),
             showDefaultAction: false,
             submitText: localizations.register,
-            onSubmit: (data) async {
+            onSubmit: (RegisterData data) async {
               _register(data);
               return null;
             },
@@ -102,7 +103,6 @@ class _RegisterPageState extends State<RegisterPage> {
               AFieldPassword(
                 identifier: 'password',
                 label: localizations.password,
-                minLength: 6,
               ),
               const SizedBox(height: 20),
               Builder(

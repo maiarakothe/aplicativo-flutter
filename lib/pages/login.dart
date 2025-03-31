@@ -12,6 +12,8 @@ import 'package:teste/services/auth_service.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
+import '../models/forgot_password.dart';
+import '../models/login.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -26,11 +28,11 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   void _showForgotPasswordDialog(BuildContext context) {
-    AFormDialog.show<Map<String, dynamic>>(
+    AFormDialog.show<ForgotPasswordData>(
       context,
       title: AppLocalizations.of(context)!.forgotPassword,
       submitText: AppLocalizations.of(context)!.send,
-      onSubmit: (data) async {
+      onSubmit: (ForgotPasswordData data) async {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.resetLinkSent),
@@ -47,9 +49,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ],
       persistent: false,
-      fromJson: (json) => json as Map<String, dynamic>,
+      fromJson: (json) => ForgotPasswordData.fromJson(json),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,19 +100,20 @@ class _LoginPageState extends State<LoginPage> {
                 height: 200,
               ),
               SizedBox(height: 40),
-              AForm<Map<String, dynamic>>(
-                fromJson: (json) => json as Map<String, dynamic>,
+              AForm<LoginData>(
+                fromJson: (json) => LoginData.fromJson(json),
                 showDefaultAction: false,
                 submitText: AppLocalizations.of(context)!.login,
-                onSubmit: (data) async {
+                onSubmit: (LoginData data) async {
                   setState(() => _isLoading = true);
                   final navigator = Navigator.of(context);
                   final messenger = ScaffoldMessenger.of(context);
                   final localizations = AppLocalizations.of(context)!;
 
                   try {
-                    final email = data['email']?.trim() ?? '';
-                    final password = data['password']?.trim() ?? '';
+
+                    final email = data.email.trim();
+                    final password = data.password.trim();
 
                     if (email == "m@gmail.com" && password == "12345678") {
                       await AuthService.login(email);
