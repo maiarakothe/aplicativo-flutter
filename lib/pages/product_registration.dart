@@ -11,15 +11,15 @@ import 'package:teste/pages/profile_page.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
+  final ValueNotifier<List<Map<String, String>>> productsNotifier = ValueNotifier([]);
 
-  const ProductRegistrationPage({super.key, required this.changeLanguage});
+  ProductRegistrationPage({super.key, required this.changeLanguage});
 
   @override
   _ProductRegistrationPageState createState() => _ProductRegistrationPageState();
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
-  final List<Map<String, String>> products = [];
   int _selectedIndex = 0;
 
   void _showProductDialog({int? editingIndex}) async {
@@ -30,7 +30,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
     };
 
     if (editingIndex != null) {
-      newProduct = Map.from(products[editingIndex]);
+      newProduct = Map.from(widget.productsNotifier.value[editingIndex]);
     }
 
     await AFormDialog.show<Map<String, dynamic>>(
@@ -44,18 +44,19 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       onSubmit: (data) async {
         setState(() {
           if (editingIndex != null) {
-            products[editingIndex] = {
+            widget.productsNotifier.value[editingIndex] = {
               'name': data['product_name'],
               'image': data['product_image_url'],
               'price': data['product_price'],
             };
           } else {
-            products.add({
+            widget.productsNotifier.value.add({
               'name': data['product_name'],
               'image': data['product_image_url'],
               'price': data['product_price'],
             });
           }
+          widget.productsNotifier.value = List.from(widget.productsNotifier.value);
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -120,7 +121,8 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  products.removeAt(index); // Remove the product
+                  widget.productsNotifier.value.removeAt(index);
+                  widget.productsNotifier.value = List.from(widget.productsNotifier.value);
                 });
                 Navigator.pop(context);
 
@@ -184,7 +186,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       )
           : _selectedIndex == 1
           ? ShowProductPage(
-        products: products,
+        productsNotifier: widget.productsNotifier,
         onEdit: _editProduct,
         onDelete: _confirmDelete,
       )

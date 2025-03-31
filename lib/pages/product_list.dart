@@ -2,20 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:awidgets/general/a_table.dart';
 
-class ShowProductPage extends StatelessWidget {
-  final List<Map<String, String>> products;
+class ShowProductPage extends StatefulWidget {
+  final ValueNotifier<List<Map<String, String>>> productsNotifier;
   final Function(int) onEdit;
   final Function(int) onDelete;
 
   const ShowProductPage({
     super.key,
-    required this.products,
+    required this.productsNotifier,
     required this.onEdit,
     required this.onDelete,
   });
 
+  @override
+  _ShowProductPageState createState() => _ShowProductPageState();
+}
+
+class _ShowProductPageState extends State<ShowProductPage> {
+  final GlobalKey<ATableState<Map<String, String>>> _tableKey = GlobalKey<ATableState<Map<String, String>>>();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.productsNotifier.addListener(_reloadTable);
+  }
+
+  @override
+  void dispose() {
+    widget.productsNotifier.removeListener(_reloadTable);
+    super.dispose();
+  }
+
+  void _reloadTable() {
+    if (_tableKey.currentState != null) {
+      _tableKey.currentState!.reload();
+    }
+  }
+
   Future<List<Map<String, String>>> _loadProducts(int limit, int offset) async {
-    return products;
+    return widget.productsNotifier.value;
   }
 
   @override
@@ -27,6 +52,7 @@ class ShowProductPage extends StatelessWidget {
         ),
       ),
       body: ATable<Map<String, String>>(
+        key: _tableKey,
         columns: [
           ATableColumn(
             title: AppLocalizations.of(context).name,
@@ -59,14 +85,14 @@ class ShowProductPage extends StatelessWidget {
                   message: AppLocalizations.of(context).edit,
                   child: IconButton(
                     icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () => onEdit(products.indexOf(item)),
+                    onPressed: () => widget.onEdit(widget.productsNotifier.value.indexOf(item)),
                   ),
                 ),
                 Tooltip(
                   message: AppLocalizations.of(context).delete,
                   child: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => onDelete(products.indexOf(item)),
+                    onPressed: () => widget.onDelete(widget.productsNotifier.value.indexOf(item)),
                   ),
                 ),
               ],
