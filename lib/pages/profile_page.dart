@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teste/core/colors.dart';
+import 'package:teste/models/profile.dart'; 
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -11,8 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final AuthService _authService = AuthService();
-  late String username = '';
-  late String email = '';
+  late ProfileData _profileData;
 
   @override
   void initState() {
@@ -22,9 +22,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _loadUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
-      username = prefs.getString('username') ?? 'Nome não disponível';
-      email = prefs.getString('email') ?? 'Email não disponível';
+      _profileData = ProfileData(
+        name: prefs.getString('username') ?? 'Nome não disponível',
+        email: prefs.getString('email') ?? 'Email não disponível',
+      );
     });
   }
 
@@ -63,7 +66,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: _profileData == null
+          ? Center(child: CircularProgressIndicator())
+          : Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,26 +81,22 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             SizedBox(height: 60),
-
             Icon(
               Icons.account_circle,
               size: 160,
               color: DefaultColors.backgroundButton,
             ),
             SizedBox(height: 20),
-
             Text(
-              '$username',
+              _profileData.name,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
-
             Text(
-              '$email',
+              _profileData.email,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
             ),
             SizedBox(height: 80),
-
             ElevatedButton(
               onPressed: () => _showLogoutDialog(context),
               style: ElevatedButton.styleFrom(
@@ -111,5 +112,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
 }
