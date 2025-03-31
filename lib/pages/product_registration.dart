@@ -8,10 +8,11 @@ import 'package:teste/pages/product_list.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/pages/profile_page.dart';
+import '../models/product_registration.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
-  final ValueNotifier<List<Map<String, String>>> productsNotifier = ValueNotifier([]);
+  final ValueNotifier<List<ProductRegistrationData>> productsNotifier = ValueNotifier([]);
 
   ProductRegistrationPage({super.key, required this.changeLanguage});
 
@@ -23,14 +24,10 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   int _selectedIndex = 0;
 
   void _showProductDialog({int? editingIndex}) async {
-    Map<String, String> newProduct = {
-      'name': '',
-      'image': '',
-      'price': '',
-    };
+    ProductRegistrationData? initialProduct;
 
     if (editingIndex != null) {
-      newProduct = Map.from(widget.productsNotifier.value[editingIndex]);
+      initialProduct = widget.productsNotifier.value[editingIndex];
     }
 
     await AFormDialog.show<Map<String, dynamic>>(
@@ -41,59 +38,74 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       submitText: editingIndex != null
           ? AppLocalizations.of(context)!.edit
           : AppLocalizations.of(context)!.register,
-      onSubmit: (data) async {
-        setState(() {
-          if (editingIndex != null) {
-            widget.productsNotifier.value[editingIndex] = {
-              'name': data['product_name'],
-              'image': data['product_image_url'],
-              'price': data['product_price'],
-            };
-          } else {
-            widget.productsNotifier.value.add({
-              'name': data['product_name'],
-              'image': data['product_image_url'],
-              'price': data['product_price'],
-            });
-          }
-          widget.productsNotifier.value = List.from(widget.productsNotifier.value);
-        });
+      fromJson: (json) => json as Map<String, dynamic>,
+      initialData: initialProduct?.toJson(),
+        onSubmit: (data) async {
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(editingIndex != null
-                ? AppLocalizations.of(context)!.productUpdatedSuccessfully
-                : AppLocalizations.of(context)!.productRegisteredSuccessfully),
-            backgroundColor: DefaultColors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-        return null;
-      },
+          final priceText = data['product_price'] as String;
+          final priceWithoutThousandSeparator = priceText.replaceAll('.', '');
+          final priceWithDecimalPoint = priceWithoutThousandSeparator.replaceAll(',', '.');
+          final price = double.tryParse(priceWithDecimalPoint) ?? 0.0;
+
+          final newProduct = ProductRegistrationData(
+            productName: data['productName'] as String,
+            url: data['url'] as String,
+            price: price,
+          );
+
+          setState(() {
+            if (editingIndex != null) {
+              widget.productsNotifier.value[editingIndex] = newProduct;
+            } else {
+              widget.productsNotifier.value.add(newProduct);
+            }
+            widget.productsNotifier.value = List.from(widget.productsNotifier.value);
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(editingIndex != null
+                  ? AppLocalizations.of(context)!.productUpdatedSuccessfully
+                  : AppLocalizations.of(context)!.productRegisteredSuccessfully),
+              backgroundColor: DefaultColors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+          return null;
+        },
       fields: [
         AFieldText(
-          identifier: 'product_name',
+          identifier: 'productName',
           label: AppLocalizations.of(context)!.productName,
           required: true,
-          initialValue: newProduct['name'],
+          initialValue: initialProduct?.productName ?? '',
         ),
         const SizedBox(height: 16),
         AFieldMoney(
           identifier: 'product_price',
           label: AppLocalizations.of(context)!.productPrice,
           required: true,
-          initialValue: newProduct['price'],
+          initialValue: initialProduct?.price.toStringAsFixed(2),
+          customRules: [
+                (value) {
+              final parsed = double.tryParse(
+                value?.replaceAll('.', '').replaceAll(',', '.') ?? '',
+              );
+              if (parsed == null || parsed <= 0.0) {
+                return AppLocalizations.of(context)!.insertProductPrice;
+              }
+              return null;
+            }
+          ],
         ),
         const SizedBox(height: 16),
         AFieldURL(
-          identifier: 'product_image_url',
+          identifier: 'url',
           label: AppLocalizations.of(context)!.productImageURL,
           required: true,
-          initialValue: newProduct['image'],
+          initialValue: initialProduct?.url ?? '',
         ),
       ],
-      persistent: false,
-      fromJson: (json) => json as Map<String, dynamic>,
     );
   }
 
@@ -125,7 +137,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
                   widget.productsNotifier.value = List.from(widget.productsNotifier.value);
                 });
                 Navigator.pop(context);
-
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(AppLocalizations.of(context).productDeletedSuccessfully),

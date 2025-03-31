@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:awidgets/general/a_table.dart';
+import '../models/product_registration.dart';
 
 class ShowProductPage extends StatefulWidget {
-  final ValueNotifier<List<Map<String, String>>> productsNotifier;
+  final ValueNotifier<List<ProductRegistrationData>> productsNotifier;
   final Function(int) onEdit;
   final Function(int) onDelete;
 
@@ -19,7 +20,7 @@ class ShowProductPage extends StatefulWidget {
 }
 
 class _ShowProductPageState extends State<ShowProductPage> {
-  final GlobalKey<ATableState<Map<String, String>>> _tableKey = GlobalKey<ATableState<Map<String, String>>>();
+  final GlobalKey<ATableState<ProductRegistrationData>> _tableKey = GlobalKey<ATableState<ProductRegistrationData>>();
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _ShowProductPageState extends State<ShowProductPage> {
     }
   }
 
-  Future<List<Map<String, String>>> _loadProducts(int limit, int offset) async {
+  Future<List<ProductRegistrationData>> _loadProducts(int limit, int offset) async {
     return widget.productsNotifier.value;
   }
 
@@ -51,28 +52,27 @@ class _ShowProductPageState extends State<ShowProductPage> {
           child: Text(AppLocalizations.of(context).products),
         ),
       ),
-      body: ATable<Map<String, String>>(
+      body: ATable<ProductRegistrationData>(
         key: _tableKey,
         columns: [
           ATableColumn(
             title: AppLocalizations.of(context).name,
-            cellBuilder: (context, width, item) => Text(item['name'] ?? ''),
+            cellBuilder: (context, width, item) => Text(item.productName),
           ),
           ATableColumn(
             title: AppLocalizations.of(context).price,
-            cellBuilder: (context, width, item) => Text("R\$ ${item['price']}"),
+            cellBuilder: (context, width, item) => Text("R\$ ${item.price.toStringAsFixed(2)}"),
           ),
           ATableColumn(
             title: AppLocalizations.of(context).image,
             cellBuilder: (context, width, item) {
-              return item['image'] != null && item['image']!.isNotEmpty
+              return item.url.isNotEmpty
                   ? Image.network(
-                item['image']!,
+                item.url,
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.image_not_supported, size: 50),
+                errorBuilder: (context, error, stackTrace) => Icon(Icons.image_not_supported, size: 50),
               )
                   : Icon(Icons.image, size: 50);
             },
