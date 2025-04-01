@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teste/core/colors.dart';
-import 'package:teste/models/profile.dart'; 
+import 'package:teste/models/user.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final AuthService _authService = AuthService();
-  late ProfileData _profileData;
+  late User _userData;
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      _profileData = ProfileData(
+      _userData = User(
         name: prefs.getString('username') ?? 'Nome não disponível',
         email: prefs.getString('email') ?? 'Email não disponível',
       );
@@ -66,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _profileData == null
+      body: _userData == null
           ? Center(child: CircularProgressIndicator())
           : Center(
         child: Column(
@@ -88,12 +88,12 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: 20),
             Text(
-              _profileData.name,
+              _userData.name,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
             Text(
-              _profileData.email,
+              _userData.email,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
             ),
             SizedBox(height: 80),
