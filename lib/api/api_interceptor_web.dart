@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
 import 'dart:html' as html;
-
+import 'package:teste/main.dart';
+import 'package:teste/routes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 

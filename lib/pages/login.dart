@@ -14,6 +14,7 @@ import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
 import '../models/forgot_password.dart';
 import '../models/login.dart';
+import 'package:teste/api/api.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -26,6 +27,39 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
+
+
+  void _login(LoginData data) async {
+    setState(() => _isLoading = true);
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final localizations = AppLocalizations.of(context)!;
+
+    try {
+      final email = data.email.trim();
+      final password = data.password.trim();
+
+      await API.login.login(email: email, password: password);
+
+      // Se a autenticação der certo navega para a próxima tela
+      navigator.pushNamedAndRemoveUntil(
+        Routes.productRegistration,
+        arguments: {'changeLanguage': widget.changeLanguage},
+            (route) => false,
+      );
+    } catch (e) {
+      // Exibe uma mensagem de erro
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text("Erro ao tentar fazer login. Verifique seus dados e tente novamente."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print("Erro ao tentar logar: $e");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   void _showForgotPasswordDialog(BuildContext context) {
     AFormDialog.show<ForgotPasswordData>(
@@ -52,7 +86,6 @@ class _LoginPageState extends State<LoginPage> {
       fromJson: (json) => ForgotPasswordData.fromJson(json),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,36 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                 showDefaultAction: false,
                 submitText: AppLocalizations.of(context)!.login,
                 onSubmit: (LoginData data) async {
-                  setState(() => _isLoading = true);
-                  final navigator = Navigator.of(context);
-                  final messenger = ScaffoldMessenger.of(context);
-                  final localizations = AppLocalizations.of(context)!;
-
-                  try {
-
-                    final email = data.email.trim();
-                    final password = data.password.trim();
-
-                    if (email == "m@gmail.com" && password == "12345678") {
-                      await AuthService.login(email);
-                      navigator.pushNamedAndRemoveUntil(
-                        Routes.productRegistration,
-                        arguments: {
-                          'changeLanguage': widget.changeLanguage,
-                        },
-                            (route) => false,
-                      );
-                    } else {
-                      messenger.showSnackBar(
-                        SnackBar(
-                          content: Text(localizations.formNotFound),
-                        ),
-                      );
-                    }
-                  } finally {
-                    setState(() => _isLoading = false);
-                  }
-                  return null;
+                  _login(data);
                 },
                 fields: [
                   AFieldEmail(
