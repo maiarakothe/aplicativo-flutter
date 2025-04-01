@@ -17,14 +17,18 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key
+  });
+
+  static final GlobalKey<_MyAppState> appStateKey = GlobalKey<_MyAppState>();
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale _locale = Locale('pt');
+  Locale _locale = const Locale('pt');
 
   void _changeLanguage(Locale locale) {
     setState(() {
@@ -40,7 +44,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       locale: _locale,
       supportedLocales: L10n.all,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
