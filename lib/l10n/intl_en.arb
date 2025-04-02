@@ -50,5 +50,13 @@
   "profile": "Profile",
   "confirmLogout": "Confirm Logout",
   "areYouSureLogout": "Are you sure you want to log out?",
-  "formNotFound": "Error"
+  "formNotFound": "Error",
+  "somethingWentWrong": "Something went wrong.",
+  "invalidCredentials": "Invalid email or password.",
+  "passwordResetSent": "Password reset email sent successfully.",
+  "resetPassword": "Reset Password",
+  "confirm": "Confirm",
+  "passwordChanged": "Password successfully changed.",
+  "verificationCode": "Verification Code",
+  "newPassword": "New Password"
 }

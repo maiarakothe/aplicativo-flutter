@@ -50,5 +50,13 @@
   "profile": "Perfil",
   "confirmLogout": "Confirmar Saída",
   "areYouSureLogout": "Você tem certeza que deseja sair?",
-  "formNotFound": "Erro"
+  "formNotFound": "Erro",
+  "somethingWentWrong": "Algo deu errado.",
+  "invalidCredentials": "Email ou senha inválidos.",
+  "passwordResetSent": "Email para redefinição de senha enviado com sucesso.",
+  "resetPassword": "Redefinir Senha",
+  "confirm": "Confirmar",
+  "passwordChanged": "Senha alterada com sucesso.",
+  "verificationCode": "Código de Verificação",
+  "newPassword": "Nova Senha"
 }

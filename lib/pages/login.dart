@@ -131,32 +131,29 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
-  void _showResetPasswordDialog(BuildContext context) {
-    AFormDialog.show<Map<String, String>>(
+  void _showResetPasswordDialog(BuildContext context) async {
+    await AFormDialog.show<Map<String, dynamic>>(
       context,
-      title: "Redefinir Senha",
-      submitText: "Confirmar",
+      title: AppLocalizations.of(context)!.resetPassword,
+      submitText: AppLocalizations.of(context)!.confirm,
       onSubmit: (data) async {
-        final code = data['code']!.trim();
-        final newPassword = data['new_password']!.trim();
         final messenger = ScaffoldMessenger.of(context);
-
         try {
           await API.forgotPassword.resetPassword(
-              code: code,
-              newPassword: newPassword);
+            code: data['code']!.trim(),
+            newPassword: data['new_password']!.trim(),
+          );
           messenger.showSnackBar(
             SnackBar(
-              content: Text("Senha redefinida com sucesso!"),
-              backgroundColor: DefaultColors.green,
+              content: Text(AppLocalizations.of(context)!.passwordChanged),
+              backgroundColor: Colors.green,
             ),
           );
           Navigator.pop(context);
         } catch (e) {
           messenger.showSnackBar(
             SnackBar(
-              content: Text(e.toString().replaceAll("Exception: ", "")),
+              content: Text(AppLocalizations.of(context)!.somethingWentWrong),
               backgroundColor: Colors.red,
             ),
           );
@@ -165,12 +162,12 @@ class _LoginPageState extends State<LoginPage> {
       fields: [
         AFieldText(
           identifier: 'code',
-          label: "Código de Recuperação",
+          label: AppLocalizations.of(context)!.verificationCode,
           required: true,
         ),
         AFieldPassword(
           identifier: 'new_password',
-          label: "Nova Senha",
+          label: AppLocalizations.of(context)!.newPassword,
         ),
       ],
       persistent: false,
@@ -178,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final localizations = AppLocalizations.of(context);
