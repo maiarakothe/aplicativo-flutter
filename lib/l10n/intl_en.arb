@@ -58,5 +58,8 @@
   "confirm": "Confirm",
   "passwordChanged": "Password successfully changed.",
   "verificationCode": "Verification Code",
-  "newPassword": "New Password"
+  "newPassword": "New Password",
+  "editProfile": "Edit profile",
+  "oldPassword": "Old password",
+  "profileUpdated": "Profile updated"
 }

@@ -20,4 +20,9 @@ class LoginAPI extends BaseModuleAPI {
           'password': password,
         }),),);}
 
+  Future<void> logout() async {
+    await requestWrapper(
+          () => api.dio.get('/logout'),
+    );
+  }
 }

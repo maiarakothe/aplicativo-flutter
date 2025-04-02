@@ -58,5 +58,8 @@
   "confirm": "Confirmar",
   "passwordChanged": "Senha alterada com sucesso.",
   "verificationCode": "Código de Verificação",
-  "newPassword": "Nova Senha"
+  "newPassword": "Nova Senha",
+  "editProfile": "Editar perfil",
+  "oldPassword": "Senha antiga",
+  "profileUpdated": "Perfil atualizado"
 }
