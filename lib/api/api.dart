@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import './api_interceptor_web.dart' if (dart.library.io) './api_interceptor_web.dart';
 import 'api_login.dart';
+import 'api_register.dart';
 
 const String BASE_URL = String.fromEnvironment(
   'API',
@@ -31,9 +32,11 @@ class API {
   static API instance = API();
 
   static LoginAPI get login => instance._login;
+  static RegisterAPI get signup => instance._signup;
 
 
   late LoginAPI _login;
+  late RegisterAPI _signup;
 
   API() {
     dio.interceptors.add(_cookies);
@@ -47,6 +50,7 @@ class API {
         };
     }
     _login = LoginAPI(this);
+    _signup = RegisterAPI(this);
   }
 
   Codec<String, String> stringToBase64 = utf8.fuse(base64Url);

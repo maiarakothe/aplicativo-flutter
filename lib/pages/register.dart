@@ -12,6 +12,8 @@ import 'package:teste/core/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/routes.dart';
 import '../models/register.dart';
+import '../api/api.dart';
+import '../api/api_register.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -23,17 +25,47 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  void _register(RegisterData data) {
+  final API _api = API();
+  final RegisterAPI _registerAPI;
+
+  _RegisterPageState() : _registerAPI = RegisterAPI(API());
+
+  Future<void> _register(RegisterData data) async {
     final name = data.name.trim();
     final email = data.email.trim();
     final password = data.password.trim();
 
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.productRegistration,
-          (route) => false,
-    );
+    try {
+      await _registerAPI.register(
+          name: name,
+          email: email,
+          password: password);
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.productRegistration,
+            (route) => false,
+      );
+    } catch (e) {
+      print('Erro ao registrar: $e');
+      String errorMessage;
+      if (e.toString().contains('409')) {
+        errorMessage = 'E-mail já está em uso';
+      } else if (e.toString().contains('422')) {
+        errorMessage = 'Erro de validação. Verifique os dados inseridos.';
+      } else {
+        errorMessage = 'Erro ao registrar. Tente novamente mais tarde';
+      }
+      print(errorMessage);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
             showDefaultAction: false,
             submitText: localizations.register,
             onSubmit: (RegisterData data) async {
-              _register(data);
+              await _register(data);
               return null;
             },
             fields: [
