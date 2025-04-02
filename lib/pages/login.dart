@@ -15,10 +15,11 @@ import 'package:awidgets/fields/a_field_password.dart';
 import '../models/forgot_password.dart';
 import '../models/login.dart';
 import 'package:teste/api/api.dart';
+import '../api/api_login.dart';
+import 'package:dio/dio.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
-
   const LoginPage({super.key, required this.changeLanguage});
 
   @override
@@ -27,31 +28,37 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
-
+  final LoginAPI _loginAPI = LoginAPI(API());
 
   void _login(LoginData data) async {
     setState(() => _isLoading = true);
-    final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final localizations = AppLocalizations.of(context)!;
 
     try {
-      final email = data.email.trim();
-      final password = data.password.trim();
+      await _loginAPI.login(
+        email: data.email.trim(),
+        password: data.password.trim(),
+      );
 
-      await API.login.login(email: email, password: password);
-
-      // Se a autenticação der certo navega para a próxima tela
-      navigator.pushNamedAndRemoveUntil(
+      Navigator.pushNamedAndRemoveUntil(
+        context,
         Routes.productRegistration,
-        arguments: {'changeLanguage': widget.changeLanguage},
             (route) => false,
       );
     } catch (e) {
-      // Exibe uma mensagem de erro
+      String errorMessage = "Erro ao tentar fazer login.";
+      if (e is DioException) {
+        if (e.response?.statusCode == 401) {
+          errorMessage = "Senha incorreta. Tente novamente.";
+        } else if (e.response?.statusCode == 404) {
+          errorMessage = "E-mail inválido. Verifique e tente novamente.";
+        } else if (e.response?.statusCode == 422) {
+          errorMessage = "Erro de validação. Verifique os dados inseridos.";
+        }
+      }
       messenger.showSnackBar(
         SnackBar(
-          content: Text("Erro ao tentar fazer login. Verifique seus dados e tente novamente."),
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
         ),
       );
