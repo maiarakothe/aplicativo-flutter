@@ -1,3 +1,4 @@
+import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
@@ -74,13 +75,49 @@ class _LoginPageState extends State<LoginPage> {
       title: AppLocalizations.of(context)!.forgotPassword,
       submitText: AppLocalizations.of(context)!.send,
       onSubmit: (ForgotPasswordData data) async {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.resetLinkSent),
-            backgroundColor: DefaultColors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
+        final messenger = ScaffoldMessenger.of(context);
+        final email = data.email.trim();
+
+        try {
+          await API.forgotPassword.forgotPassword(email: email);
+
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.resetLinkSent),
+              backgroundColor: DefaultColors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          Future.delayed(Duration(seconds: 1), () {
+            _showResetPasswordDialog(context);
+          });
+
+        } on DioException catch (e) {
+          String errorMessage = "Erro ao solicitar recuperação de senha.";
+
+          if (e.response != null) {
+            print("Erro na recuperação de senha: ${e.response?.data}");
+
+            if (e.response?.statusCode == 404) {
+              errorMessage = "E-mail inválido.";
+            } else if (e.response?.statusCode == 422) {
+              errorMessage = "Erro de validação.";
+            } else {
+              errorMessage = "Erro: ${e.response?.data['message'] ?? 'Ocorreu um erro desconhecido.'}";
+            }
+          } else {
+            print("Erro na recuperação de senha: $e");
+            errorMessage = "Erro inesperado. Verifique sua conexão.";
+          }
+
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       },
       fields: [
         AFieldEmail(
@@ -91,6 +128,53 @@ class _LoginPageState extends State<LoginPage> {
       ],
       persistent: false,
       fromJson: (json) => ForgotPasswordData.fromJson(json),
+    );
+  }
+
+
+  void _showResetPasswordDialog(BuildContext context) {
+    AFormDialog.show<Map<String, String>>(
+      context,
+      title: "Redefinir Senha",
+      submitText: "Confirmar",
+      onSubmit: (data) async {
+        final code = data['code']!.trim();
+        final newPassword = data['new_password']!.trim();
+        final messenger = ScaffoldMessenger.of(context);
+
+        try {
+          await API.forgotPassword.resetPassword(
+              code: code,
+              newPassword: newPassword);
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text("Senha redefinida com sucesso!"),
+              backgroundColor: DefaultColors.green,
+            ),
+          );
+          Navigator.pop(context);
+        } catch (e) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(e.toString().replaceAll("Exception: ", "")),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      fields: [
+        AFieldText(
+          identifier: 'code',
+          label: "Código de Recuperação",
+          required: true,
+        ),
+        AFieldPassword(
+          identifier: 'new_password',
+          label: "Nova Senha",
+        ),
+      ],
+      persistent: false,
+      fromJson: (json) => json as Map<String, String>,
     );
   }
 
