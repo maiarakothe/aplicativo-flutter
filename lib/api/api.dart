@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:teste/api/api_product.dart';
 
 import '../models/user.dart';
 import './api_interceptor_web.dart' if (dart.library.io) './api_interceptor_web.dart';
@@ -37,12 +38,14 @@ class API {
   static RegisterAPI get signup => instance._signup;
   static ForgotPasswordAPI get forgotPassword => instance._forgotPassword;
   static UserAPI get user => instance._user;
+  static ProductAPI get createProduct => instance._product;
 
 
   late LoginAPI _login;
   late RegisterAPI _signup;
   late ForgotPasswordAPI _forgotPassword;
   late UserAPI _user;
+  late ProductAPI _product;
 
   API() {
     dio.interceptors.add(_cookies);
@@ -59,6 +62,7 @@ class API {
     _signup = RegisterAPI(this);
     _forgotPassword = ForgotPasswordAPI(this);
     _user = UserAPI(this);
+    _product = ProductAPI(this);
   }
 
   Codec<String, String> stringToBase64 = utf8.fuse(base64Url);

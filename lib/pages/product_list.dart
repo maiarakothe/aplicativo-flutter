@@ -16,11 +16,12 @@ class ShowProductPage extends StatefulWidget {
   });
 
   @override
-  _ShowProductPageState createState() => _ShowProductPageState();
+  _ProductListPageState createState() => _ProductListPageState();
 }
 
-class _ShowProductPageState extends State<ShowProductPage> {
-  final GlobalKey<ATableState<ProductRegistrationData>> _tableKey = GlobalKey<ATableState<ProductRegistrationData>>();
+class _ProductListPageState extends State<ShowProductPage> {
+  final GlobalKey<ATableState<ProductRegistrationData>> _tableKey =
+  GlobalKey<ATableState<ProductRegistrationData>>();
 
   @override
   void initState() {
@@ -57,11 +58,12 @@ class _ShowProductPageState extends State<ShowProductPage> {
         columns: [
           ATableColumn(
             title: AppLocalizations.of(context).name,
-            cellBuilder: (context, width, item) => Text(item.productName),
+            cellBuilder: (context, width, item) => Text(item.name),
           ),
           ATableColumn(
-            title: AppLocalizations.of(context).price,
-            cellBuilder: (context, width, item) => Text("R\$ ${item.price.toStringAsFixed(2)}"),
+            title: AppLocalizations.of(context)!.price,
+            cellBuilder: (context, width, item) =>
+                Text("R\$ ${item.value.toStringAsFixed(2)}"),
           ),
           ATableColumn(
             title: AppLocalizations.of(context).image,
@@ -72,7 +74,8 @@ class _ShowProductPageState extends State<ShowProductPage> {
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Icon(Icons.image_not_supported, size: 50),
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.image_not_supported, size: 50),
               )
                   : Icon(Icons.image, size: 50);
             },
@@ -85,14 +88,16 @@ class _ShowProductPageState extends State<ShowProductPage> {
                   message: AppLocalizations.of(context).edit,
                   child: IconButton(
                     icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () => widget.onEdit(widget.productsNotifier.value.indexOf(item)),
+                    onPressed: () =>
+                        widget.onEdit(widget.productsNotifier.value.indexOf(item)),
                   ),
                 ),
                 Tooltip(
                   message: AppLocalizations.of(context).delete,
                   child: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => widget.onDelete(widget.productsNotifier.value.indexOf(item)),
+                    onPressed: () =>
+                        widget.onDelete(widget.productsNotifier.value.indexOf(item)),
                   ),
                 ),
               ],
@@ -100,7 +105,7 @@ class _ShowProductPageState extends State<ShowProductPage> {
           ),
         ],
         loadItems: _loadProducts,
-        emptyMessage: AppLocalizations.of(context).noProducts,
+        emptyMessage: AppLocalizations.of(context)!.noProducts,
       ),
     );
   }

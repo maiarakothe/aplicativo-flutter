@@ -9,15 +9,21 @@ part of '../product_registration.dart';
 _$ProductRegistrationDataImpl _$$ProductRegistrationDataImplFromJson(
         Map<String, dynamic> json) =>
     _$ProductRegistrationDataImpl(
-      productName: json['product_name'] as String,
+      category: json['category'] as String?,
+      quantity: (json['quantity'] as num?)?.toInt(),
+      id: json['id'] as String,
+      name: json['name'] as String,
       url: json['url'] as String,
-      price: (json['price'] as num).toDouble(),
+      value: (json['value'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$$ProductRegistrationDataImplToJson(
         _$ProductRegistrationDataImpl instance) =>
     <String, dynamic>{
-      'product_name': instance.productName,
+      if (instance.category case final value?) 'category': value,
+      if (instance.quantity case final value?) 'quantity': value,
+      'id': instance.id,
+      'name': instance.name,
       'url': instance.url,
-      'price': instance.price,
+      'value': instance.value,
     };
