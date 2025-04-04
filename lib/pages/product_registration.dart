@@ -36,6 +36,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
   Future<void> _loadProducts() async {
     try {
       final products = await widget._productAPI.getAllProducts();
+      print('Produtos carregados: $products');
       widget.productsNotifier.value = products.map((p) => ProductRegistrationData.fromJson(p)).toList();
     } catch (e) {
       print('Erro ao carregar produtos: $e');
@@ -76,7 +77,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               .replaceAll(',', '.')) ?? 0.0;
 
           final newProduct = ProductRegistrationData(
-            id: initialProduct?.id ?? "",
+            id: initialProduct?.id ?? 0,
             name: data['productName'],
             url: data['url'],
             value: price,
@@ -84,16 +85,28 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
           if (editingIndex != null) {
             await widget._productAPI.updateProduct(
-              id: int.parse(newProduct.id),
+              id: newProduct.id ?? 0,
               name: newProduct.name,
               value: newProduct.value,
               url: newProduct.url,
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.productUpdatedSuccessfully),
+                backgroundColor: Colors.green,
+              ),
             );
           } else {
             await widget._productAPI.createProduct(
               name: newProduct.name,
               value: newProduct.value,
               url: newProduct.url,
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.productRegisteredSuccessfully),
+                backgroundColor: Colors.green,
+              ),
             );
           }
 
@@ -156,7 +169,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               onPressed: () async {
                 try {
                   await widget._productAPI.deleteProduct(
-                      int.parse(widget.productsNotifier.value[index].id)
+                      widget.productsNotifier.value[index].id
                   );
                   _loadProducts();
                   Navigator.pop(context);
@@ -214,9 +227,9 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           ? Center(child: Text(AppLocalizations.of(context)!.pressButtonToAddProduct, style: const TextStyle(fontSize: 16)))
           : _selectedIndex == 1
           ? ShowProductPage(
-        productsNotifier: widget.productsNotifier,
-        onEdit: _editProduct,
-        onDelete: _confirmDelete,
+            productsNotifier: widget.productsNotifier,
+            onEdit: _editProduct,
+            onDelete: _confirmDelete,
       )
           : ProfilePage(),
       floatingActionButton: _selectedIndex == 0

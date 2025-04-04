@@ -11,7 +11,7 @@ _$ProductRegistrationDataImpl _$$ProductRegistrationDataImplFromJson(
     _$ProductRegistrationDataImpl(
       category: json['category'] as String?,
       quantity: (json['quantity'] as num?)?.toInt(),
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       url: json['url'] as String,
       value: (json['value'] as num).toDouble(),

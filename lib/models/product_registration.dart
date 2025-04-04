@@ -8,7 +8,7 @@ class ProductRegistrationData with _$ProductRegistrationData {
   const factory ProductRegistrationData({
     String? category,
     int? quantity,
-    required String id,
+    required int id,
     required String name,
     required String url,
     required double value,

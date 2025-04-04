@@ -23,7 +23,7 @@ ProductRegistrationData _$ProductRegistrationDataFromJson(
 mixin _$ProductRegistrationData {
   String? get category => throw _privateConstructorUsedError;
   int? get quantity => throw _privateConstructorUsedError;
-  String get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   double get value => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $ProductRegistrationDataCopyWith<$Res> {
   $Res call(
       {String? category,
       int? quantity,
-      String id,
+      int id,
       String name,
       String url,
       double value});
@@ -88,7 +88,7 @@ class _$ProductRegistrationDataCopyWithImpl<$Res,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -117,7 +117,7 @@ abstract class _$$ProductRegistrationDataImplCopyWith<$Res>
   $Res call(
       {String? category,
       int? quantity,
-      String id,
+      int id,
       String name,
       String url,
       double value});
@@ -157,7 +157,7 @@ class __$$ProductRegistrationDataImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -193,7 +193,7 @@ class _$ProductRegistrationDataImpl implements _ProductRegistrationData {
   @override
   final int? quantity;
   @override
-  final String id;
+  final int id;
   @override
   final String name;
   @override
@@ -247,7 +247,7 @@ abstract class _ProductRegistrationData implements ProductRegistrationData {
   const factory _ProductRegistrationData(
       {final String? category,
       final int? quantity,
-      required final String id,
+      required final int id,
       required final String name,
       required final String url,
       required final double value}) = _$ProductRegistrationDataImpl;
@@ -260,7 +260,7 @@ abstract class _ProductRegistrationData implements ProductRegistrationData {
   @override
   int? get quantity;
   @override
-  String get id;
+  int get id;
   @override
   String get name;
   @override
