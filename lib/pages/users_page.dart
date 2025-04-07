@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../api/api.dart';
-import '../api/api_profile.dart';
+import '../api/api_users.dart';
 import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
@@ -194,12 +194,16 @@ class _UsersPageState extends State<UsersPage> {
             permissions: json['permissions'],
           ),
           onSubmit: (userData) async {
-            final provider = Provider.of<UsersProvider>(context, listen: false);
-
-            final result = await API().getUserData();
-            final accountId = selectedAccount!.id;
-
-            return null;
+            try {
+              final createdUser = await widget._userAPI.createUser(
+                selectedAccount!.id,
+                userData,
+              );
+              allUsers.add(createdUser);
+              return null;
+            } catch (e) {
+              return e.toString();
+            }
           },
           onSuccess: () {
             tableKey.currentState?.reload();
