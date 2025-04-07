@@ -2,7 +2,11 @@ import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'models/account.dart';
+
+  Account? selectedAccount;
 class Configs {
+
   // BorderRadius
   static BorderRadius radiusBorder = BorderRadius.circular(16);
 

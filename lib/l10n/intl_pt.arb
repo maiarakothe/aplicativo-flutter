@@ -73,5 +73,6 @@
   "search": "Pesquisar",
   "userRegisteredSuccessfully": "Usuário registrado com sucesso!",
   "noUsersFound": "Nenhum usuário encontrado",
-  "productList": "Lista de produtos"
+  "productList": "Lista de produtos",
+  "accountManagement": "Gerenciamento de contas"
 }

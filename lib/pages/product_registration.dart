@@ -6,6 +6,7 @@ import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/fields/a_field_url.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import '../api/api.dart';
+import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../models/product_registration.dart';
 import '../api/api_product.dart';
@@ -44,7 +45,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
   Future<void> _loadProducts() async {
     try {
-      final products = await _api.getAllProducts();
+      final products = await _api.getAllProducts(accountId: selectedAccount!.id);
       _productsNotifier.value = products.map((p) => ProductRegistrationData.fromJson(p)).toList();
     } catch (e) {
       print('Erro ao carregar produtos: $e');
@@ -72,7 +73,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erro"), backgroundColor: Colors.red),
+        SnackBar(content: Text("Erro"), backgroundColor: Colors.red),
       );
     }
   }
@@ -120,6 +121,7 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               name: product.name,
               value: product.value,
               url: product.url,
+              accountId: selectedAccount!.id,
             );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

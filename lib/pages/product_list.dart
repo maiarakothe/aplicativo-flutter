@@ -6,6 +6,7 @@ import '../api/api_product.dart';
 import '../core/app_drawer.dart';
 import '../models/product_registration.dart';
 import '../theme_toggle_button.dart';
+import 'package:teste/configs.dart';
 
 class ShowProductPage extends StatefulWidget {
   final void Function(Locale locale) changeLanguage;
@@ -40,7 +41,8 @@ class _ShowProductPageState extends State<ShowProductPage> {
 
   Future<void> _loadProducts() async {
     try {
-      final products = await _api.getAllProducts();
+      final products = await _api.getAllProducts(accountId: selectedAccount!.id);
+
       _productsNotifier.value = products.map((p) => ProductRegistrationData.fromJson(p)).toList();
     } catch (e) {
       _showErrorSnackBar('Erro ao carregar produtos: $e');

@@ -10,6 +10,7 @@ import 'package:awidgets/general/a_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
 import '../models/user.dart';
@@ -27,6 +28,21 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
+
+  final List<String> availablePermissions = [
+    'Gerenciamento de contas',
+    'Tela de Usuários',
+    'Cadastro e edição de produtos',
+  ];
+
+  List<Option> getPermissionOptions(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return [
+      Option(localizations.accountManagement, 1),
+      Option(localizations.userScreen, 2),
+      Option(localizations.productForm, 3),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,14 +110,14 @@ class _UsersPageState extends State<UsersPage> {
             body: ColoredBox(
               color: DefaultColors.backgroundColor,
               child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AFieldSearch(
-                          label: AppLocalizations.of(context)!.search,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AFieldSearch(
+                            label: AppLocalizations.of(context)!.search,
                             onChanged: (value) {
                               setState(() => searchText = value!);
                               tableKey.currentState?.reload();
@@ -138,7 +154,7 @@ class _UsersPageState extends State<UsersPage> {
                                   .contains(searchText.toLowerCase()) ||
                                   u.email
                                       .toLowerCase()
-                                        .contains(searchText.toLowerCase())).toList();
+                                      .contains(searchText.toLowerCase())).toList();
                             },
                           );
                         },
@@ -193,18 +209,8 @@ class _UsersPageState extends State<UsersPage> {
             name: json['name'],
             email: json['email'],
             password: json['password'],
-            permissions: (json['permissions'] as List).map((id) {
-              switch (id) {
-                case 1:
-                  return AppLocalizations.of(context)!.userScreen;
-                case 2:
-                  return AppLocalizations.of(context)!.productForm;
-                case 3:
-                  return AppLocalizations.of(context)!.productEdit;
-                default:
-                  return AppLocalizations.of(context)!.unknownPermission;
-              }
-            }).toList(),
+            accountId: selectedAccount!.id,
+            permissions: List<String>.from(json['permissions']),
           ),
           onSubmit: (userData) async {
             final provider = Provider.of<UsersProvider>(context, listen: false);

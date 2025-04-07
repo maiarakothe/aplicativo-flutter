@@ -17,7 +17,7 @@
   "urlMustStartWithHTTP": "The URL must start with http:// or https://",
   "cancel": "Cancel",
   "save": "Save",
-  "image" : "Image",
+  "image": "Image",
   "pressButtonToAddProduct": "Press the button to add a product",
   "register": "Register",
   "products": "Products",
@@ -73,5 +73,6 @@
   "search": "Search",
   "userRegisteredSuccessfully": "User registered successfully",
   "noUsersFound": "No users found",
-  "productList": "Product list"
+  "productList": "Product list",
+  "accountManagement": "Account management"
 }

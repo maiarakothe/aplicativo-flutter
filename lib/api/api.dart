@@ -9,10 +9,11 @@ import 'package:teste/api/api_product.dart';
 
 import '../models/profile.dart';
 import './api_interceptor_web.dart' if (dart.library.io) './api_interceptor_web.dart';
+import 'api_account.dart';
 import 'api_login.dart';
 import 'api_register.dart';
 import 'api_forgot_password.dart';
-import 'api_user.dart';
+import 'api_profile.dart';
 
 const String BASE_URL = String.fromEnvironment(
   'API',
@@ -39,6 +40,8 @@ class API {
   static ForgotPasswordAPI get forgotPassword => instance._forgotPassword;
   static UserAPI get user => instance._user;
   static ProductAPI get createProduct => instance._product;
+  static UserAPI get users => instance._users;
+  static AccountAPI get accounts => instance._accounts;
 
 
   late LoginAPI _login;
@@ -46,6 +49,8 @@ class API {
   late ForgotPasswordAPI _forgotPassword;
   late UserAPI _user;
   late ProductAPI _product;
+  late UserAPI _users;
+  late AccountAPI _accounts;
 
   API() {
     dio.interceptors.add(_cookies);
@@ -63,6 +68,8 @@ class API {
     _forgotPassword = ForgotPasswordAPI(this);
     _user = UserAPI(this);
     _product = ProductAPI(this);
+    _users = UserAPI(this);
+    _accounts = AccountAPI(this);
   }
 
   Codec<String, String> stringToBase64 = utf8.fuse(base64Url);

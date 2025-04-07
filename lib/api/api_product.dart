@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+
 import '../core/http_utils.dart';
 import 'api_base_module.dart';
-
 class ProductAPI extends BaseModuleAPI {
   ProductAPI(super.api);
 
@@ -10,10 +10,12 @@ class ProductAPI extends BaseModuleAPI {
     required String name,
     required double value,
     required String url,
+    required int accountId,
   }) async {
     final response = await requestWrapper(
           () => api.dio.post(
         '/product',
+        queryParameters: {'account_id': accountId},
         data: jsonEncode({
           "name": name,
           "category_type": null,
@@ -26,10 +28,16 @@ class ProductAPI extends BaseModuleAPI {
     debugPrint('Resposta: ${response.data}');
   }
 
-  Future<List<Map<String, dynamic>>> getAllProducts() async {
+  Future<List<Map<String, dynamic>>> getAllProducts({required int accountId}) async {
     final response = await requestWrapper(
-          () => api.dio.get('/products'),
+          () => api.dio.get(
+        '/products',
+        queryParameters: {
+          'account_id': accountId,
+        },
+      ),
     );
+    debugPrint('[RAW PRODUCTS RESPONSE] ${response.data}');
     return List<Map<String, dynamic>>.from(response.data);
   }
 
@@ -43,20 +51,26 @@ class ProductAPI extends BaseModuleAPI {
   Future<void> updateProduct({
     required int id,
     required String name,
+    required String url,
     required double value,
-    required url,
+    int? accountId,
   }) async {
+    final Map<String, dynamic> data = {
+      "name": name,
+      "category_type": null,
+      "quantity": null,
+      "value": value,
+      "url": url,
+    };
+
     await requestWrapper(
           () => api.dio.patch(
         '/product/update',
-        queryParameters: {'product_id': id},
-        data: jsonEncode({
-          "name": name,
-          "category_type": null,
-          "quantity": null,
-          "value": value,
-          "url": url,
-        }),
+        queryParameters: {
+          'product_id': id,
+          'account_id': accountId ?? null,
+        },
+        data: jsonEncode(data),
       ),
     );
   }

@@ -23,8 +23,10 @@ mixin _$User {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  String? get password => throw _privateConstructorUsedError;
+  String get password => throw _privateConstructorUsedError;
   List<String> get permissions => throw _privateConstructorUsedError;
+  @JsonKey(name: 'account_id')
+  int? get accountId => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,8 +46,9 @@ abstract class $UserCopyWith<$Res> {
       {int id,
       String name,
       String email,
-      String? password,
-      List<String> permissions});
+      String password,
+      List<String> permissions,
+      @JsonKey(name: 'account_id') int? accountId});
 }
 
 /// @nodoc
@@ -66,8 +69,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? password = freezed,
+    Object? password = null,
     Object? permissions = null,
+    Object? accountId = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -82,14 +86,18 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      password: freezed == password
+      password: null == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       permissions: null == permissions
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      accountId: freezed == accountId
+          ? _value.accountId
+          : accountId // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -105,8 +113,9 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       {int id,
       String name,
       String email,
-      String? password,
-      List<String> permissions});
+      String password,
+      List<String> permissions,
+      @JsonKey(name: 'account_id') int? accountId});
 }
 
 /// @nodoc
@@ -124,8 +133,9 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? password = freezed,
+    Object? password = null,
     Object? permissions = null,
+    Object? accountId = freezed,
   }) {
     return _then(_$UserImpl(
       id: null == id
@@ -140,14 +150,18 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      password: freezed == password
+      password: null == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       permissions: null == permissions
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      accountId: freezed == accountId
+          ? _value.accountId
+          : accountId // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -159,8 +173,9 @@ class _$UserImpl implements _User {
       {required this.id,
       required this.name,
       required this.email,
-      this.password,
-      required final List<String> permissions})
+      required this.password,
+      required final List<String> permissions,
+      @JsonKey(name: 'account_id') required this.accountId})
       : _permissions = permissions;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -173,7 +188,7 @@ class _$UserImpl implements _User {
   @override
   final String email;
   @override
-  final String? password;
+  final String password;
   final List<String> _permissions;
   @override
   List<String> get permissions {
@@ -183,8 +198,12 @@ class _$UserImpl implements _User {
   }
 
   @override
+  @JsonKey(name: 'account_id')
+  final int? accountId;
+
+  @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions, accountId: $accountId)';
   }
 
   @override
@@ -198,13 +217,15 @@ class _$UserImpl implements _User {
             (identical(other.password, password) ||
                 other.password == password) &&
             const DeepCollectionEquality()
-                .equals(other._permissions, _permissions));
+                .equals(other._permissions, _permissions) &&
+            (identical(other.accountId, accountId) ||
+                other.accountId == accountId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, email, password,
-      const DeepCollectionEquality().hash(_permissions));
+      const DeepCollectionEquality().hash(_permissions), accountId);
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -227,8 +248,9 @@ abstract class _User implements User {
       {required final int id,
       required final String name,
       required final String email,
-      final String? password,
-      required final List<String> permissions}) = _$UserImpl;
+      required final String password,
+      required final List<String> permissions,
+      @JsonKey(name: 'account_id') required final int? accountId}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -239,9 +261,12 @@ abstract class _User implements User {
   @override
   String get email;
   @override
-  String? get password;
+  String get password;
   @override
   List<String> get permissions;
+  @override
+  @JsonKey(name: 'account_id')
+  int? get accountId;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
