@@ -10,6 +10,9 @@ import 'package:awidgets/general/a_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../api/api.dart';
+import '../api/api_profile.dart';
 import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
@@ -19,7 +22,8 @@ import '../theme_toggle_button.dart';
 
 class UsersPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
-  const UsersPage({super.key, required this.changeLanguage});
+  final UserAPI _userAPI = UserAPI(API());
+  UsersPage({super.key, required this.changeLanguage});
 
   @override
   State<UsersPage> createState() => _UsersPageState();
@@ -28,12 +32,14 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
+  List<User> allUsers = [];
 
-  final List<String> availablePermissions = [
-    'Gerenciamento de contas',
-    'Tela de Usuários',
-    'Cadastro e edição de produtos',
-  ];
+  Future<List<User>> loadUsers(BuildContext context) async {
+    return allUsers.where((u) =>
+    u.name.toLowerCase().contains(searchText.toLowerCase()) ||
+        u.email.toLowerCase().contains(searchText.toLowerCase())
+    ).toList();
+  }
 
   List<Option> getPermissionOptions(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -49,29 +55,27 @@ class _UsersPageState extends State<UsersPage> {
     final columns = <ATableColumn<User>>[
       ATableColumn<User>(
         title: AppLocalizations.of(context)!.name,
-        cellBuilder: (context, index, user) => Text(user.name),
+        cellBuilder: (_, __, user) => Text(user.name),
       ),
       ATableColumn<User>(
         title: AppLocalizations.of(context)!.email,
-        cellBuilder: (context, index, user) => Text(user.email),
+        cellBuilder: (_, __, user) => Text(user.email),
       ),
       ATableColumn<User>(
         title: AppLocalizations.of(context)!.permissions,
-        cellBuilder: (context, index, user) =>
-            Text(user.permissions.join(', ')),
+        cellBuilder: (_, __, user) => Text(user.permissions.join(', ')),
       ),
     ];
 
-
     return Row(
       children: [
-        const Material(
-          child: AppDrawer(),
-        ),
+        const Material(child: AppDrawer()),
         const VerticalDivider(width: 1),
         Expanded(
           child: Scaffold(
-            backgroundColor: Theme.of(context).cardColor,
+            backgroundColor: Theme
+                .of(context)
+                .cardColor,
             appBar: AppBar(
               title: Text(
                 AppLocalizations.of(context)!.users,
@@ -84,20 +88,18 @@ class _UsersPageState extends State<UsersPage> {
                   underline: const SizedBox.shrink(),
                   dropdownColor: Colors.black,
                   onChanged: (Locale? newValue) {
-                    if (newValue != null) {
-                      widget.changeLanguage(newValue);
-                    }
+                    if (newValue != null) widget.changeLanguage(newValue);
                   },
                   items: const [
                     DropdownMenuItem(
                       value: Locale('en'),
-                      child:
-                      Text('English', style: TextStyle(color: Colors.white)),
+                      child: Text(
+                          'English', style: TextStyle(color: Colors.white)),
                     ),
                     DropdownMenuItem(
                       value: Locale('pt'),
-                      child: Text('Português',
-                          style: TextStyle(color: Colors.white)),
+                      child: Text(
+                          'Português', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -132,32 +134,17 @@ class _UsersPageState extends State<UsersPage> {
                           color: DefaultColors.circleAvatar,
                           fontWeight: FontWeight.bold,
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
+                              horizontal: 20, vertical: 12),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     Expanded(
-                      child: Consumer<UsersProvider>(
-                        builder: (context, provider, child) {
-                          return ATable<User>(
-                            key: tableKey,
-                            columns: columns,
-                            striped: true,
-                            loadItems: (_, __) async {
-                              await provider.loadUsers();
-                              return provider.users.where((u) =>
-                              u.name
-                                  .toLowerCase()
-                                  .contains(searchText.toLowerCase()) ||
-                                  u.email
-                                      .toLowerCase()
-                                      .contains(searchText.toLowerCase())).toList();
-                            },
-                          );
-                        },
+                      child: ATable<User>(
+                        key: tableKey,
+                        columns: columns,
+                        striped: true,
+                        loadItems: (_, __) => loadUsers(context),
                       ),
                     ),
                   ],
@@ -196,25 +183,27 @@ class _UsersPageState extends State<UsersPage> {
             AFieldCheckboxList(
               label: AppLocalizations.of(context)!.permissions,
               identifier: 'permissions',
-              options: [
-                Option(AppLocalizations.of(context)!.userScreen, 1),
-                Option(AppLocalizations.of(context)!.productForm, 2),
-                Option(AppLocalizations.of(context)!.productEdit, 3),
-              ],
+              options: getPermissionOptions(context),
               minRequired: 1,
             ),
           ],
-          fromJson: (json) => User(
-            id: 0,
-            name: json['name'],
-            email: json['email'],
-            password: json['password'],
-            accountId: selectedAccount!.id,
-            permissions: List<String>.from(json['permissions']),
-          ),
+          fromJson: (json) =>
+              User(
+                id: 0,
+                name: json['name'],
+                email: json['email'],
+                password: json['password'],
+                accountId: selectedAccount!.id,
+                permissions: List<String>.from(json['permissions']),
+              ),
           onSubmit: (userData) async {
             final provider = Provider.of<UsersProvider>(context, listen: false);
-            await provider.addUser(userData);
+
+            final result = await API().getUserData();
+            final accountId = selectedAccount!.id;
+
+            final userToCreate = userData.copyWith(accountId: accountId ?? 0);
+
             return null;
           },
           onSuccess: () {
