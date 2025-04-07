@@ -6,12 +6,13 @@ part 'generated/product_registration.g.dart';
 @freezed
 class ProductRegistrationData with _$ProductRegistrationData {
   const factory ProductRegistrationData({
-    String? category,
-    int? quantity,
     required int id,
     required String name,
-    required String url,
+    // ignore: invalid_annotation_target
+    @JsonKey(name: 'category_type') String? category,
+    int? quantity,
     required double value,
+    String? url,
   }) = _ProductRegistrationData;
 
   factory ProductRegistrationData.fromJson(Map<String, dynamic> json) =>

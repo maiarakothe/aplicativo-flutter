@@ -1,12 +1,14 @@
+import 'package:awidgets/general/a_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:awidgets/general/a_table.dart';
+
+import 'package:teste/configs.dart';
+
 import '../api/api.dart';
 import '../api/api_product.dart';
 import '../core/app_drawer.dart';
 import '../models/product_registration.dart';
 import '../theme_toggle_button.dart';
-import 'package:teste/configs.dart';
 
 class ShowProductPage extends StatefulWidget {
   final void Function(Locale locale) changeLanguage;
@@ -19,13 +21,15 @@ class ShowProductPage extends StatefulWidget {
 
 class _ShowProductPageState extends State<ShowProductPage> {
   final _tableKey = GlobalKey<ATableState<ProductRegistrationData>>();
-  final ValueNotifier<List<ProductRegistrationData>> _productsNotifier = ValueNotifier([]);
+  final ValueNotifier<List<ProductRegistrationData>> _productsNotifier =
+      ValueNotifier([]);
   final ProductAPI _api = ProductAPI(API());
+
+  List<ProductRegistrationData> products = [];
 
   @override
   void initState() {
     super.initState();
-    _loadProducts();
     _productsNotifier.addListener(_reloadTable);
   }
 
@@ -39,14 +43,18 @@ class _ShowProductPageState extends State<ShowProductPage> {
     _tableKey.currentState?.reload();
   }
 
-  Future<void> _loadProducts() async {
+  Future<List<ProductRegistrationData>> _loadProducts() async {
     try {
-      final products = await _api.getAllProducts(accountId: selectedAccount!.id);
-
-      _productsNotifier.value = products.map((p) => ProductRegistrationData.fromJson(p)).toList();
+      final result = await _api.getAllProducts(accountId: selectedAccount!.id);
+      setState(() {
+        products = result
+            .map((json) => ProductRegistrationData.fromJson(json))
+            .toList();
+      });
     } catch (e) {
       _showErrorSnackBar('Erro ao carregar produtos: $e');
     }
+    return products;
   }
 
   void _showErrorSnackBar(String message) {
@@ -75,36 +83,33 @@ class _ShowProductPageState extends State<ShowProductPage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.confirmDelete),
-        content: Text(AppLocalizations.of(context)!.areYouSureDelete),
+        title: Text(AppLocalizations.of(context).confirmDelete),
+        content: Text(AppLocalizations.of(context).areYouSureDelete),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () async {
               try {
-                await _api.deleteProduct(product.id!);
+                await _api.deleteProduct(product.id);
                 Navigator.pop(context);
-                _showSuccessSnackBar(AppLocalizations.of(context)!.productDeletedSuccessfully);
+                _showSuccessSnackBar(
+                    AppLocalizations.of(context).productDeletedSuccessfully);
                 _loadProducts();
               } catch (e) {
                 _showErrorSnackBar('Erro ao excluir produto: $e');
               }
             },
             child: Text(
-              AppLocalizations.of(context)!.delete,
+              AppLocalizations.of(context).delete,
               style: const TextStyle(color: Colors.red),
             ),
           ),
         ],
       ),
     );
-  }
-
-  Future<List<ProductRegistrationData>> _loadItems(int limit, int offset) async {
-    return _productsNotifier.value;
   }
 
   @override
@@ -117,7 +122,7 @@ class _ShowProductPageState extends State<ShowProductPage> {
           Expanded(
             child: Scaffold(
               appBar: AppBar(
-                title: Text(AppLocalizations.of(context)!.productList),
+                title: Text(AppLocalizations.of(context).productList),
                 automaticallyImplyLeading: false,
                 actions: [
                   DropdownButton<Locale>(
@@ -130,11 +135,13 @@ class _ShowProductPageState extends State<ShowProductPage> {
                     items: const [
                       DropdownMenuItem(
                         value: Locale('en'),
-                        child: Text('English', style: TextStyle(color: Colors.white)),
+                        child: Text('English',
+                            style: TextStyle(color: Colors.white)),
                       ),
                       DropdownMenuItem(
                         value: Locale('pt'),
-                        child: Text('Português', style: TextStyle(color: Colors.white)),
+                        child: Text('Português',
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -145,17 +152,19 @@ class _ShowProductPageState extends State<ShowProductPage> {
                 key: _tableKey,
                 columns: [
                   ATableColumn(
-                    title: AppLocalizations.of(context)!.name,
+                    title: AppLocalizations.of(context).name,
                     cellBuilder: (_, __, item) => Text(item.name),
                   ),
                   ATableColumn(
-                    title: AppLocalizations.of(context)!.price,
-                    cellBuilder: (_, __, item) => Text("R\$ ${item.value.toStringAsFixed(2)}"),
+                    title: AppLocalizations.of(context).price,
+                    cellBuilder: (_, __, item) =>
+                        Text("R\$ ${item.value.toStringAsFixed(2)}"),
                   ),
                   ATableColumn(
-                    title: AppLocalizations.of(context)!.image,
-                    cellBuilder: (_, __, item) => item.url.isNotEmpty
-                        ? Image.network(item.url, width: 50, height: 50, fit: BoxFit.cover)
+                    title: AppLocalizations.of(context).image,
+                    cellBuilder: (_, __, item) => item.url != null
+                        ? Image.network(item.url!,
+                            width: 50, height: 50, fit: BoxFit.cover)
                         : const Icon(Icons.image, size: 50),
                   ),
                   ATableColumn(
@@ -166,12 +175,12 @@ class _ShowProductPageState extends State<ShowProductPage> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.blue),
-                            tooltip: AppLocalizations.of(context)!.edit,
-                            onPressed: () => _editProduct(item.id!),
+                            tooltip: AppLocalizations.of(context).edit,
+                            onPressed: () => _editProduct(item.id),
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
-                            tooltip: AppLocalizations.of(context)!.delete,
+                            tooltip: AppLocalizations.of(context).delete,
                             onPressed: () => _confirmDelete(index),
                           ),
                         ],
@@ -179,8 +188,10 @@ class _ShowProductPageState extends State<ShowProductPage> {
                     },
                   ),
                 ],
-                loadItems: _loadItems,
-                emptyMessage: AppLocalizations.of(context)!.noProducts,
+                loadItems: (_, __) async {
+                  return await _loadProducts();
+                },
+                emptyMessage: AppLocalizations.of(context).noProducts,
               ),
             ),
           ),

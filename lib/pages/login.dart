@@ -2,14 +2,13 @@ import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:teste/api/api_account.dart';
 import 'package:teste/core/colors.dart';
-import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teste/providers/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/routes.dart';
-import 'package:teste/services/auth_service.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
@@ -30,6 +29,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   final LoginAPI _loginAPI = LoginAPI(API());
+  final AccountAPI _accountAPI = AccountAPI(API());
 
   void _login(LoginData data) async {
     setState(() => _isLoading = true);
@@ -40,11 +40,12 @@ class _LoginPageState extends State<LoginPage> {
         email: data.email.trim(),
         password: data.password.trim(),
       );
+      await _accountAPI.getAccounts();
 
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.productRegistration,
-            (route) => false,
+        (route) => false,
       );
     } catch (e) {
       String errorMessage = "Erro ao tentar fazer login.";
@@ -72,8 +73,8 @@ class _LoginPageState extends State<LoginPage> {
   void _showForgotPasswordDialog(BuildContext context) {
     AFormDialog.show<ForgotPasswordData>(
       context,
-      title: AppLocalizations.of(context)!.forgotPassword,
-      submitText: AppLocalizations.of(context)!.send,
+      title: AppLocalizations.of(context).forgotPassword,
+      submitText: AppLocalizations.of(context).send,
       onSubmit: (ForgotPasswordData data) async {
         final messenger = ScaffoldMessenger.of(context);
         final email = data.email.trim();
@@ -83,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
 
           messenger.showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.resetLinkSent),
+              content: Text(AppLocalizations.of(context).resetLinkSent),
               backgroundColor: DefaultColors.green,
               duration: Duration(seconds: 2),
             ),
@@ -92,7 +93,6 @@ class _LoginPageState extends State<LoginPage> {
           Future.delayed(Duration(seconds: 1), () {
             _showResetPasswordDialog(context);
           });
-
         } on DioException catch (e) {
           String errorMessage = "Erro ao solicitar recuperação de senha.";
 
@@ -104,7 +104,8 @@ class _LoginPageState extends State<LoginPage> {
             } else if (e.response?.statusCode == 422) {
               errorMessage = "Erro de validação.";
             } else {
-              errorMessage = "Erro: ${e.response?.data['message'] ?? 'Ocorreu um erro desconhecido.'}";
+              errorMessage =
+                  "Erro: ${e.response?.data['message'] ?? 'Ocorreu um erro desconhecido.'}";
             }
           } else {
             print("Erro na recuperação de senha: $e");
@@ -118,11 +119,12 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         }
+        return null;
       },
       fields: [
         AFieldEmail(
           identifier: 'email',
-          label: AppLocalizations.of(context)!.email,
+          label: AppLocalizations.of(context).email,
           required: true,
         ),
       ],
@@ -134,8 +136,8 @@ class _LoginPageState extends State<LoginPage> {
   void _showResetPasswordDialog(BuildContext context) async {
     await AFormDialog.show<Map<String, dynamic>>(
       context,
-      title: AppLocalizations.of(context)!.resetPassword,
-      submitText: AppLocalizations.of(context)!.confirm,
+      title: AppLocalizations.of(context).resetPassword,
+      submitText: AppLocalizations.of(context).confirm,
       onSubmit: (data) async {
         final messenger = ScaffoldMessenger.of(context);
         try {
@@ -145,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
           );
           messenger.showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.passwordChanged),
+              content: Text(AppLocalizations.of(context).passwordChanged),
               backgroundColor: Colors.green,
             ),
           );
@@ -153,21 +155,22 @@ class _LoginPageState extends State<LoginPage> {
         } catch (e) {
           messenger.showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.somethingWentWrong),
+              content: Text(AppLocalizations.of(context).somethingWentWrong),
               backgroundColor: Colors.red,
             ),
           );
         }
+        return null;
       },
       fields: [
         AFieldText(
           identifier: 'code',
-          label: AppLocalizations.of(context)!.verificationCode,
+          label: AppLocalizations.of(context).verificationCode,
           required: true,
         ),
         AFieldPassword(
           identifier: 'new_password',
-          label: AppLocalizations.of(context)!.newPassword,
+          label: AppLocalizations.of(context).newPassword,
         ),
       ],
       persistent: false,
@@ -182,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations!.welcome),
+        title: Text(localizations.welcome),
         automaticallyImplyLeading: false,
         centerTitle: true,
         actions: [
@@ -224,9 +227,10 @@ class _LoginPageState extends State<LoginPage> {
               AForm<LoginData>(
                 fromJson: (json) => LoginData.fromJson(json),
                 showDefaultAction: false,
-                submitText: AppLocalizations.of(context)!.login,
+                submitText: AppLocalizations.of(context).login,
                 onSubmit: (LoginData data) async {
                   _login(data);
+                  return null;
                 },
                 fields: [
                   AFieldEmail(
@@ -258,18 +262,19 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _isLoading
                               ? null
                               : () {
-                            final formState = AForm.maybeOf(context);
-                            if (formState == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(localizations.formNotFound),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else {
-                              formState.onSubmit();
-                            }
-                          },
+                                  final formState = AForm.maybeOf(context);
+                                  if (formState == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text(localizations.formNotFound),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  } else {
+                                    formState.onSubmit();
+                                  }
+                                },
                           text: localizations.login,
                           loading: _isLoading,
                           textColor: DefaultColors.textColorButton,
@@ -292,10 +297,10 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           children: [
                             TextSpan(
-                              text: AppLocalizations.of(context)!.noAccount,
+                              text: AppLocalizations.of(context).noAccount,
                             ),
                             TextSpan(
-                              text: AppLocalizations.of(context)!.signUp,
+                              text: AppLocalizations.of(context).signUp,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

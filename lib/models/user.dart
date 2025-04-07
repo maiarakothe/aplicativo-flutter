@@ -1,4 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:teste/core/http_utils.dart';
+import 'package:teste/models/account.dart';
 
 part 'generated/user.freezed.dart';
 part 'generated/user.g.dart';
@@ -10,9 +12,8 @@ class User with _$User {
     required String name,
     required String email,
     required String password,
-    required List<String> permissions,
-    @JsonKey(name: 'account_id') required int? accountId,
+    required List<PermissionData> permissions,
   }) = _User;
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(JSON json) => _$UserFromJson(json);
 }

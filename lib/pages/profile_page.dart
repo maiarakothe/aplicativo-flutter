@@ -46,9 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations
-              .of(context)
-              .somethingWentWrong),
+          content: Text(AppLocalizations.of(context).somethingWentWrong),
           backgroundColor: Colors.red,
         ),
       );
@@ -58,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _showEditProfileDialog() async {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
 
     await AFormDialog.show<Map<String, dynamic>>(
       context,
@@ -87,11 +85,12 @@ class _ProfilePageState extends State<ProfilePage> {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.somethingWentWrong),
+              content: Text(AppLocalizations.of(context).somethingWentWrong),
               backgroundColor: Colors.red,
             ),
           );
         }
+        return null;
       },
       fields: [
         AFieldName(
@@ -140,25 +139,26 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<bool> _showLogoutDialog(BuildContext context) async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).confirmLogout),
-        content: Text(AppLocalizations.of(context).areYouSureLogout),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalizations.of(context).cancel),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(AppLocalizations.of(context).confirmLogout),
+            content: Text(AppLocalizations.of(context).areYouSureLogout),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(AppLocalizations.of(context).cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(
+                  AppLocalizations.of(context).logout,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              AppLocalizations.of(context).logout,
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   @override
@@ -187,11 +187,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     items: const [
                       DropdownMenuItem(
                         value: Locale('en'),
-                        child: Text('English', style: TextStyle(color: Colors.white)),
+                        child: Text('English',
+                            style: TextStyle(color: Colors.white)),
                       ),
                       DropdownMenuItem(
                         value: Locale('pt'),
-                        child: Text('Português', style: TextStyle(color: Colors.white)),
+                        child: Text('Português',
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -204,52 +206,57 @@ class _ProfilePageState extends State<ProfilePage> {
               body: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 60),
-                    Icon(
-                      Icons.account_circle,
-                      size: 160,
-                      color: DefaultColors.backgroundButton,
-                    ),
-                    SizedBox(height: 60),
-                    Text(
-                      _profileData?.name ?? 'Nome não disponível',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      _profileData?.email ?? 'Email não disponível',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _showEditProfileDialog,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: DefaultColors.backgroundButton,
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                        textStyle: TextStyle(fontSize: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 60),
+                          Icon(
+                            Icons.account_circle,
+                            size: 160,
+                            color: DefaultColors.backgroundButton,
+                          ),
+                          SizedBox(height: 60),
+                          Text(
+                            _profileData?.name ?? 'Nome não disponível',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            _profileData?.email ?? 'Email não disponível',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.normal),
+                          ),
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: _showEditProfileDialog,
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: DefaultColors.backgroundButton,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 24),
+                              textStyle: TextStyle(fontSize: 20),
+                            ),
+                            child:
+                                Text(AppLocalizations.of(context).editProfile),
+                          ),
+                          SizedBox(height: 40),
+                          ElevatedButton(
+                            onPressed: () => _logout(context),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: DefaultColors.backgroundButton,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 24),
+                              textStyle: TextStyle(fontSize: 20),
+                            ),
+                            child: Text(AppLocalizations.of(context).logout),
+                          ),
+                          SizedBox(height: 60),
+                        ],
                       ),
-                      child: Text(AppLocalizations.of(context)!.editProfile),
                     ),
-                    SizedBox(height: 40),
-                    ElevatedButton(
-                      onPressed: () => _logout(context),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: DefaultColors.backgroundButton,
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                        textStyle:TextStyle(fontSize: 20),
-                      ),
-                      child: Text(AppLocalizations.of(context).logout),
-                    ),
-                    SizedBox(height: 60),
-                  ],
-                ),
-              ),
             ),
           ),
         ],

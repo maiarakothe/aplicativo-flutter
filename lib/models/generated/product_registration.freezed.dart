@@ -21,12 +21,14 @@ ProductRegistrationData _$ProductRegistrationDataFromJson(
 
 /// @nodoc
 mixin _$ProductRegistrationData {
+  int get id => throw _privateConstructorUsedError;
+  String get name =>
+      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  @JsonKey(name: 'category_type')
   String? get category => throw _privateConstructorUsedError;
   int? get quantity => throw _privateConstructorUsedError;
-  int get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get url => throw _privateConstructorUsedError;
   double get value => throw _privateConstructorUsedError;
+  String? get url => throw _privateConstructorUsedError;
 
   /// Serializes this ProductRegistrationData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,12 +47,12 @@ abstract class $ProductRegistrationDataCopyWith<$Res> {
       _$ProductRegistrationDataCopyWithImpl<$Res, ProductRegistrationData>;
   @useResult
   $Res call(
-      {String? category,
-      int? quantity,
-      int id,
+      {int id,
       String name,
-      String url,
-      double value});
+      @JsonKey(name: 'category_type') String? category,
+      int? quantity,
+      double value,
+      String? url});
 }
 
 /// @nodoc
@@ -69,22 +71,14 @@ class _$ProductRegistrationDataCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? category = freezed,
-    Object? quantity = freezed,
     Object? id = null,
     Object? name = null,
-    Object? url = null,
+    Object? category = freezed,
+    Object? quantity = freezed,
     Object? value = null,
+    Object? url = freezed,
   }) {
     return _then(_value.copyWith(
-      category: freezed == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String?,
-      quantity: freezed == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int?,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -93,14 +87,22 @@ class _$ProductRegistrationDataCopyWithImpl<$Res,
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
+      quantity: freezed == quantity
+          ? _value.quantity
+          : quantity // ignore: cast_nullable_to_non_nullable
+              as int?,
       value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as double,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -115,12 +117,12 @@ abstract class _$$ProductRegistrationDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? category,
-      int? quantity,
-      int id,
+      {int id,
       String name,
-      String url,
-      double value});
+      @JsonKey(name: 'category_type') String? category,
+      int? quantity,
+      double value,
+      String? url});
 }
 
 /// @nodoc
@@ -138,22 +140,14 @@ class __$$ProductRegistrationDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? category = freezed,
-    Object? quantity = freezed,
     Object? id = null,
     Object? name = null,
-    Object? url = null,
+    Object? category = freezed,
+    Object? quantity = freezed,
     Object? value = null,
+    Object? url = freezed,
   }) {
     return _then(_$ProductRegistrationDataImpl(
-      category: freezed == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String?,
-      quantity: freezed == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int?,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -162,14 +156,22 @@ class __$$ProductRegistrationDataImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
+      quantity: freezed == quantity
+          ? _value.quantity
+          : quantity // ignore: cast_nullable_to_non_nullable
+              as int?,
       value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as double,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -178,32 +180,34 @@ class __$$ProductRegistrationDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ProductRegistrationDataImpl implements _ProductRegistrationData {
   const _$ProductRegistrationDataImpl(
-      {this.category,
-      this.quantity,
-      required this.id,
+      {required this.id,
       required this.name,
-      required this.url,
-      required this.value});
+      @JsonKey(name: 'category_type') this.category,
+      this.quantity,
+      required this.value,
+      this.url});
 
   factory _$ProductRegistrationDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductRegistrationDataImplFromJson(json);
 
   @override
+  final int id;
+  @override
+  final String name;
+// ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'category_type')
   final String? category;
   @override
   final int? quantity;
   @override
-  final int id;
-  @override
-  final String name;
-  @override
-  final String url;
-  @override
   final double value;
+  @override
+  final String? url;
 
   @override
   String toString() {
-    return 'ProductRegistrationData(category: $category, quantity: $quantity, id: $id, name: $name, url: $url, value: $value)';
+    return 'ProductRegistrationData(id: $id, name: $name, category: $category, quantity: $quantity, value: $value, url: $url)';
   }
 
   @override
@@ -211,20 +215,20 @@ class _$ProductRegistrationDataImpl implements _ProductRegistrationData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ProductRegistrationDataImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.url, url) || other.url == url) &&
-            (identical(other.value, value) || other.value == value));
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.url, url) || other.url == url));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, category, quantity, id, name, url, value);
+      Object.hash(runtimeType, id, name, category, quantity, value, url);
 
   /// Create a copy of ProductRegistrationData
   /// with the given fields replaced by the non-null parameter values.
@@ -245,28 +249,29 @@ class _$ProductRegistrationDataImpl implements _ProductRegistrationData {
 
 abstract class _ProductRegistrationData implements ProductRegistrationData {
   const factory _ProductRegistrationData(
-      {final String? category,
-      final int? quantity,
-      required final int id,
+      {required final int id,
       required final String name,
-      required final String url,
-      required final double value}) = _$ProductRegistrationDataImpl;
+      @JsonKey(name: 'category_type') final String? category,
+      final int? quantity,
+      required final double value,
+      final String? url}) = _$ProductRegistrationDataImpl;
 
   factory _ProductRegistrationData.fromJson(Map<String, dynamic> json) =
       _$ProductRegistrationDataImpl.fromJson;
 
   @override
+  int get id;
+  @override
+  String get name; // ignore: invalid_annotation_target
+  @override
+  @JsonKey(name: 'category_type')
   String? get category;
   @override
   int? get quantity;
   @override
-  int get id;
-  @override
-  String get name;
-  @override
-  String get url;
-  @override
   double get value;
+  @override
+  String? get url;
 
   /// Create a copy of ProductRegistrationData
   /// with the given fields replaced by the non-null parameter values.

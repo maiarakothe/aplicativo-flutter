@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../core/http_utils.dart';
 import 'api_base_module.dart';
+
 class ProductAPI extends BaseModuleAPI {
   ProductAPI(super.api);
 
@@ -13,7 +14,7 @@ class ProductAPI extends BaseModuleAPI {
     required int accountId,
   }) async {
     final response = await requestWrapper(
-          () => api.dio.post(
+      () => api.dio.post(
         '/product',
         queryParameters: {'account_id': accountId},
         data: jsonEncode({
@@ -28,9 +29,10 @@ class ProductAPI extends BaseModuleAPI {
     debugPrint('Resposta: ${response.data}');
   }
 
-  Future<List<Map<String, dynamic>>> getAllProducts({required int accountId}) async {
+  Future<List<Map<String, dynamic>>> getAllProducts(
+      {required int accountId}) async {
     final response = await requestWrapper(
-          () => api.dio.get(
+      () => api.dio.get(
         '/products',
         queryParameters: {
           'account_id': accountId,
@@ -43,7 +45,7 @@ class ProductAPI extends BaseModuleAPI {
 
   Future<Map<String, dynamic>> getProductById(int productId) async {
     final response = await requestWrapper(
-          () => api.dio.get('/product/$productId'),
+      () => api.dio.get('/product/$productId'),
     );
     return Map<String, dynamic>.from(response.data);
   }
@@ -64,7 +66,7 @@ class ProductAPI extends BaseModuleAPI {
     };
 
     await requestWrapper(
-          () => api.dio.patch(
+      () => api.dio.patch(
         '/product/update',
         queryParameters: {
           'product_id': id,
@@ -77,7 +79,7 @@ class ProductAPI extends BaseModuleAPI {
 
   Future<void> deleteProduct(int productId) async {
     await requestWrapper(
-          () => api.dio.delete('/product/$productId'),
+      () => api.dio.delete('/product/$productId'),
     );
   }
 }

@@ -5,7 +5,6 @@ import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:flutter/material.dart';
 import 'package:teste/core/colors.dart';
-import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
 import 'package:teste/providers/theme_provider.dart';
@@ -70,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -176,10 +175,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       children: [
                         TextSpan(
-                          text: AppLocalizations.of(context)!.alreadyHaveAccount,
+                          text: AppLocalizations.of(context).alreadyHaveAccount,
                         ),
                         TextSpan(
-                          text: AppLocalizations.of(context)!.doLogin,
+                          text: AppLocalizations.of(context).doLogin,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),

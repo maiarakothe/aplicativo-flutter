@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 
 import 'models/account.dart';
 
-  Account? selectedAccount;
-class Configs {
+Account? selectedAccount;
 
+class Configs {
   // BorderRadius
   static BorderRadius radiusBorder = BorderRadius.circular(16);
 

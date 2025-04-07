@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import '../core/http_utils.dart';
+
+import '../configs.dart';
 import '../models/account.dart';
 import 'api.dart';
-import 'api_base_module.dart';
-import '../configs.dart';
 
 class AccountAPI {
   final API api;
@@ -16,6 +13,7 @@ class AccountAPI {
       final response = await api.dio.get(
         '/accounts',
       );
+      selectedAccount = Account.fromJson(response.data[0]);
       return Account.fromJson(response.data[0]);
     } on DioException catch (e) {
       print('[ERRO AO BUSCAR CONTAS]');
