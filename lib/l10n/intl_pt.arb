@@ -61,5 +61,17 @@
   "newPassword": "Nova Senha",
   "editProfile": "Editar perfil",
   "oldPassword": "Senha antiga",
-  "profileUpdated": "Perfil atualizado"
+  "profileUpdated": "Perfil atualizado",
+  "users": "Usuários",
+  "permissions": "Permissões",
+  "userScreen": "Tela de Usuários",
+  "productForm": "Formulário de Produto",
+  "productEdit": "Edição de Produto",
+  "unknownPermission": "Desconhecido",
+  "createUser": "Criar Usuário",
+  "addUser": "Adicionar usuário",
+  "search": "Pesquisar",
+  "userRegisteredSuccessfully": "Usuário registrado com sucesso!",
+  "noUsersFound": "Nenhum usuário encontrado",
+  "productList": "Lista de produtos"
 }

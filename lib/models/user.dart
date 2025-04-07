@@ -5,11 +5,13 @@ part 'generated/user.g.dart';
 
 @freezed
 class User with _$User {
-  const factory User({
+  factory User({
+    required int id,
     required String name,
     required String email,
+    String? password,
+    required List<String> permissions,
   }) = _User;
 
-  factory User.fromJson(Map<String, dynamic> json) =>
-      _$UserFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

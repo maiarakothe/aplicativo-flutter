@@ -8,7 +8,7 @@ import 'package:teste/core/colors.dart';
 import 'package:teste/configs.dart';
 import 'package:teste/theme_toggle_button.dart';
 import 'package:provider/provider.dart';
-import 'package:teste/core/theme_provider.dart';
+import 'package:teste/providers/theme_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/routes.dart';
 import '../models/register.dart';

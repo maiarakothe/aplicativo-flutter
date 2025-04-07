@@ -61,5 +61,17 @@
   "newPassword": "New Password",
   "editProfile": "Edit profile",
   "oldPassword": "Old password",
-  "profileUpdated": "Profile updated"
+  "profileUpdated": "Profile updated",
+  "users": "Users",
+  "permissions": "Permissions",
+  "userScreen": "User screen",
+  "productForm": "Product form",
+  "productEdit": "Product edit",
+  "unknownPermission": "Unknown",
+  "createUser": "Create User",
+  "addUser": "Add user",
+  "search": "Search",
+  "userRegisteredSuccessfully": "User registered successfully",
+  "noUsersFound": "No users found",
+  "productList": "Product list"
 }

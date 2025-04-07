@@ -1,43 +1,51 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:awidgets/fields/a_field_money.dart';
 import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/fields/a_field_url.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
-import 'package:flutter/material.dart';
-import 'package:teste/core/colors.dart';
-import 'package:teste/pages/product_list.dart';
-import 'package:teste/theme_toggle_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:teste/pages/profile_page.dart';
-import '../models/product_registration.dart';
 import '../api/api.dart';
-import 'package:dio/dio.dart';
+import '../core/app_drawer.dart';
+import '../models/product_registration.dart';
 import '../api/api_product.dart';
+import '../theme_toggle_button.dart';
 
 class ProductRegistrationPage extends StatefulWidget {
-  final void Function(Locale) changeLanguage;
-  final ProductAPI _productAPI = ProductAPI(API());
-  final ValueNotifier<List<ProductRegistrationData>> productsNotifier = ValueNotifier([]);
+  final void Function(Locale locale) changeLanguage;
 
-  ProductRegistrationPage({super.key, required this.changeLanguage});
+  const ProductRegistrationPage({super.key, required this.changeLanguage});
 
   @override
-  _ProductRegistrationPageState createState() => _ProductRegistrationPageState();
+  State<ProductRegistrationPage> createState() => _ProductRegistrationPageState();
 }
 
 class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
-  int _selectedIndex = 0;
+  final ProductAPI _api = ProductAPI(API());
+  final ValueNotifier<List<ProductRegistrationData>> _productsNotifier = ValueNotifier([]);
 
   @override
-  void initState() {
-    super.initState();
-    _loadProducts();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    if (args != null && args['productId'] != null) {
+      final productId = args['productId'];
+      if (productId is int) {
+        _openProductForEditing(productId);
+      } else if (productId is String) {
+        _openProductForEditing(int.tryParse(productId) ?? -1);
+      }
+    } else {
+      _loadProducts();
+    }
   }
+
 
   Future<void> _loadProducts() async {
     try {
-      final products = await widget._productAPI.getAllProducts();
-      print('Produtos carregados: $products');
-      widget.productsNotifier.value = products.map((p) => ProductRegistrationData.fromJson(p)).toList();
+      final products = await _api.getAllProducts();
+      _productsNotifier.value = products.map((p) => ProductRegistrationData.fromJson(p)).toList();
     } catch (e) {
       print('Erro ao carregar produtos: $e');
       String errorMessage = "Erro ao tentar carregar produtos.";
@@ -48,14 +56,29 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           errorMessage = "Erro de validação.";
         }
       }
+    }
+  }
+
+  Future<void> _openProductForEditing(int id) async {
+    try {
+      final json = await _api.getProductById(id);
+      final product = ProductRegistrationData.fromJson(json);
+
+      await _loadProducts();
+
+      final index = _productsNotifier.value.indexWhere((p) => p.id == product.id);
+      if (index != -1) {
+        _showProductForm(editingIndex: index);
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+          SnackBar(content: Text("Erro"), backgroundColor: Colors.red),
       );
     }
   }
 
-  void _showProductDialog({int? editingIndex}) async {
-    ProductRegistrationData? initialProduct = editingIndex != null ? widget.productsNotifier.value[editingIndex] : null;
+  void _showProductForm({int? editingIndex}) async {
+    ProductRegistrationData? initial = editingIndex != null ? _productsNotifier.value[editingIndex] : null;
 
     await AFormDialog.show<Map<String, dynamic>>(
       context,
@@ -66,29 +89,25 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           ? AppLocalizations.of(context)!.edit
           : AppLocalizations.of(context)!.register,
       fromJson: (json) => json as Map<String, dynamic>,
-      initialData: initialProduct?.toJson(),
+      initialData: initial?.toJson(),
       onSubmit: (data) async {
+        final price = double.tryParse(
+            data['product_price'].replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+
+        final product = ProductRegistrationData(
+          id: initial?.id ?? 0,
+          name: data['productName'],
+          url: data['url'],
+          value: price,
+        );
+
         try {
-          print("Dados recebidos no formulário:");
-          print(data);
-
-          final price = double.tryParse(data['product_price']
-              .replaceAll('.', '')
-              .replaceAll(',', '.')) ?? 0.0;
-
-          final newProduct = ProductRegistrationData(
-            id: initialProduct?.id ?? 0,
-            name: data['productName'],
-            url: data['url'],
-            value: price,
-          );
-
           if (editingIndex != null) {
-            await widget._productAPI.updateProduct(
-              id: newProduct.id ?? 0,
-              name: newProduct.name,
-              value: newProduct.value,
-              url: newProduct.url,
+            await _api.updateProduct(
+              id: product.id!,
+              name: product.name,
+              value: product.value,
+              url: product.url,
             );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -97,10 +116,10 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               ),
             );
           } else {
-            await widget._productAPI.createProduct(
-              name: newProduct.name,
-              value: newProduct.value,
-              url: newProduct.url,
+            await _api.createProduct(
+              name: product.name,
+              value: product.value,
+              url: product.url,
             );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -109,13 +128,11 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
               ),
             );
           }
-
-          print("Produto salvo com sucesso!");
           _loadProducts();
         } catch (e) {
-          print('Erro ao salvar produto: $e');
+          print(e);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erro ao salvar produto: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text("Erro ao salvar produto"), backgroundColor: Colors.red),
           );
         }
       },
@@ -124,136 +141,64 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
           identifier: 'productName',
           label: AppLocalizations.of(context)!.productName,
           required: true,
-          initialValue: initialProduct?.name ?? '',
+          initialValue: initial?.name ?? '',
         ),
         const SizedBox(height: 16),
         AFieldMoney(
           identifier: 'product_price',
           label: AppLocalizations.of(context)!.productPrice,
           required: true,
-          initialValue: initialProduct?.value.toStringAsFixed(2) ?? '',
+          initialValue: initial?.value.toStringAsFixed(2) ?? '',
         ),
         const SizedBox(height: 16),
         AFieldURL(
           identifier: 'url',
           label: AppLocalizations.of(context)!.productImageURL,
           required: true,
-          initialValue: initialProduct?.url ?? '',
+          initialValue: initial?.url ?? '',
         ),
       ],
     );
   }
 
-  void _editProduct(int index) {
-    _showProductDialog(editingIndex: index);
-  }
-
-  void _confirmDelete(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Center(
-            child: Text(
-              AppLocalizations.of(context).confirmDelete,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          content: Text(AppLocalizations.of(context).areYouSureDelete),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(AppLocalizations.of(context).cancel)
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await widget._productAPI.deleteProduct(
-                      widget.productsNotifier.value[index].id
-                  );
-                  _loadProducts();
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(AppLocalizations.of(context)!.productDeletedSuccessfully),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } catch (e) {
-                  print('Erro ao excluir produto: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Erro ao excluir produto: $e'), backgroundColor: Colors.red),
-                  );
-                }
-              },
-              child: Text(AppLocalizations.of(context).delete, style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          DropdownButton<Locale>(
-            icon: Icon(Icons.language, color: Colors.white),
-            underline: SizedBox.shrink(),
-            dropdownColor: Colors.black,
-            onChanged: (Locale? newValue) {
-              if (newValue != null) {
-                widget.changeLanguage(newValue);
-              }
-            },
-            items: [
-              DropdownMenuItem(value: Locale('en'), child: Text('English', style: TextStyle(color: Colors.white))),
-              DropdownMenuItem(value: Locale('pt'), child: Text('Português', style: TextStyle(color: Colors.white))),
-            ],
-          ),
-          ThemeToggleButton(),
-        ],
-      ),
-      body: _selectedIndex == 0
-          ? Center(child: Text(AppLocalizations.of(context)!.pressButtonToAddProduct, style: const TextStyle(fontSize: 16)))
-          : _selectedIndex == 1
-          ? ShowProductPage(
-            productsNotifier: widget.productsNotifier,
-            onEdit: _editProduct,
-            onDelete: _confirmDelete,
-      )
-          : ProfilePage(),
-      floatingActionButton: _selectedIndex == 0
-          ? FloatingActionButton(
-        onPressed: () => _showProductDialog(),
-        backgroundColor: DefaultColors.backgroundButton,
-        child: Icon(Icons.add, color: DefaultColors.textColorButton),
-      )
-          : null,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.add),
-            label: AppLocalizations.of(context)!.register,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.list),
-            label: AppLocalizations.of(context)!.products,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.account_circle),
-            label: AppLocalizations.of(context)!.profile,
+      body: Row(
+        children: [
+          const AppDrawer(),
+          const VerticalDivider(width: 1),
+          Expanded(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(AppLocalizations.of(context)!.registerProduct),
+                automaticallyImplyLeading: false,
+                actions: [
+                  DropdownButton<Locale>(
+                    icon: const Icon(Icons.language, color: Colors.white),
+                    underline: const SizedBox.shrink(),
+                    dropdownColor: Colors.black,
+                    onChanged: (Locale? locale) {
+                      if (locale != null) widget.changeLanguage(locale);
+                    },
+                    items: const [
+                      DropdownMenuItem(value: Locale('en'), child: Text('English', style: TextStyle(color: Colors.white))),
+                      DropdownMenuItem(value: Locale('pt'), child: Text('Português', style: TextStyle(color: Colors.white))),
+                    ],
+                  ),
+                  ThemeToggleButton(),
+                ],
+              ),
+              body: const Center(
+                child: Text('Clique no botão para cadastrar um produto'),
+              ),
+              floatingActionButton: FloatingActionButton.extended(
+                onPressed: () => _showProductForm(),
+                icon: const Icon(Icons.add),
+                label: Text(AppLocalizations.of(context)!.registerProduct),
+              ),
+            ),
           ),
         ],
       ),

@@ -20,8 +20,11 @@ User _$UserFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$User {
+  int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
+  List<String> get permissions => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -37,7 +40,12 @@ abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res, User>;
   @useResult
-  $Res call({String name, String email});
+  $Res call(
+      {int id,
+      String name,
+      String email,
+      String? password,
+      List<String> permissions});
 }
 
 /// @nodoc
@@ -55,10 +63,17 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? email = null,
+    Object? password = freezed,
+    Object? permissions = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -67,6 +82,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
+      permissions: null == permissions
+          ? _value.permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -78,7 +101,12 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       __$$UserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String email});
+  $Res call(
+      {int id,
+      String name,
+      String email,
+      String? password,
+      List<String> permissions});
 }
 
 /// @nodoc
@@ -93,10 +121,17 @@ class __$$UserImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? email = null,
+    Object? password = freezed,
+    Object? permissions = null,
   }) {
     return _then(_$UserImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -105,6 +140,14 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
+      permissions: null == permissions
+          ? _value._permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -112,19 +155,36 @@ class __$$UserImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$UserImpl implements _User {
-  const _$UserImpl({required this.name, required this.email});
+  _$UserImpl(
+      {required this.id,
+      required this.name,
+      required this.email,
+      this.password,
+      required final List<String> permissions})
+      : _permissions = permissions;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
 
   @override
+  final int id;
+  @override
   final String name;
   @override
   final String email;
+  @override
+  final String? password;
+  final List<String> _permissions;
+  @override
+  List<String> get permissions {
+    if (_permissions is EqualUnmodifiableListView) return _permissions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_permissions);
+  }
 
   @override
   String toString() {
-    return 'User(name: $name, email: $email)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions)';
   }
 
   @override
@@ -132,13 +192,19 @@ class _$UserImpl implements _User {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UserImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.email, email) || other.email == email));
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
+            const DeepCollectionEquality()
+                .equals(other._permissions, _permissions));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, email);
+  int get hashCode => Object.hash(runtimeType, id, name, email, password,
+      const DeepCollectionEquality().hash(_permissions));
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -157,15 +223,25 @@ class _$UserImpl implements _User {
 }
 
 abstract class _User implements User {
-  const factory _User(
-      {required final String name, required final String email}) = _$UserImpl;
+  factory _User(
+      {required final int id,
+      required final String name,
+      required final String email,
+      final String? password,
+      required final List<String> permissions}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
   @override
+  int get id;
+  @override
   String get name;
   @override
   String get email;
+  @override
+  String? get password;
+  @override
+  List<String> get permissions;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.

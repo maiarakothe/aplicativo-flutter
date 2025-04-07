@@ -7,7 +7,7 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:teste/api/api_product.dart';
 
-import '../models/user.dart';
+import '../models/profile.dart';
 import './api_interceptor_web.dart' if (dart.library.io) './api_interceptor_web.dart';
 import 'api_login.dart';
 import 'api_register.dart';
@@ -67,7 +67,7 @@ class API {
 
   Codec<String, String> stringToBase64 = utf8.fuse(base64Url);
 
-  Future<User?> getUserData() async {
+  Future<Profile?> getUserData() async {
     List<Cookie> cookies = await _cookies.getCookies();
     for (Cookie cookie in cookies) {
       if (cookie.name == 'token') {
@@ -80,7 +80,7 @@ class API {
           String encoded = stringToBase64.decode(payload);
           Map<String, dynamic> userData = json.decode(encoded);
           try {
-            return User.fromJson(userData);
+            return Profile.fromJson(userData);
           } catch (e, stack) {
             if (kDebugMode) {
               print(e);
