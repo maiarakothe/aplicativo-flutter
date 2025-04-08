@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:teste/configs.dart';
 
 import '../core/http_utils.dart';
 import 'api_base_module.dart';
@@ -43,9 +44,11 @@ class ProductAPI extends BaseModuleAPI {
     return List<Map<String, dynamic>>.from(response.data);
   }
 
-  Future<Map<String, dynamic>> getProductById(int productId) async {
+  Future<Map<String, dynamic>> getProductById(int productId, {required int accountId}) async {
     final response = await requestWrapper(
-      () => api.dio.get('/product/$productId'),
+          () => api.dio.get('/product/$productId',
+        queryParameters: {'account_id': selectedAccount!.id},
+      ),
     );
     return Map<String, dynamic>.from(response.data);
   }
@@ -55,7 +58,7 @@ class ProductAPI extends BaseModuleAPI {
     required String name,
     required String url,
     required double value,
-    int? accountId,
+    required int accountId,
   }) async {
     final Map<String, dynamic> data = {
       "name": name,
@@ -70,16 +73,18 @@ class ProductAPI extends BaseModuleAPI {
         '/product/update',
         queryParameters: {
           'product_id': id,
-          'account_id': accountId ?? null,
+          'account_id': accountId,
         },
         data: jsonEncode(data),
       ),
     );
   }
 
-  Future<void> deleteProduct(int productId) async {
+  Future<void> deleteProduct(int productId, {required int accountId}) async {
     await requestWrapper(
-      () => api.dio.delete('/product/$productId'),
+          () => api.dio.delete('/product/$productId',
+        queryParameters: {'account_id': selectedAccount!.id},
+      ),
     );
   }
 }

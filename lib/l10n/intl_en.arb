@@ -74,5 +74,6 @@
   "userRegisteredSuccessfully": "User registered successfully",
   "noUsersFound": "No users found",
   "productList": "Product list",
-  "accountManagement": "Account management"
+  "accountManagement": "Account management",
+  "erroProduct": "Error saving product"
 }

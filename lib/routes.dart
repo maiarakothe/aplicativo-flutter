@@ -25,8 +25,11 @@ class Routes {
       case register:
         return MaterialPageRoute(builder: (_) => RegisterPage(changeLanguage: changeLanguage));
       case productRegistration:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final productId = args?['productId'] as int?;
         return MaterialPageRoute(
-            builder: (_) => ProductRegistrationPage(changeLanguage: changeLanguage));
+          builder: (_) => ProductRegistrationPage(changeLanguage: changeLanguage, productId: productId),
+        );
       case productList:
         return MaterialPageRoute(
             builder: (_) => ShowProductPage(changeLanguage: changeLanguage));

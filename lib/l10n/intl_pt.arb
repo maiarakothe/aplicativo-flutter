@@ -74,5 +74,6 @@
   "userRegisteredSuccessfully": "Usuário registrado com sucesso!",
   "noUsersFound": "Nenhum usuário encontrado",
   "productList": "Lista de produtos",
-  "accountManagement": "Gerenciamento de contas"
+  "accountManagement": "Gerenciamento de contas",
+  "erroProduct": "Erro ao salvar produto"
 }

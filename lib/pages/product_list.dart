@@ -25,12 +25,11 @@ class _ShowProductPageState extends State<ShowProductPage> {
       ValueNotifier([]);
   final ProductAPI _api = ProductAPI(API());
 
-  List<ProductRegistrationData> products = [];
-
   @override
   void initState() {
     super.initState();
     _productsNotifier.addListener(_reloadTable);
+    _loadProducts();
   }
 
   @override
@@ -43,18 +42,16 @@ class _ShowProductPageState extends State<ShowProductPage> {
     _tableKey.currentState?.reload();
   }
 
-  Future<List<ProductRegistrationData>> _loadProducts() async {
+  Future<void> _loadProducts() async {
     try {
       final result = await _api.getAllProducts(accountId: selectedAccount!.id);
-      setState(() {
-        products = result
-            .map((json) => ProductRegistrationData.fromJson(json))
-            .toList();
-      });
+      final loadedProducts = result
+          .map((json) => ProductRegistrationData.fromJson(json))
+          .toList();
+      _productsNotifier.value = loadedProducts;
     } catch (e) {
       _showErrorSnackBar('Erro ao carregar produtos: $e');
     }
-    return products;
   }
 
   void _showErrorSnackBar(String message) {
@@ -69,12 +66,14 @@ class _ShowProductPageState extends State<ShowProductPage> {
     );
   }
 
-  void _editProduct(int id) {
+  void _editProduct(ProductRegistrationData product) {
     Navigator.pushNamed(
       context,
       '/product_registration',
-      arguments: {'productId': id},
-    );
+      arguments: {'productId': product.id},
+    ).then((_) {
+      _loadProducts();
+    });
   }
 
   void _confirmDelete(int index) {
@@ -93,11 +92,15 @@ class _ShowProductPageState extends State<ShowProductPage> {
           TextButton(
             onPressed: () async {
               try {
-                await _api.deleteProduct(product.id);
+                await _api.deleteProduct(product.id, accountId: selectedAccount!.id);
                 Navigator.pop(context);
                 _showSuccessSnackBar(
                     AppLocalizations.of(context).productDeletedSuccessfully);
-                _loadProducts();
+
+                final updatedList = List<ProductRegistrationData>.from(_productsNotifier.value);
+                updatedList.removeAt(index);
+                _productsNotifier.value = updatedList;
+
               } catch (e) {
                 _showErrorSnackBar('Erro ao excluir produto: $e');
               }
@@ -148,50 +151,59 @@ class _ShowProductPageState extends State<ShowProductPage> {
                   ThemeToggleButton(),
                 ],
               ),
-              body: ATable<ProductRegistrationData>(
-                key: _tableKey,
-                columns: [
-                  ATableColumn(
-                    title: AppLocalizations.of(context).name,
-                    cellBuilder: (_, __, item) => Text(item.name),
-                  ),
-                  ATableColumn(
-                    title: AppLocalizations.of(context).price,
-                    cellBuilder: (_, __, item) =>
-                        Text("R\$ ${item.value.toStringAsFixed(2)}"),
-                  ),
-                  ATableColumn(
-                    title: AppLocalizations.of(context).image,
-                    cellBuilder: (_, __, item) => item.url != null
-                        ? Image.network(item.url!,
+              body: ValueListenableBuilder<List<ProductRegistrationData>>(
+                valueListenable: _productsNotifier,
+                builder: (context, products, child) {
+                  return ATable<ProductRegistrationData>(
+                    key: _tableKey,
+                    columns: [
+                      ATableColumn(
+                        title: AppLocalizations.of(context).name,
+                        cellBuilder: (_, __, item) => Text(item.name),
+                      ),
+                      ATableColumn(
+                        title: AppLocalizations.of(context).price,
+                        cellBuilder: (_, __, item) =>
+                            Text("R\$ ${item.value.toStringAsFixed(2)}"),
+                      ),
+                      ATableColumn(
+                        title: AppLocalizations.of(context).image,
+                        cellBuilder: (_, __, item) => item.url != null
+                            ? Image.network(item.url!,
                             width: 50, height: 50, fit: BoxFit.cover)
-                        : const Icon(Icons.image, size: 50),
-                  ),
-                  ATableColumn(
-                    cellBuilder: (_, __, item) {
-                      final index = _productsNotifier.value.indexOf(item);
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            tooltip: AppLocalizations.of(context).edit,
-                            onPressed: () => _editProduct(item.id),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            tooltip: AppLocalizations.of(context).delete,
-                            onPressed: () => _confirmDelete(index),
-                          ),
-                        ],
-                      );
+                            : const Icon(Icons.image, size: 50),
+                      ),
+                      ATableColumn(
+                        cellBuilder: (_, __, item) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                tooltip: AppLocalizations.of(context).edit,
+                                onPressed: () => _editProduct(item),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                tooltip: AppLocalizations.of(context).delete,
+                                onPressed: () {
+                                  final index = _productsNotifier.value.indexOf(item);
+                                  if (index != -1) {
+                                    _confirmDelete(index);
+                                  }
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                    loadItems: (_, __) async {
+                      return _productsNotifier.value;
                     },
-                  ),
-                ],
-                loadItems: (_, __) async {
-                  return await _loadProducts();
+                    emptyMessage: AppLocalizations.of(context).noProducts,
+                  );
                 },
-                emptyMessage: AppLocalizations.of(context).noProducts,
               ),
             ),
           ),
