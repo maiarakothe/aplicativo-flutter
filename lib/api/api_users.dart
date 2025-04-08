@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:teste/models/account.dart';
+
 import '../models/user.dart';
 import 'api.dart';
 
@@ -8,16 +10,17 @@ class UserAPI {
 
   Future<User> createUser(int accountId, User user) async {
     try {
-      final response = await _api.dio.post(
+      await _api.dio.post(
         '/member',
         queryParameters: {'account_id': accountId},
         data: {
           'name': user.name,
           'email': user.email,
           'password': user.password,
+          'permissions': user.permissions.toJson(),
         },
       );
-      return User.fromJson(response.data);
+      return user.copyWith(id: -1);
     } on DioException catch (e) {
       throw Exception(e.response?.data['detail'] ?? 'Erro ao criar usuário');
     }

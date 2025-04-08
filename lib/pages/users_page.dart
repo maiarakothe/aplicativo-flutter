@@ -16,14 +16,17 @@ import '../api/api_users.dart';
 import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
+import '../models/account.dart';
 import '../models/user.dart';
 import '../providers/user_provider.dart';
 import '../theme_toggle_button.dart';
+import '../models/account_permission.dart';
+
 
 class UsersPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
-  final UserAPI _userAPI = UserAPI(API());
-  UsersPage({super.key, required this.changeLanguage});
+
+  const UsersPage({super.key, required this.changeLanguage});
 
   @override
   State<UsersPage> createState() => _UsersPageState();
@@ -32,39 +35,57 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
-  List<User> allUsers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<UsersProvider>(context, listen: false);
+    provider.loadUsers(selectedAccount!.id);
+  }
 
   Future<List<User>> loadUsers(BuildContext context) async {
-    return allUsers
+    final provider = Provider.of<UsersProvider>(context, listen: false);
+    return provider.users
         .where((u) =>
-            u.name.toLowerCase().contains(searchText.toLowerCase()) ||
-            u.email.toLowerCase().contains(searchText.toLowerCase()))
+    u.name.toLowerCase().contains(searchText.toLowerCase()) ||
+        u.email.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
   }
 
   List<Option> getPermissionOptions(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
-    return [
-      Option(localizations.accountManagement, 1),
-      Option(localizations.userScreen, 2),
-      Option(localizations.productForm, 3),
-    ];
+    final localizations = AppLocalizations.of(context)!;
+    return AccountPermission.values.map((permission) {
+      String translatedPermission;
+      switch (permission) {
+        case AccountPermission.account_management:
+          translatedPermission = localizations.accountManagement;
+          break;
+        case AccountPermission.users:
+          translatedPermission = localizations.userScreen;
+          break;
+        case AccountPermission.add_and_delete_products:
+          translatedPermission = localizations.productForm;
+          break;
+      }
+      return Option(translatedPermission, permission.index);
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final columns = <ATableColumn<User>>[
       ATableColumn<User>(
-        title: AppLocalizations.of(context).name,
+        title: localizations.name,
         cellBuilder: (_, __, user) => Text(user.name),
       ),
       ATableColumn<User>(
-        title: AppLocalizations.of(context).email,
+        title: localizations.email,
         cellBuilder: (_, __, user) => Text(user.email),
       ),
       ATableColumn<User>(
-        title: AppLocalizations.of(context).permissions,
-        cellBuilder: (_, __, user) => Text(user.permissions.join(', ')),
+        title: localizations.permissions,
+        cellBuilder: (_, __, user) => Text('${user.permissions}'),
       ),
     ];
 
@@ -77,7 +98,7 @@ class _UsersPageState extends State<UsersPage> {
             backgroundColor: Theme.of(context).cardColor,
             appBar: AppBar(
               title: Text(
-                AppLocalizations.of(context).users,
+                localizations.users,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               automaticallyImplyLeading: false,
@@ -92,8 +113,8 @@ class _UsersPageState extends State<UsersPage> {
                   items: const [
                     DropdownMenuItem(
                       value: Locale('en'),
-                      child: Text('English',
-                          style: TextStyle(color: Colors.white)),
+                      child:
+                      Text('English', style: TextStyle(color: Colors.white)),
                     ),
                     DropdownMenuItem(
                       value: Locale('pt'),
@@ -118,16 +139,16 @@ class _UsersPageState extends State<UsersPage> {
                       children: [
                         Expanded(
                           child: AFieldSearch(
-                            label: AppLocalizations.of(context).search,
+                            label: localizations.search,
                             onChanged: (value) {
-                              setState(() => searchText = value!);
+                              setState(() => searchText = value ?? '');
                               tableKey.currentState?.reload();
                             },
                           ),
                         ),
                         const SizedBox(width: 12),
                         AButton(
-                          text: AppLocalizations.of(context).addUser,
+                          text: localizations.addUser,
                           landingIcon: Icons.person_add,
                           onPressed: _openUserDialog,
                           color: DefaultColors.circleAvatar,
@@ -156,14 +177,26 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  void _openUserDialog() {
+  void _openUserDialog({User? user}) {
+    final isEdit = user != null;
+
     showDialog(
       context: context,
       builder: (context) {
         return AFormDialog<User>(
-          title: AppLocalizations.of(context).addUser,
+          title: (AppLocalizations.of(context).addUser),
           submitText: AppLocalizations.of(context).save,
           persistent: true,
+          initialData: isEdit
+              ? {
+            'name': user.name,
+            'email': user.email,
+            'password': user.password,
+            'permissions': user.permissions
+                .map((p) => AccountPermission.values.indexOf(p.permission))
+                .toList(),
+          }
+              : null,
           fields: [
             AFieldName(
               label: AppLocalizations.of(context).name,
@@ -187,31 +220,45 @@ class _UsersPageState extends State<UsersPage> {
             ),
           ],
           fromJson: (json) => User(
-            id: 0,
+            id: user?.id ?? 0,
             name: json['name'],
             email: json['email'],
             password: json['password'],
-            permissions: json['permissions'],
+            permissions: (json['permissions'] as List<dynamic>)
+                .map((index) => AccountPermission.values[index as int])
+                .map((permission) =>
+                PermissionData(permission: permission, ptBr: ''))
+                .toList(),
           ),
           onSubmit: (userData) async {
+            final provider = Provider.of<UsersProvider>(context, listen: false);
+            final accountId = selectedAccount!.id;
+
             try {
-              final createdUser = await widget._userAPI.createUser(
-                selectedAccount!.id,
-                userData,
-              );
-              allUsers.add(createdUser);
+              await provider.addUser(accountId, userData);
               return null;
-            } catch (e) {
-              return e.toString();
+            } catch (e, stackTrace) {
+              debugPrint('Erro ao salvar usuário: $e');
+              debugPrintStack(stackTrace: stackTrace);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).genericError),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return '';
             }
           },
+
           onSuccess: () {
             tableKey.currentState?.reload();
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                    AppLocalizations.of(context).userRegisteredSuccessfully),
+                      AppLocalizations.of(context).userRegisteredSuccessfully,
+                ),
                 backgroundColor: DefaultColors.green,
               ),
             );

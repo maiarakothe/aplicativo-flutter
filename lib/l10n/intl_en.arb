@@ -75,5 +75,6 @@
   "noUsersFound": "No users found",
   "productList": "Product list",
   "accountManagement": "Account management",
-  "erroProduct": "Error saving product"
+  "erroProduct": "Error saving product",
+  "genericError": "Error saving user. Please try again."
 }

@@ -75,5 +75,6 @@
   "noUsersFound": "Nenhum usuário encontrado",
   "productList": "Lista de produtos",
   "accountManagement": "Gerenciamento de contas",
-  "erroProduct": "Erro ao salvar produto"
+  "erroProduct": "Erro ao salvar produto",
+  "genericError": "Erro ao salvar usuário. Tente novamente."
 }
