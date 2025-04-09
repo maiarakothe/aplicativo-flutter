@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../configs.dart' as widget;
 import '../routes.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -22,7 +23,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 const Icon(Icons.account_circle, size: 64),
                 const SizedBox(height: 8),
-                Text(local.welcome, style: const TextStyle(fontSize: 18)),
+                Text(widget.selectedAccount?.name ?? '', style: const TextStyle(fontSize: 18)),
               ],
             ),
           ),
