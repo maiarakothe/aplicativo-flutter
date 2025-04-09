@@ -7,10 +7,10 @@ part of '../user.dart';
 // **************************************************************************
 
 _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
-      id: (json['id'] as num).toInt(),
+      id: (json['user_id'] as num).toInt(),
       name: json['name'] as String,
       email: json['email'] as String,
-      password: json['password'] as String,
+      password: json['password'] as String?,
       permissions: (json['permissions'] as List<dynamic>)
           .map((e) => PermissionData.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -18,9 +18,9 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'user_id': instance.id,
       'name': instance.name,
       'email': instance.email,
-      'password': instance.password,
+      if (instance.password case final value?) 'password': value,
       'permissions': instance.permissions.map((e) => e.toJson()).toList(),
     };

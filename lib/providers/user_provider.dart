@@ -1,19 +1,48 @@
 import 'package:dio/src/dio.dart';
 import 'package:flutter/material.dart';
+import '../api/api.dart';
 import '../api/api_users.dart';
+import '../configs.dart';
+import '../models/account_permission.dart';
 import '../models/user.dart';
 
 class UsersProvider extends ChangeNotifier {
   final List<User> _users = [];
+  final UserAPI _userAPI = UserAPI(API());
 
   List<User> get users => _users;
 
-  Future<void> loadUsers(int id) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+  Future<void> loadUsers(int accountId) async {
+    try {
+      final fetchedUsers = await _userAPI.getMembers(accountId);
+      _users.clear();
+      _users.addAll(fetchedUsers);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Erro ao carregar usuários: $e');
+    }
   }
 
   Future<void> addUser(int accountId, User userData) async {
-    _users.add(userData);
-    notifyListeners();
+    try {
+      final newUser = await _userAPI.createUser(accountId, userData);
+      _users.add(newUser);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateUser(int accountId, User user) async {
+    try {
+      final updatedUser = await _userAPI.editMember(accountId: accountId, user: user);
+      final index = _users.indexWhere((u) => u.id == user.id);
+      if (index != -1) {
+        _users[index] = updatedUser;
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }

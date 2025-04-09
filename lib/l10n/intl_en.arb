@@ -76,5 +76,6 @@
   "productList": "Product list",
   "accountManagement": "Account management",
   "erroProduct": "Error saving product",
-  "genericError": "Error saving user. Please try again."
+  "genericError": "Error saving user. Please try again.",
+  "userEditedSuccessfully": "User Edited Successfully"
 }

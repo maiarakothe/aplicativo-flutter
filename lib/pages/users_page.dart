@@ -17,11 +17,10 @@ import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
 import '../models/account.dart';
+import '../models/account_permission.dart';
 import '../models/user.dart';
 import '../providers/user_provider.dart';
 import '../theme_toggle_button.dart';
-import '../models/account_permission.dart';
-
 
 class UsersPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -36,47 +35,65 @@ class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
 
+  final List<PermissionData> allPermissions = [
+    PermissionData(
+      permission: AccountPermission.account_management,
+      ptBr: 'Gerenciamento de contas',
+    ),
+    PermissionData(
+      permission: AccountPermission.users,
+      ptBr: 'Tela de Usuários',
+    ),
+    PermissionData(
+      permission: AccountPermission.add_and_delete_products,
+      ptBr: 'Cadastro e edição de produtos',
+    ),
+  ];
+
+  List<Option> getPermissionOptions(BuildContext context) {
+    return List.generate(
+      allPermissions.length,
+          (index) => Option(allPermissions[index].ptBr, index),
+    );
+  }
+
+  String _getPermissionPtBr(AccountPermission permission) {
+    try {
+      return allPermissions.firstWhere((p) => p.permission == permission).ptBr;
+    } catch (e) {
+      return permission.encoded; // Fallback
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<UsersProvider>(context, listen: false);
-    provider.loadUsers(selectedAccount!.id);
+    _refreshUsers();
   }
+
+  Future<void> _refreshUsers() async {
+    final provider = Provider.of<UsersProvider>(context, listen: false);
+    await provider.loadUsers(selectedAccount!.id);
+    tableKey.currentState?.reload();
+  }
+
 
   Future<List<User>> loadUsers(BuildContext context) async {
     final provider = Provider.of<UsersProvider>(context, listen: false);
-    return provider.users
-        .where((u) =>
-    u.name.toLowerCase().contains(searchText.toLowerCase()) ||
-        u.email.toLowerCase().contains(searchText.toLowerCase()))
-        .toList();
-  }
-
-  List<Option> getPermissionOptions(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
-    return AccountPermission.values.map((permission) {
-      String translatedPermission;
-      switch (permission) {
-        case AccountPermission.account_management:
-          translatedPermission = localizations.accountManagement;
-          break;
-        case AccountPermission.users:
-          translatedPermission = localizations.userScreen;
-          break;
-        case AccountPermission.add_and_delete_products:
-          translatedPermission = localizations.productForm;
-          break;
-      }
-      return Option(translatedPermission, permission.index);
+    await provider.loadUsers(selectedAccount!.id);
+    return provider.users.where((u) {
+      return u.name.toLowerCase().contains(searchText.toLowerCase()) ||
+          u.email.toLowerCase().contains(searchText.toLowerCase());
     }).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
     final columns = <ATableColumn<User>>[
       ATableColumn<User>(
-        title: localizations.name,
+        title: localizations!.name,
         cellBuilder: (_, __, user) => Text(user.name),
       ),
       ATableColumn<User>(
@@ -85,7 +102,32 @@ class _UsersPageState extends State<UsersPage> {
       ),
       ATableColumn<User>(
         title: localizations.permissions,
-        cellBuilder: (_, __, user) => Text('${user.permissions}'),
+        cellBuilder: (_, __, user) => Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          children: user.permissions.map((p) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _getPermissionPtBr(p.permission),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+      ATableColumn<User>(
+        cellBuilder: (_, __, user) => IconButton(
+          icon: const Icon(Icons.edit, color: Colors.blueAccent),
+          tooltip: localizations.edit,
+          onPressed: () => _openUserDialog(user: user),
+        ),
       ),
     ];
 
@@ -184,36 +226,39 @@ class _UsersPageState extends State<UsersPage> {
       context: context,
       builder: (context) {
         return AFormDialog<User>(
-          title: (AppLocalizations.of(context).addUser),
-          submitText: AppLocalizations.of(context).save,
+          title: (AppLocalizations.of(context)!.addUser),
+          submitText: AppLocalizations.of(context)!.save,
           persistent: true,
           initialData: isEdit
               ? {
             'name': user.name,
             'email': user.email,
-            'password': user.password,
+            'password': '',
             'permissions': user.permissions
-                .map((p) => AccountPermission.values.indexOf(p.permission))
+                .map((p) => allPermissions.indexWhere(
+                  (perm) => perm.permission == p.permission,
+            ))
+                .where((i) => i != -1)
                 .toList(),
           }
               : null,
           fields: [
             AFieldName(
-              label: AppLocalizations.of(context).name,
+              label: AppLocalizations.of(context)!.name,
               identifier: 'name',
               required: true,
             ),
             AFieldEmail(
-              label: AppLocalizations.of(context).email,
+              label: AppLocalizations.of(context)!.email,
               identifier: 'email',
               required: true,
             ),
             AFieldPassword(
-              label: AppLocalizations.of(context).password,
+              label: AppLocalizations.of(context)!.password,
               identifier: 'password',
             ),
             AFieldCheckboxList(
-              label: AppLocalizations.of(context).permissions,
+              label: AppLocalizations.of(context)!.permissions,
               identifier: 'permissions',
               options: getPermissionOptions(context),
               minRequired: 1,
@@ -225,9 +270,7 @@ class _UsersPageState extends State<UsersPage> {
             email: json['email'],
             password: json['password'],
             permissions: (json['permissions'] as List<dynamic>)
-                .map((index) => AccountPermission.values[index as int])
-                .map((permission) =>
-                PermissionData(permission: permission, ptBr: ''))
+                .map((index) => allPermissions[index as int])
                 .toList(),
           ),
           onSubmit: (userData) async {
@@ -235,29 +278,32 @@ class _UsersPageState extends State<UsersPage> {
             final accountId = selectedAccount!.id;
 
             try {
-              await provider.addUser(accountId, userData);
+              final userToSave = userData.copyWith(id: user?.id ?? 0);
+              if (isEdit) {
+                await provider.updateUser(accountId, userToSave);
+              } else {
+                await provider.addUser(accountId, userToSave);
+              }
               return null;
-            } catch (e, stackTrace) {
-              debugPrint('Erro ao salvar usuário: $e');
-              debugPrintStack(stackTrace: stackTrace);
-
+            } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context).genericError),
+                  content: Text(AppLocalizations.of(context)!.genericError),
                   backgroundColor: Colors.red,
                 ),
               );
-              return '';
+              return e.toString();
             }
           },
-
-          onSuccess: () {
-            tableKey.currentState?.reload();
+          onSuccess: () async {
+            await _refreshUsers();
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                      AppLocalizations.of(context).userRegisteredSuccessfully,
+                  isEdit
+                      ? AppLocalizations.of(context)!.userEditedSuccessfully
+                      : AppLocalizations.of(context)!.userRegisteredSuccessfully,
                 ),
                 backgroundColor: DefaultColors.green,
               ),
