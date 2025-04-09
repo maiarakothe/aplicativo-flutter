@@ -258,93 +258,109 @@ class _UsersPageState extends State<UsersPage> {
   void _openUserDialog({User? user}) {
     final isEdit = user != null;
 
+    final List<int> selectedPermissionIndexes = isEdit
+        ? user.permissions
+        .map((p) => allPermissions
+        .indexWhere((perm) => perm.permission == p.permission))
+        .where((i) => i != -1)
+        .toList()
+        : [];
+
     showDialog(
       context: context,
       builder: (context) {
-        return AFormDialog<User>(
-          title: isEdit
-              ? AppLocalizations.of(context)!.editUserPermissions
-              : AppLocalizations.of(context)!.addUser,
-          submitText: AppLocalizations.of(context)!.save,
-          persistent: true,
-          initialData: isEdit
-              ? {
-            'name': user.name,
-            'email': user.email,
-            'password': '',
-            'permissions': user.permissions
-                .map((p) => allPermissions.indexWhere(
-                    (perm) => perm.permission == p.permission))
-                .where((i) => i != -1)
-                .toList(),
-          }
-              : null,
-          fields: [
-            if (!isEdit) ...[
-              AFieldName(
-                label: AppLocalizations.of(context)!.name,
-                identifier: 'name',
-                required: true,
-              ),
-              AFieldEmail(
-                label: AppLocalizations.of(context)!.email,
-                identifier: 'email',
-                required: true,
-              ),
-              AFieldPassword(
-                label: AppLocalizations.of(context)!.password,
-                identifier: 'password',
-              ),
-            ],
-            AFieldCheckboxList(
-              label: AppLocalizations.of(context)!.permissions,
-              identifier: 'permissions',
-              options: getPermissionOptions(context),
-              minRequired: 1,
-            ),
-          ],
-          fromJson: (json) => User(
-            id: user?.id ?? 0,
-            name: json['name'],
-            email: json['email'],
-            password: json['password'],
-            permissions: (json['permissions'] as List<dynamic>)
-                .map((index) => allPermissions[index as int])
-                .toList(),
-          ),
-          onSubmit: (userData) async {
-            final provider = Provider.of<UsersProvider>(context, listen: false);
-            final accountId = selectedAccount!.id;
-            try {
-              final userToSave = userData.copyWith(id: user?.id ?? 0);
-              if (isEdit) {
-                await provider.updateUser(accountId, userToSave);
-              } else {
-                await provider.addUser(accountId, userToSave);
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AFormDialog<User>(
+              title: isEdit
+                  ? AppLocalizations.of(context)!.editUserPermissions
+                  : AppLocalizations.of(context)!.addUser,
+              submitText: AppLocalizations.of(context)!.save,
+              persistent: true,
+              initialData: isEdit
+                  ? {
+                'name': user.name,
+                'email': user.email,
+                'password': '',
+                'permissions': selectedPermissionIndexes,
               }
-              return null;
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(AppLocalizations.of(context)!.genericError),
-                  backgroundColor: Colors.red,
+                  : null,
+              fields: [
+                if (!isEdit) ...[
+                  AFieldName(
+                    label: AppLocalizations.of(context)!.name,
+                    identifier: 'name',
+                    required: true,
+                  ),
+                  AFieldEmail(
+                    label: AppLocalizations.of(context)!.email,
+                    identifier: 'email',
+                    required: true,
+                  ),
+                  AFieldPassword(
+                    label: AppLocalizations.of(context)!.password,
+                    identifier: 'password',
+                  ),
+                ],
+                AFieldCheckboxList(
+                  label: AppLocalizations.of(context)!.permissions,
+                  identifier: 'permissions',
+                  options: getPermissionOptions(context),
+                  minRequired: 1,
+                  initialValue: selectedPermissionIndexes,
+                  onChanged: (newValues) {
+                    setState(() {
+                      selectedPermissionIndexes.clear();
+                      selectedPermissionIndexes.addAll(
+                          newValues!.map((e) => e as int).toList());
+                    });
+                  },
                 ),
-              );
-              return e.toString();
-            }
-          },
-          onSuccess: () async {
-            await _refreshUsers();
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  isEdit
-                      ? AppLocalizations.of(context)!.userEditedSuccessfully
-                      : AppLocalizations.of(context)!.userRegisteredSuccessfully,
-                ),
-                backgroundColor: DefaultColors.green,
+              ],
+              fromJson: (json) => User(
+                id: user?.id ?? 0,
+                name: json['name'],
+                email: json['email'],
+                password: json['password'],
+                permissions: selectedPermissionIndexes
+                    .map((index) => allPermissions[index])
+                    .toList(),
               ),
+              onSubmit: (userData) async {
+                final provider = Provider.of<UsersProvider>(context, listen: false);
+                final accountId = selectedAccount!.id;
+                try {
+                  final userToSave = userData.copyWith(id: user?.id ?? 0, permissions: selectedPermissionIndexes.map((index) => allPermissions[index]).toList());
+                  if (isEdit) {
+                    await provider.updateUser(accountId, userToSave);
+                  } else {
+                    await provider.addUser(accountId, userToSave);
+                  }
+                  return null;
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.genericError),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return e.toString();
+                }
+              },
+              onSuccess: () async {
+                await _refreshUsers();
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isEdit
+                          ? AppLocalizations.of(context)!.userEditedSuccessfully
+                          : AppLocalizations.of(context)!.userRegisteredSuccessfully,
+                    ),
+                    backgroundColor: DefaultColors.green,
+                  ),
+                );
+              },
             );
           },
         );

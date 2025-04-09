@@ -51,11 +51,6 @@ class UsersProvider extends ChangeNotifier {
       accountId: accountId,
       isActive: isActive,
     );
-
-    final index = _users.indexWhere((u) => u.id == user.id);
-    if (index != -1) {
-      _users[index] = user.copyWith(isActive: isActive);
-      notifyListeners();
-    }
   }
+
 }
