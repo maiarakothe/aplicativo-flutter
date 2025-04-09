@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:teste/core/http_utils.dart';
 import 'package:teste/models/account.dart';
-
 part 'generated/user.freezed.dart';
 part 'generated/user.g.dart';
 

@@ -243,20 +243,22 @@ class _UsersPageState extends State<UsersPage> {
           }
               : null,
           fields: [
-            AFieldName(
-              label: AppLocalizations.of(context)!.name,
-              identifier: 'name',
-              required: true,
-            ),
-            AFieldEmail(
-              label: AppLocalizations.of(context)!.email,
-              identifier: 'email',
-              required: true,
-            ),
-            AFieldPassword(
-              label: AppLocalizations.of(context)!.password,
-              identifier: 'password',
-            ),
+            if (!isEdit) ...[
+              AFieldName(
+                label: AppLocalizations.of(context)!.name,
+                identifier: 'name',
+                required: true,
+              ),
+              AFieldEmail(
+                label: AppLocalizations.of(context)!.email,
+                identifier: 'email',
+                required: true,
+              ),
+              AFieldPassword(
+                label: AppLocalizations.of(context)!.password,
+                identifier: 'password',
+              ),
+            ],
             AFieldCheckboxList(
               label: AppLocalizations.of(context)!.permissions,
               identifier: 'permissions',

@@ -77,5 +77,7 @@
   "accountManagement": "Gerenciamento de contas",
   "erroProduct": "Erro ao salvar produto",
   "genericError": "Erro ao salvar usuário. Tente novamente.",
+  "userPermissionsUpdatedSuccessfully": "Permissões do usuário editado com sucesso",
+  "editUserPermissions": "Editar permissões do usuário",
   "userEditedSuccessfully": "Usuário editado com sucesso"
 }

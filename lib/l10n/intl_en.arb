@@ -77,5 +77,7 @@
   "accountManagement": "Account management",
   "erroProduct": "Error saving product",
   "genericError": "Error saving user. Please try again.",
+  "userPermissionsUpdatedSuccessfully": "User permissions updated successfully",
+  "editUserPermissions": "Edit user permissions",
   "userEditedSuccessfully": "User Edited Successfully"
 }

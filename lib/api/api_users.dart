@@ -34,16 +34,13 @@ class UserAPI {
     required User user,
   }) async {
     final data = {
-      'name': user.name,
-      'email': user.email,
-      if (user.password?.isNotEmpty == true) 'password': user.password,
       'permissions': user.permissions.map((p) => p.permission.encoded).toList(),
     };
 
     final response = await requestWrapper(() => _api.dio.put(
       '/member/edit',
       queryParameters: {
-        'member_id': user.id,
+        'user_id': user.id,
         'account_id': accountId,
       },
       data: data,

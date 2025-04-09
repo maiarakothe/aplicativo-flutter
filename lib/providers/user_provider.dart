@@ -35,12 +35,8 @@ class UsersProvider extends ChangeNotifier {
 
   Future<void> updateUser(int accountId, User user) async {
     try {
-      final updatedUser = await _userAPI.editMember(accountId: accountId, user: user);
-      final index = _users.indexWhere((u) => u.id == user.id);
-      if (index != -1) {
-        _users[index] = updatedUser;
-        notifyListeners();
-      }
+      await _userAPI.editMember(accountId: accountId, user: user);
+      await loadUsers(accountId);
     } catch (e) {
       rethrow;
     }
