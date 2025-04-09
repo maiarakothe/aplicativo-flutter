@@ -26,6 +26,7 @@ mixin _$User {
   String get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   List<PermissionData> get permissions => throw _privateConstructorUsedError;
+  bool get isActive => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,7 +47,8 @@ abstract class $UserCopyWith<$Res> {
       String name,
       String email,
       String? password,
-      List<PermissionData> permissions});
+      List<PermissionData> permissions,
+      bool isActive});
 }
 
 /// @nodoc
@@ -69,6 +71,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? email = null,
     Object? password = freezed,
     Object? permissions = null,
+    Object? isActive = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -91,6 +94,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<PermissionData>,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -107,7 +114,8 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String name,
       String email,
       String? password,
-      List<PermissionData> permissions});
+      List<PermissionData> permissions,
+      bool isActive});
 }
 
 /// @nodoc
@@ -127,6 +135,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = freezed,
     Object? permissions = null,
+    Object? isActive = null,
   }) {
     return _then(_$UserImpl(
       id: null == id
@@ -149,6 +158,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<PermissionData>,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -161,7 +174,8 @@ class _$UserImpl implements _User {
       required this.name,
       required this.email,
       this.password,
-      required final List<PermissionData> permissions})
+      required final List<PermissionData> permissions,
+      this.isActive = true})
       : _permissions = permissions;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -185,8 +199,12 @@ class _$UserImpl implements _User {
   }
 
   @override
+  @JsonKey()
+  final bool isActive;
+
+  @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions, isActive: $isActive)';
   }
 
   @override
@@ -200,13 +218,15 @@ class _$UserImpl implements _User {
             (identical(other.password, password) ||
                 other.password == password) &&
             const DeepCollectionEquality()
-                .equals(other._permissions, _permissions));
+                .equals(other._permissions, _permissions) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, email, password,
-      const DeepCollectionEquality().hash(_permissions));
+      const DeepCollectionEquality().hash(_permissions), isActive);
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -230,7 +250,8 @@ abstract class _User implements User {
       required final String name,
       required final String email,
       final String? password,
-      required final List<PermissionData> permissions}) = _$UserImpl;
+      required final List<PermissionData> permissions,
+      final bool isActive}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -245,6 +266,8 @@ abstract class _User implements User {
   String? get password;
   @override
   List<PermissionData> get permissions;
+  @override
+  bool get isActive;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.

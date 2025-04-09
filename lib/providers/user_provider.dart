@@ -41,4 +41,21 @@ class UsersProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> toggleUserActive(User user, bool isActive) async {
+    final accountId = selectedAccount?.id;
+    if (accountId == null) throw Exception('Conta não selecionada.');
+
+    await _userAPI.toggleActive(
+      userId: user.id,
+      accountId: accountId,
+      isActive: isActive,
+    );
+
+    final index = _users.indexWhere((u) => u.id == user.id);
+    if (index != -1) {
+      _users[index] = user.copyWith(isActive: isActive);
+      notifyListeners();
+    }
+  }
 }

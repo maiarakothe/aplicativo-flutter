@@ -60,4 +60,27 @@ class UserAPI {
     final List<Map<String, dynamic>> rawUsers = List<Map<String, dynamic>>.from(response.data);
     return rawUsers.map((json) => User.fromJson(json)).toList();
   }
+
+  Future<void> toggleActive({
+    required int userId,
+    required int accountId,
+    required bool isActive,
+  }) async {
+    final path = isActive
+        ? '/member/activate/$userId'
+        : '/member/deactivate/active/$userId';
+
+    try {
+      await _api.dio.put(
+        path,
+        queryParameters: {
+          'member_id': userId,
+          'account_id': accountId,
+        },
+      );
+    } on DioException catch (e) {
+      throw Exception(
+          e.response?.data['detail'] ?? 'Erro ao atualizar status do usuário');
+    }
+  }
 }

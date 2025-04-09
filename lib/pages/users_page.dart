@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../api/api.dart';
-import '../api/api_users.dart';
 import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
@@ -34,6 +33,7 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
   final GlobalKey<ATableState<User>> tableKey = GlobalKey<ATableState<User>>();
   String searchText = '';
+  bool showActiveUsers = true;
 
   final List<PermissionData> allPermissions = [
     PermissionData(
@@ -61,7 +61,7 @@ class _UsersPageState extends State<UsersPage> {
     try {
       return allPermissions.firstWhere((p) => p.permission == permission).ptBr;
     } catch (e) {
-      return permission.encoded; // Fallback
+      return permission.encoded;
     }
   }
 
@@ -77,16 +77,16 @@ class _UsersPageState extends State<UsersPage> {
     tableKey.currentState?.reload();
   }
 
-
   Future<List<User>> loadUsers(BuildContext context) async {
     final provider = Provider.of<UsersProvider>(context, listen: false);
     await provider.loadUsers(selectedAccount!.id);
     return provider.users.where((u) {
-      return u.name.toLowerCase().contains(searchText.toLowerCase()) ||
+      final matchesSearch = u.name.toLowerCase().contains(searchText.toLowerCase()) ||
           u.email.toLowerCase().contains(searchText.toLowerCase());
+      final matchesStatus = showActiveUsers ? u.isActive : !u.isActive;
+      return matchesSearch && matchesStatus;
     }).toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,20 +113,37 @@ class _UsersPageState extends State<UsersPage> {
               ),
               child: Text(
                 _getPermissionPtBr(p.permission),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
             );
           }).toList(),
         ),
       ),
       ATableColumn<User>(
-        cellBuilder: (_, __, user) => IconButton(
-          icon: const Icon(Icons.edit, color: Colors.blueAccent),
-          tooltip: localizations.edit,
-          onPressed: () => _openUserDialog(user: user),
+        cellBuilder: (_, __, user) => Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blueAccent),
+              tooltip: localizations.edit,
+              onPressed: () => _openUserDialog(user: user),
+            ),
+            IconButton(
+              icon: Icon(
+                user.isActive ? Icons.person_off : Icons.person,
+                color: user.isActive ? Colors.red : Colors.green,
+              ),
+              tooltip: user.isActive ? 'Desativar' : 'Ativar',
+              onPressed: () async {
+                final provider = Provider.of<UsersProvider>(context, listen: false);
+                final newStatus = !user.isActive;
+                print('[DEBUG] Clicado para ${newStatus ? 'ativar' : 'desativar'} usuário: ${user.name}');
+                await provider.toggleUserActive(user, newStatus);
+                _refreshUsers();
+              },
+
+            ),
+          ],
         ),
       ),
     ];
@@ -155,13 +172,11 @@ class _UsersPageState extends State<UsersPage> {
                   items: const [
                     DropdownMenuItem(
                       value: Locale('en'),
-                      child:
-                      Text('English', style: TextStyle(color: Colors.white)),
+                      child: Text('English', style: TextStyle(color: Colors.white)),
                     ),
                     DropdownMenuItem(
                       value: Locale('pt'),
-                      child: Text('Português',
-                          style: TextStyle(color: Colors.white)),
+                      child: Text('Português', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -195,12 +210,33 @@ class _UsersPageState extends State<UsersPage> {
                           onPressed: _openUserDialog,
                           color: DefaultColors.circleAvatar,
                           fontWeight: FontWeight.bold,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        AButton(
+                          text: 'Usuários Ativos',
+                          onPressed: () {
+                            setState(() => showActiveUsers = true);
+                            tableKey.currentState?.reload();
+                          },
+                          color: showActiveUsers ? DefaultColors.green : Colors.grey,
+                        ),
+                        const SizedBox(width: 10),
+                        AButton(
+                          text: 'Usuários Inativos',
+                          onPressed: () {
+                            setState(() => showActiveUsers = false);
+                            tableKey.currentState?.reload();
+                          },
+                          color: !showActiveUsers ? Colors.red : Colors.grey,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: ATable<User>(
                         key: tableKey,
@@ -226,7 +262,9 @@ class _UsersPageState extends State<UsersPage> {
       context: context,
       builder: (context) {
         return AFormDialog<User>(
-          title: (AppLocalizations.of(context)!.addUser),
+          title: isEdit
+              ? AppLocalizations.of(context)!.editUserPermissions
+              : AppLocalizations.of(context)!.addUser,
           submitText: AppLocalizations.of(context)!.save,
           persistent: true,
           initialData: isEdit
@@ -236,8 +274,7 @@ class _UsersPageState extends State<UsersPage> {
             'password': '',
             'permissions': user.permissions
                 .map((p) => allPermissions.indexWhere(
-                  (perm) => perm.permission == p.permission,
-            ))
+                    (perm) => perm.permission == p.permission))
                 .where((i) => i != -1)
                 .toList(),
           }
@@ -278,7 +315,6 @@ class _UsersPageState extends State<UsersPage> {
           onSubmit: (userData) async {
             final provider = Provider.of<UsersProvider>(context, listen: false);
             final accountId = selectedAccount!.id;
-
             try {
               final userToSave = userData.copyWith(id: user?.id ?? 0);
               if (isEdit) {
