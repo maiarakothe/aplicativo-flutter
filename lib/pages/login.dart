@@ -2,6 +2,7 @@ import 'package:awidgets/fields/a_field_text.dart';
 import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teste/api/api_account.dart';
 import 'package:teste/core/colors.dart';
 import 'package:teste/theme_toggle_button.dart';
@@ -12,14 +13,17 @@ import 'package:teste/routes.dart';
 import 'package:awidgets/general/a_form.dart';
 import 'package:awidgets/fields/a_field_email.dart';
 import 'package:awidgets/fields/a_field_password.dart';
+import '../configs.dart';
 import '../models/forgot_password.dart';
 import '../models/login.dart';
 import 'package:teste/api/api.dart';
 import '../api/api_login.dart';
 import 'package:dio/dio.dart';
+import '../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
+
   const LoginPage({super.key, required this.changeLanguage});
 
   @override
@@ -28,25 +32,33 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
+  bool _stayConnected = false;
+
   final LoginAPI _loginAPI = LoginAPI(API());
   final AccountAPI _accountAPI = AccountAPI(API());
 
   void _login(LoginData data) async {
     setState(() => _isLoading = true);
     final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
     try {
-      await _loginAPI.login(
+      await API.login.login(
         email: data.email.trim(),
         password: data.password.trim(),
       );
-      await _accountAPI.getAccounts();
+      await AuthService.saveLoginToken(data.email);
+      await AuthService.setStayConnected(_stayConnected);
+      final account = await API.accounts.getAccounts();
 
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        Routes.productRegistration,
-        (route) => false,
-      );
+      if (selectedAccount?.id != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('selected_account_id', selectedAccount!.id);
+      }
+
+      navigator.pushNamedAndRemoveUntil(
+          Routes.productList, (route) => false);
+
     } catch (e) {
       String errorMessage = "Erro ao tentar fazer login.";
       if (e is DioException) {
@@ -81,7 +93,6 @@ class _LoginPageState extends State<LoginPage> {
 
         try {
           await API.forgotPassword.forgotPassword(email: email);
-
           messenger.showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context).resetLinkSent),
@@ -98,7 +109,6 @@ class _LoginPageState extends State<LoginPage> {
 
           if (e.response != null) {
             print("Erro na recuperação de senha: ${e.response?.data}");
-
             if (e.response?.statusCode == 404) {
               errorMessage = "E-mail inválido.";
             } else if (e.response?.statusCode == 422) {
@@ -209,7 +219,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-          ThemeToggleButton(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ThemeToggleButton(),
+          ),
         ],
       ),
       body: Padding(
@@ -218,12 +231,13 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: 60),
               Image.asset(
                 "assets/mobilelogin.png",
                 width: 200,
                 height: 200,
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 5),
               AForm<LoginData>(
                 fromJson: (json) => LoginData.fromJson(json),
                 showDefaultAction: false,
@@ -238,23 +252,32 @@ class _LoginPageState extends State<LoginPage> {
                     label: localizations.email,
                     required: true,
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 10),
                   AFieldPassword(
                     identifier: 'password',
                     label: localizations.password,
                     minLength: 8,
                   ),
-                  SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        _showForgotPasswordDialog(context);
-                      },
-                      child: Text(localizations.forgotPassword),
-                    ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _stayConnected,
+                        onChanged: (value) {
+                          setState(() => _stayConnected = value ?? false);
+                        },
+                      ),
+                      Text(AppLocalizations.of(context).stayConnected,),
+                      Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          _showForgotPasswordDialog(context);
+                        },
+                        child: Text(localizations.forgotPassword),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 10),
                   Builder(
                     builder: (context) {
                       return Center(
@@ -262,19 +285,19 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _isLoading
                               ? null
                               : () {
-                                  final formState = AForm.maybeOf(context);
-                                  if (formState == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text(localizations.formNotFound),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  } else {
-                                    formState.onSubmit();
-                                  }
-                                },
+                            final formState = AForm.maybeOf(context);
+                            if (formState == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                    Text(localizations.formNotFound),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              formState.onSubmit();
+                            }
+                          },
                           text: localizations.login,
                           loading: _isLoading,
                           textColor: DefaultColors.textColorButton,
@@ -283,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
                       );
                     },
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 10),
                   Center(
                     child: TextButton(
                       onPressed: () {

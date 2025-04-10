@@ -85,5 +85,9 @@
   "activateUserConfirmation": "Deseja ativar {userName}?",
   "deactivateUserConfirmation": "Deseja desativar {userName}?",
   "userActivatedSuccessfully": "Usuário ativado com sucesso.",
-  "userDeactivatedSuccessfully": "Usuário desativado com sucesso."
+  "userDeactivatedSuccessfully": "Usuário desativado com sucesso.",
+  "stayConnected": "Manter conectado",
+  "error": "Erro",
+  "failedToLoadSavedAccount": "Falha ao carregar a conta salva. Por favor, faça login novamente.",
+  "ok": "Ok"
 }
