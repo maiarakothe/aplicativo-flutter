@@ -1,20 +1,18 @@
-import 'package:dio/src/dio.dart';
 import 'package:flutter/material.dart';
 import '../api/api.dart';
 import '../api/api_users.dart';
 import '../configs.dart';
-import '../models/account_permission.dart';
 import '../models/user.dart';
 
 class UsersProvider extends ChangeNotifier {
   final List<User> _users = [];
-  final UserAPI _userAPI = UserAPI(API());
+  final MemberAPI _userAPI = MemberAPI(API());
 
   List<User> get users => _users;
 
   Future<void> loadUsers(int accountId) async {
     try {
-      final fetchedUsers = await _userAPI.getMembers(accountId);
+      final fetchedUsers = await _userAPI.getMembers(accountId, true);
       _users.clear();
       _users.addAll(fetchedUsers);
       notifyListeners();
@@ -36,7 +34,7 @@ class UsersProvider extends ChangeNotifier {
   Future<void> updateUser(int accountId, User user) async {
     try {
       await _userAPI.editMember(accountId: accountId, user: user);
-      await loadUsers(accountId);
+      //  await loadUsers(accountId);
     } catch (e) {
       rethrow;
     }
@@ -52,5 +50,4 @@ class UsersProvider extends ChangeNotifier {
       isActive: isActive,
     );
   }
-
 }

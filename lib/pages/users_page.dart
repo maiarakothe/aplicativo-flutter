@@ -53,7 +53,7 @@ class _UsersPageState extends State<UsersPage> {
   List<Option> getPermissionOptions(BuildContext context) {
     return List.generate(
       allPermissions.length,
-          (index) => Option(allPermissions[index].ptBr, index),
+      (index) => Option(allPermissions[index].ptBr, index),
     );
   }
 
@@ -66,34 +66,11 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _refreshUsers();
-  }
-
-  Future<void> _refreshUsers() async {
-    final provider = Provider.of<UsersProvider>(context, listen: false);
-    await provider.loadUsers(selectedAccount!.id);
-    tableKey.currentState?.reload();
-  }
-
-  Future<List<User>> loadUsers(BuildContext context) async {
-    final provider = Provider.of<UsersProvider>(context, listen: false);
-    await provider.loadUsers(selectedAccount!.id);
-    return provider.users.where((u) {
-      final matchesSearch = u.name.toLowerCase().contains(searchText.toLowerCase()) ||
-          u.email.toLowerCase().contains(searchText.toLowerCase());
-      final matchesStatus = showActiveUsers ? u.isActive : !u.isActive;
-      return matchesSearch && matchesStatus;
-    }).toList();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
     final columns = <ATableColumn<User>>[
       ATableColumn<User>(
-        title: localizations!.name,
+        title: localizations.name,
         cellBuilder: (_, __, user) => Text(user.name),
       ),
       ATableColumn<User>(
@@ -113,7 +90,8 @@ class _UsersPageState extends State<UsersPage> {
               ),
               child: Text(
                 _getPermissionPtBr(p.permission),
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
             );
           }).toList(),
@@ -135,13 +113,15 @@ class _UsersPageState extends State<UsersPage> {
               ),
               tooltip: user.isActive ? 'Desativar' : 'Ativar',
               onPressed: () async {
-                final provider = Provider.of<UsersProvider>(context, listen: false);
+                final provider =
+                    Provider.of<UsersProvider>(context, listen: false);
                 final newStatus = !user.isActive;
-                print('[DEBUG] Clicado para ${newStatus ? 'ativar' : 'desativar'} usuário: ${user.name}');
+                print(
+                    '[DEBUG] Clicado para ${newStatus ? 'ativar' : 'desativar'} usuário: ${user.name}');
                 await provider.toggleUserActive(user, newStatus);
-                _refreshUsers();
-              },
 
+                tableKey.currentState?.reload();
+              },
             ),
           ],
         ),
@@ -172,11 +152,13 @@ class _UsersPageState extends State<UsersPage> {
                   items: const [
                     DropdownMenuItem(
                       value: Locale('en'),
-                      child: Text('English', style: TextStyle(color: Colors.white)),
+                      child: Text('English',
+                          style: TextStyle(color: Colors.white)),
                     ),
                     DropdownMenuItem(
                       value: Locale('pt'),
-                      child: Text('Português', style: TextStyle(color: Colors.white)),
+                      child: Text('Português',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -210,7 +192,8 @@ class _UsersPageState extends State<UsersPage> {
                           onPressed: _openUserDialog,
                           color: DefaultColors.circleAvatar,
                           fontWeight: FontWeight.bold,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                         ),
                       ],
                     ),
@@ -223,7 +206,9 @@ class _UsersPageState extends State<UsersPage> {
                             setState(() => showActiveUsers = true);
                             tableKey.currentState?.reload();
                           },
-                          color: showActiveUsers ? DefaultColors.green : Colors.grey,
+                          color: showActiveUsers
+                              ? DefaultColors.green
+                              : Colors.grey,
                         ),
                         const SizedBox(width: 10),
                         AButton(
@@ -242,7 +227,10 @@ class _UsersPageState extends State<UsersPage> {
                         key: tableKey,
                         columns: columns,
                         striped: true,
-                        loadItems: (_, __) => loadUsers(context),
+                        loadItems: (_, __) async {
+                          return await API.members
+                              .getMembers(selectedAccount!.id, showActiveUsers);
+                        },
                       ),
                     ),
                   ],
@@ -260,10 +248,10 @@ class _UsersPageState extends State<UsersPage> {
 
     final List<int> selectedPermissionIndexes = isEdit
         ? user.permissions
-        .map((p) => allPermissions
-        .indexWhere((perm) => perm.permission == p.permission))
-        .where((i) => i != -1)
-        .toList()
+            .map((p) => allPermissions
+                .indexWhere((perm) => perm.permission == p.permission))
+            .where((i) => i != -1)
+            .toList()
         : [];
 
     showDialog(
@@ -273,37 +261,37 @@ class _UsersPageState extends State<UsersPage> {
           builder: (context, setState) {
             return AFormDialog<User>(
               title: isEdit
-                  ? AppLocalizations.of(context)!.editUserPermissions
-                  : AppLocalizations.of(context)!.addUser,
-              submitText: AppLocalizations.of(context)!.save,
+                  ? AppLocalizations.of(context).editUserPermissions
+                  : AppLocalizations.of(context).addUser,
+              submitText: AppLocalizations.of(context).save,
               persistent: true,
               initialData: isEdit
                   ? {
-                'name': user.name,
-                'email': user.email,
-                'password': '',
-                'permissions': selectedPermissionIndexes,
-              }
+                      'name': user.name,
+                      'email': user.email,
+                      'password': '',
+                      'permissions': selectedPermissionIndexes,
+                    }
                   : null,
               fields: [
                 if (!isEdit) ...[
                   AFieldName(
-                    label: AppLocalizations.of(context)!.name,
+                    label: AppLocalizations.of(context).name,
                     identifier: 'name',
                     required: true,
                   ),
                   AFieldEmail(
-                    label: AppLocalizations.of(context)!.email,
+                    label: AppLocalizations.of(context).email,
                     identifier: 'email',
                     required: true,
                   ),
                   AFieldPassword(
-                    label: AppLocalizations.of(context)!.password,
+                    label: AppLocalizations.of(context).password,
                     identifier: 'password',
                   ),
                 ],
                 AFieldCheckboxList(
-                  label: AppLocalizations.of(context)!.permissions,
+                  label: AppLocalizations.of(context).permissions,
                   identifier: 'permissions',
                   options: getPermissionOptions(context),
                   minRequired: 1,
@@ -311,8 +299,8 @@ class _UsersPageState extends State<UsersPage> {
                   onChanged: (newValues) {
                     setState(() {
                       selectedPermissionIndexes.clear();
-                      selectedPermissionIndexes.addAll(
-                          newValues!.map((e) => e as int).toList());
+                      selectedPermissionIndexes
+                          .addAll(newValues!.map((e) => e as int).toList());
                     });
                   },
                 ),
@@ -327,10 +315,15 @@ class _UsersPageState extends State<UsersPage> {
                     .toList(),
               ),
               onSubmit: (userData) async {
-                final provider = Provider.of<UsersProvider>(context, listen: false);
+                final provider =
+                    Provider.of<UsersProvider>(context, listen: false);
                 final accountId = selectedAccount!.id;
                 try {
-                  final userToSave = userData.copyWith(id: user?.id ?? 0, permissions: selectedPermissionIndexes.map((index) => allPermissions[index]).toList());
+                  final userToSave = userData.copyWith(
+                      id: user?.id ?? 0,
+                      permissions: selectedPermissionIndexes
+                          .map((index) => allPermissions[index])
+                          .toList());
                   if (isEdit) {
                     await provider.updateUser(accountId, userToSave);
                   } else {
@@ -340,7 +333,7 @@ class _UsersPageState extends State<UsersPage> {
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!.genericError),
+                      content: Text(AppLocalizations.of(context).genericError),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -348,14 +341,14 @@ class _UsersPageState extends State<UsersPage> {
                 }
               },
               onSuccess: () async {
-                await _refreshUsers();
-                Navigator.of(context).pop();
+                tableKey.currentState?.reload();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
                       isEdit
-                          ? AppLocalizations.of(context)!.userEditedSuccessfully
-                          : AppLocalizations.of(context)!.userRegisteredSuccessfully,
+                          ? AppLocalizations.of(context).userEditedSuccessfully
+                          : AppLocalizations.of(context)
+                              .userRegisteredSuccessfully,
                     ),
                     backgroundColor: DefaultColors.green,
                   ),

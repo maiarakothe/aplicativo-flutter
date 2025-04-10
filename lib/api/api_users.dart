@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:teste/models/account.dart';
 
 import '../core/http_utils.dart';
 import '../models/account_permission.dart';
 import '../models/user.dart';
 import 'api.dart';
 
-class UserAPI {
+class MemberAPI {
   final API _api;
-  UserAPI(this._api);
+  MemberAPI(this._api);
 
   Future<User> createUser(int accountId, User user) async {
     try {
@@ -20,7 +19,8 @@ class UserAPI {
           'name': user.name,
           'email': user.email,
           'password': user.password,
-          'permissions': user.permissions.map((p) => p.permission.encoded).toList(),
+          'permissions':
+              user.permissions.map((p) => p.permission.encoded).toList(),
         },
       );
       return User.fromJson(response.data);
@@ -38,26 +38,30 @@ class UserAPI {
     };
 
     final response = await requestWrapper(() => _api.dio.put(
-      '/member/edit',
-      queryParameters: {
-        'user_id': user.id,
-        'account_id': accountId,
-      },
-      data: data,
-    ));
+          '/member/edit',
+          queryParameters: {
+            'user_id': user.id,
+            'account_id': accountId,
+          },
+          data: data,
+        ));
 
     return User.fromJson(response.data);
   }
 
-  Future<List<User>> getMembers(int accountId) async {
+  Future<List<User>> getMembers(int accountId, bool active) async {
     final response = await requestWrapper(
-          () => _api.dio.get(
+      () => _api.dio.get(
         '/members/$accountId',
+        queryParameters: {
+          'active': active,
+        },
       ),
     );
 
     debugPrint('[RAW USERS RESPONSE] ${response.data}');
-    final List<Map<String, dynamic>> rawUsers = List<Map<String, dynamic>>.from(response.data);
+    final List<Map<String, dynamic>> rawUsers =
+        List<Map<String, dynamic>>.from(response.data);
     return rawUsers.map((json) => User.fromJson(json)).toList();
   }
 
