@@ -115,52 +115,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<void> _logout(BuildContext context) async {
-    bool confirmLogout = await _showLogoutDialog(context);
-    if (confirmLogout) {
-      try {
-        final loginAPI = LoginAPI(API());
-        await loginAPI.logout();
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
-
-        if (!mounted) return;
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-      } catch (e) {
-        debugPrint('Erro ao deslogar: $e');
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erro ao sair"), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  Future<bool> _showLogoutDialog(BuildContext context) async {
-    return await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(AppLocalizations.of(context).confirmLogout),
-            content: Text(AppLocalizations.of(context).areYouSureLogout),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(AppLocalizations.of(context).cancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(
-                  AppLocalizations.of(context).logout,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -242,18 +196,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Text(AppLocalizations.of(context).editProfile),
                           ),
                           SizedBox(height: 40),
-                          ElevatedButton(
-                            onPressed: () => _logout(context),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: DefaultColors.backgroundButton,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 24),
-                              textStyle: TextStyle(fontSize: 20),
-                            ),
-                            child: Text(AppLocalizations.of(context).logout),
-                          ),
-                          SizedBox(height: 60),
                         ],
                       ),
                     ),
