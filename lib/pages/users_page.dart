@@ -90,8 +90,10 @@ class _UsersPageState extends State<UsersPage> {
               ),
               child: Text(
                 _getPermissionPtBr(p.permission),
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             );
           }).toList(),
@@ -116,15 +118,58 @@ class _UsersPageState extends State<UsersPage> {
                 tooltip: user.isActive ? 'Desativar' : 'Ativar',
                 onPressed: () async {
                   final newStatus = !user.isActive;
-                  final memberAPI = MemberAPI(API());
 
-                  await memberAPI.toggleActive(
-                    accountId: selectedAccount!.id,
-                    userId: user.id,
-                    isActive: newStatus,
+                  final confirmation = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                        newStatus
+                            ? localizations.confirmActivateUser
+                            : localizations.confirmDeactivateUser,
+                      ),
+                      content: Text(
+                        newStatus
+                            ? localizations.activateUserConfirmation(user.name)
+                            : localizations.deactivateUserConfirmation(user.name),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text(localizations.cancel),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: Text(
+                            localizations.confirm,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
 
-                  tableKey.currentState?.reload();
+                  if (confirmation == true) {
+                    final memberAPI = MemberAPI(API());
+
+                    await memberAPI.toggleActive(
+                      accountId: selectedAccount!.id,
+                      userId: user.id,
+                      isActive: newStatus,
+                    );
+
+                    tableKey.currentState?.reload();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          newStatus
+                              ? localizations.userActivatedSuccessfully
+                              : localizations.userDeactivatedSuccessfully,
+                        ),
+                        backgroundColor: DefaultColors.green,
+                      ),
+                    );
+                  }
                 },
               ),
           ],

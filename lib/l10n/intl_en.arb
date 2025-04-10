@@ -79,5 +79,11 @@
   "genericError": "Error saving user. Please try again.",
   "userPermissionsUpdatedSuccessfully": "User permissions updated successfully",
   "editUserPermissions": "Edit user permissions",
-  "userEditedSuccessfully": "User Edited Successfully"
+  "userEditedSuccessfully": "User Edited Successfully",
+  "confirmActivateUser": "Activate user?",
+  "confirmDeactivateUser": "Deactivate user?",
+  "activateUserConfirmation": "Do you want to activate {userName}?",
+  "deactivateUserConfirmation": "Do you want to deactivate {userName}?",
+  "userActivatedSuccessfully": "User activated successfully.",
+  "userDeactivatedSuccessfully": "User deactivated successfully."
 }

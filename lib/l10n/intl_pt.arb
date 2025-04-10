@@ -79,5 +79,11 @@
   "genericError": "Erro ao salvar usuário. Tente novamente.",
   "userPermissionsUpdatedSuccessfully": "Permissões do usuário editado com sucesso",
   "editUserPermissions": "Editar permissões do usuário",
-  "userEditedSuccessfully": "Usuário editado com sucesso"
+  "userEditedSuccessfully": "Usuário editado com sucesso",
+  "confirmActivateUser": "Ativar usuário?",
+  "confirmDeactivateUser": "Desativar usuário?",
+  "activateUserConfirmation": "Deseja ativar {userName}?",
+  "deactivateUserConfirmation": "Deseja desativar {userName}?",
+  "userActivatedSuccessfully": "Usuário ativado com sucesso.",
+  "userDeactivatedSuccessfully": "Usuário desativado com sucesso."
 }
