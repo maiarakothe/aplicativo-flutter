@@ -53,7 +53,7 @@ class _UsersPageState extends State<UsersPage> {
   List<Option> getPermissionOptions(BuildContext context) {
     return List.generate(
       allPermissions.length,
-      (index) => Option(allPermissions[index].ptBr, index),
+          (index) => Option(allPermissions[index].ptBr, index),
     );
   }
 
@@ -101,30 +101,32 @@ class _UsersPageState extends State<UsersPage> {
         cellBuilder: (_, __, user) => Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blueAccent),
-              tooltip: localizations.edit,
-              onPressed: () => _openUserDialog(user: user),
-            ),
-            IconButton(
-              icon: Icon(
-                user.isActive ? Icons.person_off : Icons.person,
-                color: user.isActive ? Colors.red : Colors.green,
+            if (!user.owner)
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                tooltip: localizations.edit,
+                onPressed: () => _openUserDialog(user: user),
               ),
-              tooltip: user.isActive ? 'Desativar' : 'Ativar',
-              onPressed: () async {
-                final newStatus = !user.isActive;
-                final memberAPI = MemberAPI(API());
+            if (!user.owner)
+              IconButton(
+                icon: Icon(
+                  user.isActive ? Icons.person_off : Icons.person,
+                  color: user.isActive ? Colors.red : Colors.green,
+                ),
+                tooltip: user.isActive ? 'Desativar' : 'Ativar',
+                onPressed: () async {
+                  final newStatus = !user.isActive;
+                  final memberAPI = MemberAPI(API());
 
-                await memberAPI.toggleActive(
-                  accountId: selectedAccount!.id,
-                  userId: user.id,
-                  isActive: newStatus,
-                );
+                  await memberAPI.toggleActive(
+                    accountId: selectedAccount!.id,
+                    userId: user.id,
+                    isActive: newStatus,
+                  );
 
-                tableKey.currentState?.reload();
-              },
-            ),
+                  tableKey.currentState?.reload();
+                },
+              ),
           ],
         ),
       ),
@@ -350,7 +352,7 @@ class _UsersPageState extends State<UsersPage> {
                       isEdit
                           ? AppLocalizations.of(context).userEditedSuccessfully
                           : AppLocalizations.of(context)
-                              .userRegisteredSuccessfully,
+                          .userRegisteredSuccessfully,
                     ),
                     backgroundColor: DefaultColors.green,
                   ),

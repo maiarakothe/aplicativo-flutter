@@ -26,6 +26,9 @@ mixin _$User {
   String get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   List<PermissionData> get permissions => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner')
+  bool get owner => throw _privateConstructorUsedError; // 👈 aqui
+  @JsonKey(name: 'active')
   bool get isActive => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
@@ -48,7 +51,8 @@ abstract class $UserCopyWith<$Res> {
       String email,
       String? password,
       List<PermissionData> permissions,
-      bool isActive});
+      @JsonKey(name: 'owner') bool owner,
+      @JsonKey(name: 'active') bool isActive});
 }
 
 /// @nodoc
@@ -71,6 +75,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? email = null,
     Object? password = freezed,
     Object? permissions = null,
+    Object? owner = null,
     Object? isActive = null,
   }) {
     return _then(_value.copyWith(
@@ -94,6 +99,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<PermissionData>,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as bool,
       isActive: null == isActive
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
@@ -115,7 +124,8 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String email,
       String? password,
       List<PermissionData> permissions,
-      bool isActive});
+      @JsonKey(name: 'owner') bool owner,
+      @JsonKey(name: 'active') bool isActive});
 }
 
 /// @nodoc
@@ -135,6 +145,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = freezed,
     Object? permissions = null,
+    Object? owner = null,
     Object? isActive = null,
   }) {
     return _then(_$UserImpl(
@@ -158,6 +169,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<PermissionData>,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as bool,
       isActive: null == isActive
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
@@ -175,7 +190,8 @@ class _$UserImpl implements _User {
       required this.email,
       this.password,
       required final List<PermissionData> permissions,
-      this.isActive = true})
+      @JsonKey(name: 'owner') this.owner = false,
+      @JsonKey(name: 'active') this.isActive = true})
       : _permissions = permissions;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -199,12 +215,16 @@ class _$UserImpl implements _User {
   }
 
   @override
-  @JsonKey()
+  @JsonKey(name: 'owner')
+  final bool owner;
+// 👈 aqui
+  @override
+  @JsonKey(name: 'active')
   final bool isActive;
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions, isActive: $isActive)';
+    return 'User(id: $id, name: $name, email: $email, password: $password, permissions: $permissions, owner: $owner, isActive: $isActive)';
   }
 
   @override
@@ -219,6 +239,7 @@ class _$UserImpl implements _User {
                 other.password == password) &&
             const DeepCollectionEquality()
                 .equals(other._permissions, _permissions) &&
+            (identical(other.owner, owner) || other.owner == owner) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive));
   }
@@ -226,7 +247,7 @@ class _$UserImpl implements _User {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, email, password,
-      const DeepCollectionEquality().hash(_permissions), isActive);
+      const DeepCollectionEquality().hash(_permissions), owner, isActive);
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -251,7 +272,8 @@ abstract class _User implements User {
       required final String email,
       final String? password,
       required final List<PermissionData> permissions,
-      final bool isActive}) = _$UserImpl;
+      @JsonKey(name: 'owner') final bool owner,
+      @JsonKey(name: 'active') final bool isActive}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -267,6 +289,10 @@ abstract class _User implements User {
   @override
   List<PermissionData> get permissions;
   @override
+  @JsonKey(name: 'owner')
+  bool get owner; // 👈 aqui
+  @override
+  @JsonKey(name: 'active')
   bool get isActive;
 
   /// Create a copy of User

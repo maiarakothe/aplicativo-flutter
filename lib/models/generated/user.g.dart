@@ -14,7 +14,8 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       permissions: (json['permissions'] as List<dynamic>)
           .map((e) => PermissionData.fromJson(e as Map<String, dynamic>))
           .toList(),
-      isActive: json['is_active'] as bool? ?? true,
+      owner: json['owner'] as bool? ?? false,
+      isActive: json['active'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
@@ -24,5 +25,6 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'email': instance.email,
       if (instance.password case final value?) 'password': value,
       'permissions': instance.permissions.map((e) => e.toJson()).toList(),
-      'is_active': instance.isActive,
+      'owner': instance.owner,
+      'active': instance.isActive,
     };

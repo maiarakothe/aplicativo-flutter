@@ -12,7 +12,8 @@ class User with _$User {
     required String email,
     String? password,
     required List<PermissionData> permissions,
-    @Default(true) bool isActive,
+    @JsonKey(name: 'owner') @Default(false) bool owner,
+    @JsonKey(name: 'active') @Default(true) bool isActive,
   }) = _User;
 
   factory User.fromJson(JSON json) => _$UserFromJson(json);
