@@ -12,13 +12,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../api/api.dart';
+import '../api/api_users.dart';
 import '../configs.dart';
 import '../core/app_drawer.dart';
 import '../core/colors.dart';
 import '../models/account.dart';
 import '../models/account_permission.dart';
 import '../models/user.dart';
-import '../providers/user_provider.dart';
 import '../theme_toggle_button.dart';
 
 class UsersPage extends StatefulWidget {
@@ -113,12 +113,14 @@ class _UsersPageState extends State<UsersPage> {
               ),
               tooltip: user.isActive ? 'Desativar' : 'Ativar',
               onPressed: () async {
-                final provider =
-                    Provider.of<UsersProvider>(context, listen: false);
                 final newStatus = !user.isActive;
-                print(
-                    '[DEBUG] Clicado para ${newStatus ? 'ativar' : 'desativar'} usuário: ${user.name}');
-                await provider.toggleUserActive(user, newStatus);
+                final memberAPI = MemberAPI(API());
+
+                await memberAPI.toggleActive(
+                  accountId: selectedAccount!.id,
+                  userId: user.id,
+                  isActive: newStatus,
+                );
 
                 tableKey.currentState?.reload();
               },
@@ -315,19 +317,19 @@ class _UsersPageState extends State<UsersPage> {
                     .toList(),
               ),
               onSubmit: (userData) async {
-                final provider =
-                    Provider.of<UsersProvider>(context, listen: false);
+                final memberAPI = MemberAPI(API());
                 final accountId = selectedAccount!.id;
+
                 try {
                   final userToSave = userData.copyWith(
-                      id: user?.id ?? 0,
-                      permissions: selectedPermissionIndexes
-                          .map((index) => allPermissions[index])
-                          .toList());
+                    id: user?.id ?? 0,
+                    permissions: selectedPermissionIndexes.map((index) => allPermissions[index]).toList(),
+                  );
+
                   if (isEdit) {
-                    await provider.updateUser(accountId, userToSave);
+                    await memberAPI.editMember(accountId: accountId, user: userToSave);
                   } else {
-                    await provider.addUser(accountId, userToSave);
+                    await memberAPI.createUser(accountId, userToSave);
                   }
                   return null;
                 } catch (e) {

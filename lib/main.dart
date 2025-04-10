@@ -5,14 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:teste/core/themes.dart';
 import 'package:teste/providers/theme_provider.dart';
 import 'package:teste/core/l10n.dart';
-import 'package:teste/providers/user_provider.dart';
 import 'package:teste/routes.dart';
 
 void main() {
   runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => UsersProvider()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ],
       child: const MyApp(),
