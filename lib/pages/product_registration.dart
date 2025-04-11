@@ -6,7 +6,7 @@ import 'package:awidgets/fields/a_field_url.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import '../api/api.dart';
 import '../configs.dart';
-import '../core/app_drawer.dart';
+import '../core/responsive_scaffold.dart';
 import '../models/product_registration.dart';
 import '../api/api_product.dart';
 import '../theme_toggle_button.dart';
@@ -50,7 +50,6 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
       );
 
       _showProductForm(initial: _editingProduct);
-
     } catch (e) {
       debugPrint('Erro ao carregar detalhes do produto: $e');
       SnackBar(
@@ -151,49 +150,42 @@ class _ProductRegistrationPageState extends State<ProductRegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          const AppDrawer(),
-          const VerticalDivider(width: 1),
-          Expanded(
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text(AppLocalizations.of(context).registerProduct),
-                automaticallyImplyLeading: false,
-                actions: [
-                  DropdownButton<Locale>(
-                    icon: const Icon(Icons.language, color: Colors.white),
-                    underline: const SizedBox.shrink(),
-                    dropdownColor: Colors.black,
-                    onChanged: (Locale? locale) {
-                      if (locale != null) widget.changeLanguage(locale);
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                          value: Locale('en'),
-                          child: Text('English',
-                              style: TextStyle(color: Colors.white))),
-                      DropdownMenuItem(
-                          value: Locale('pt'),
-                          child: Text('Português',
-                              style: TextStyle(color: Colors.white))),
-                    ],
-                  ),
-                  ThemeToggleButton(),
-                ],
-              ),
-              body: Center(
-                child: Text(AppLocalizations.of(context).pressButtonToAddProduct),
-              ),
-              floatingActionButton: FloatingActionButton.extended(
-                onPressed: () => _showProductForm(),
-                icon: const Icon(Icons.add),
-                label: Text(AppLocalizations.of(context).registerProduct),
-              ),
-            ),
+    return ResponsiveScaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context).registerProduct),
+        automaticallyImplyLeading: false,
+        actions: [
+          DropdownButton<Locale>(
+            icon: const Icon(Icons.language, color: Colors.white),
+            underline: const SizedBox.shrink(),
+            dropdownColor: Colors.black,
+            onChanged: (Locale? locale) {
+              if (locale != null) widget.changeLanguage(locale);
+            },
+            items: const [
+              DropdownMenuItem(
+                  value: Locale('en'),
+                  child: Text('English',
+                      style: TextStyle(color: Colors.white))),
+              DropdownMenuItem(
+                  value: Locale('pt'),
+                  child: Text('Português',
+                      style: TextStyle(color: Colors.white))),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ThemeToggleButton(),
           ),
         ],
+      ),
+      body: Center(
+        child: Text(AppLocalizations.of(context).pressButtonToAddProduct),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showProductForm(),
+        icon: const Icon(Icons.add),
+        label: Text(AppLocalizations.of(context).registerProduct),
       ),
     );
   }

@@ -97,7 +97,10 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ],
           ),
-          ThemeToggleButton(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ThemeToggleButton(),
+          ),
         ],
       ),
       body: Center(

@@ -8,18 +8,16 @@ import 'package:awidgets/general/a_button.dart';
 import 'package:awidgets/general/a_form_dialog.dart';
 import 'package:awidgets/general/a_table.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../api/api.dart';
 import '../api/api_users.dart';
 import '../configs.dart';
-import '../core/app_drawer.dart';
 import '../core/colors.dart';
 import '../models/account.dart';
 import '../models/account_permission.dart';
 import '../models/user.dart';
 import '../theme_toggle_button.dart';
+import '../core/responsive_scaffold.dart';
 
 class UsersPage extends StatefulWidget {
   final void Function(Locale) changeLanguage;
@@ -79,216 +77,215 @@ class _UsersPageState extends State<UsersPage> {
       ),
       ATableColumn<User>(
         title: localizations.permissions,
-        cellBuilder: (_, __, user) => Wrap(
-          spacing: 6,
-          runSpacing: 4,
-          children: user.permissions.map((p) {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                _getPermissionPtBr(p.permission),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
+        cellBuilder: (_, __, user) =>
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: user.permissions.map((p) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _getPermissionPtBr(p.permission),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
       ),
       ATableColumn<User>(
-        cellBuilder: (_, __, user) => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!user.owner)
-              IconButton(
-                icon: const Icon(Icons.edit, color: Colors.blueAccent),
-                tooltip: localizations.edit,
-                onPressed: () => _openUserDialog(user: user),
-              ),
-            if (!user.owner)
-              IconButton(
-                icon: Icon(
-                  user.isActive ? Icons.person_off : Icons.person,
-                  color: user.isActive ? Colors.red : Colors.green,
-                ),
-                tooltip: user.isActive ? 'Desativar' : 'Ativar',
-                onPressed: () async {
-                  final newStatus = !user.isActive;
-
-                  final confirmation = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(
-                        newStatus
-                            ? localizations.confirmActivateUser
-                            : localizations.confirmDeactivateUser,
-                      ),
-                      content: Text(
-                        newStatus
-                            ? localizations.activateUserConfirmation(user.name)
-                            : localizations.deactivateUserConfirmation(user.name),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: Text(localizations.cancel),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: Text(
-                            localizations.confirm,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
+        cellBuilder: (_, __, user) =>
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!user.owner)
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                    tooltip: localizations.edit,
+                    onPressed: () => _openUserDialog(user: user),
+                  ),
+                if (!user.owner)
+                  IconButton(
+                    icon: Icon(
+                      user.isActive ? Icons.person_off : Icons.person,
+                      color: user.isActive ? Colors.red : Colors.green,
                     ),
-                  );
+                    tooltip: user.isActive ? 'Desativar' : 'Ativar',
+                    onPressed: () async {
+                      final newStatus = !user.isActive;
 
-                  if (confirmation == true) {
-                    final memberAPI = MemberAPI(API());
+                      final confirmation = await showDialog<bool>(
+                        context: context,
+                        builder: (context) =>
+                            AlertDialog(
+                              title: Text(
+                                newStatus
+                                    ? localizations.confirmActivateUser
+                                    : localizations.confirmDeactivateUser,
+                              ),
+                              content: Text(
+                                newStatus
+                                    ? localizations.activateUserConfirmation(
+                                    user.name)
+                                    : localizations.deactivateUserConfirmation(
+                                    user.name),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: Text(localizations.cancel),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text(
+                                    localizations.confirm,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
 
-                    await memberAPI.toggleActive(
-                      accountId: selectedAccount!.id,
-                      userId: user.id,
-                      isActive: newStatus,
-                    );
+                      if (confirmation == true) {
+                        final memberAPI = MemberAPI(API());
 
-                    tableKey.currentState?.reload();
+                        await memberAPI.toggleActive(
+                          accountId: selectedAccount!.id,
+                          userId: user.id,
+                          isActive: newStatus,
+                        );
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          newStatus
-                              ? localizations.userActivatedSuccessfully
-                              : localizations.userDeactivatedSuccessfully,
-                        ),
-                        backgroundColor: DefaultColors.green,
-                      ),
-                    );
-                  }
-                },
-              ),
-          ],
-        ),
+                        tableKey.currentState?.reload();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              newStatus
+                                  ? localizations.userActivatedSuccessfully
+                                  : localizations.userDeactivatedSuccessfully,
+                            ),
+                            backgroundColor: DefaultColors.green,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+              ],
+            ),
       ),
     ];
 
-    return Row(
-      children: [
-        const Material(child: AppDrawer()),
-        const VerticalDivider(width: 1),
-        Expanded(
-          child: Scaffold(
-            backgroundColor: Theme.of(context).cardColor,
-            appBar: AppBar(
-              title: Text(
-                localizations.users,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+    return ResponsiveScaffold(
+      appBar: AppBar(
+        title: Text(
+          localizations.users,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          DropdownButton<Locale>(
+            icon: const Icon(Icons.language, color: Colors.white),
+            underline: const SizedBox.shrink(),
+            dropdownColor: Colors.black,
+            onChanged: (Locale? newValue) {
+              if (newValue != null) widget.changeLanguage(newValue);
+            },
+            items: const [
+              DropdownMenuItem(
+                value: Locale('en'),
+                child: Text('English',
+                    style: TextStyle(color: Colors.white)),
               ),
-              automaticallyImplyLeading: false,
-              actions: [
-                DropdownButton<Locale>(
-                  icon: const Icon(Icons.language, color: Colors.white),
-                  underline: const SizedBox.shrink(),
-                  dropdownColor: Colors.black,
-                  onChanged: (Locale? newValue) {
-                    if (newValue != null) widget.changeLanguage(newValue);
+              DropdownMenuItem(
+                value: Locale('pt'),
+                child: Text('Português',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ThemeToggleButton(),
+          ),
+        ],
+      ),
+      body: ColoredBox(
+        color: DefaultColors.backgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: AFieldSearch(
+                      label: localizations.search,
+                      onChanged: (value) {
+                        setState(() => searchText = value ?? '');
+                        tableKey.currentState?.reload();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  AButton(
+                    text: localizations.addUser,
+                    landingIcon: Icons.person_add,
+                    onPressed: _openUserDialog,
+                    color: DefaultColors.circleAvatar,
+                    fontWeight: FontWeight.bold,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  AButton(
+                    text: 'Usuários Ativos',
+                    onPressed: () {
+                      setState(() => showActiveUsers = true);
+                      tableKey.currentState?.reload();
+                    },
+                    color: showActiveUsers
+                        ? DefaultColors.green
+                        : Colors.grey,
+                  ),
+                  const SizedBox(width: 10),
+                  AButton(
+                    text: 'Usuários Inativos',
+                    onPressed: () {
+                      setState(() => showActiveUsers = false);
+                      tableKey.currentState?.reload();
+                    },
+                    color: !showActiveUsers ? Colors.red : Colors.grey,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ATable<User>(
+                  key: tableKey,
+                  columns: columns,
+                  striped: true,
+                  loadItems: (_, __) async {
+                    return await API.members
+                        .getMembers(selectedAccount!.id, showActiveUsers);
                   },
-                  items: const [
-                    DropdownMenuItem(
-                      value: Locale('en'),
-                      child: Text('English',
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                    DropdownMenuItem(
-                      value: Locale('pt'),
-                      child: Text('Português',
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ThemeToggleButton(),
-                ),
-              ],
-            ),
-            body: ColoredBox(
-              color: DefaultColors.backgroundColor,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AFieldSearch(
-                            label: localizations.search,
-                            onChanged: (value) {
-                              setState(() => searchText = value ?? '');
-                              tableKey.currentState?.reload();
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        AButton(
-                          text: localizations.addUser,
-                          landingIcon: Icons.person_add,
-                          onPressed: _openUserDialog,
-                          color: DefaultColors.circleAvatar,
-                          fontWeight: FontWeight.bold,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        AButton(
-                          text: 'Usuários Ativos',
-                          onPressed: () {
-                            setState(() => showActiveUsers = true);
-                            tableKey.currentState?.reload();
-                          },
-                          color: showActiveUsers
-                              ? DefaultColors.green
-                              : Colors.grey,
-                        ),
-                        const SizedBox(width: 10),
-                        AButton(
-                          text: 'Usuários Inativos',
-                          onPressed: () {
-                            setState(() => showActiveUsers = false);
-                            tableKey.currentState?.reload();
-                          },
-                          color: !showActiveUsers ? Colors.red : Colors.grey,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: ATable<User>(
-                        key: tableKey,
-                        columns: columns,
-                        striped: true,
-                        loadItems: (_, __) async {
-                          return await API.members
-                              .getMembers(selectedAccount!.id, showActiveUsers);
-                        },
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -396,8 +393,7 @@ class _UsersPageState extends State<UsersPage> {
                     content: Text(
                       isEdit
                           ? AppLocalizations.of(context).userEditedSuccessfully
-                          : AppLocalizations.of(context)
-                          .userRegisteredSuccessfully,
+                          : AppLocalizations.of(context).userRegisteredSuccessfully,
                     ),
                     backgroundColor: DefaultColors.green,
                   ),
