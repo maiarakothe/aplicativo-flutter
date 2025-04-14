@@ -25,7 +25,10 @@ dependencies:
   json_annotation: ^4.9.0
   dio: ^5.8.0+1
   flutter_secure_storage: ^9.2.1
-
+  firebase_core: ^2.32.0
+  firebase_messaging: ^14.8.0
+  js: ^0.6.7
+  firebase_core_web: ^2.8.0
 
 dev_dependencies:
   intl_utils: ^2.0.0

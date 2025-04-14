@@ -4,8 +4,6 @@ import 'package:teste/main.dart';
 import 'package:teste/routes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../main.dart';
-import '../routes.dart';
 
 class Cookie {
   final String name, value;

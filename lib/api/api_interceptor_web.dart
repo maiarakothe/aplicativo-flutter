@@ -6,8 +6,6 @@ import 'package:teste/routes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
-import '../routes.dart';
 
 class Cookie {
   final String name, value;
@@ -40,7 +38,7 @@ class CookieInterceptor extends Interceptor {
         if (response.statusCode == 403) {
           await deleteCookie();
           Navigator.pushNamed(MyApp.appStateKey.currentContext!, Routes.login);
-        } 
+        }
       } catch (e, stack) {
         err = DioException(
           requestOptions: response.requestOptions,

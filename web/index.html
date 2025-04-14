@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -31,8 +18,39 @@
 
   <title>teste</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Importando Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging-compat.js"></script>
+
+  <!-- Script para registrar o Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('firebase-messaging-sw.js').then(function(registration) {
+        console.log('Service Worker registrado com sucesso:', registration);
+      }).catch(function(error) {
+        console.log('Falha ao registrar o Service Worker:', error);
+      });
+    }
+  </script>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0DolBmlyDs293z6IWw5UBi92xPg1xkmU",
+    authDomain: "aplicativo-flutter-a2d67.firebaseapp.com",
+    projectId: "aplicativo-flutter-a2d67",
+    storageBucket: "aplicativo-flutter-a2d67.firebasestorage.app",
+    messagingSenderId: "77824107659",
+    appId: "1:77824107659:web:5e2b7ab9b9342416be608e",
+    measurementId: "G-GK0E97XN87"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+</script>
+
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
+

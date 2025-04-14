@@ -346,7 +346,7 @@ class _UsersPageState extends State<UsersPage> {
                     setState(() {
                       selectedPermissionIndexes.clear();
                       selectedPermissionIndexes
-                          .addAll(newValues!.map((e) => e as int).toList());
+                          .addAll(newValues!.map((e) => e).toList());
                     });
                   },
                 ),

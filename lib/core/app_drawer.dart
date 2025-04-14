@@ -58,7 +58,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final local = AppLocalizations.of(context)!;
+    final local = AppLocalizations.of(context);
 
     return Drawer(
       child: Container(

@@ -6,7 +6,6 @@ import 'package:teste/configs.dart';
 
 import '../api/api.dart';
 import '../api/api_product.dart';
-import '../core/app_drawer.dart';
 import '../core/responsive_scaffold.dart';
 import '../models/product_registration.dart';
 import '../theme_toggle_button.dart';
