@@ -29,11 +29,14 @@ dependencies:
   firebase_messaging: ^14.8.0
   js: ^0.6.7
   firebase_core_web: ^2.8.0
+  file_picker: ^6.2.1
+  excel: ^2.1.0
+  csv: ^5.1.0
 
 dev_dependencies:
   intl_utils: ^2.0.0
   flutter_launcher_icons: ^0.14.3
-  freezed: ^2.5.8
+  freezed: ^2.4.6
   build_runner: ^2.4.9
   json_serializable: ^6.0.0
 

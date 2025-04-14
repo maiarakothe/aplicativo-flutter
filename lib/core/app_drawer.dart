@@ -105,6 +105,13 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pushNamed(context, Routes.userPage);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.file_open),
+              title: Text(local.importFile),
+              onTap: () {
+                Navigator.pushNamed(context, Routes.filePage);
+              },
+            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),

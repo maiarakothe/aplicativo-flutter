@@ -89,5 +89,10 @@
   "stayConnected": "Stay connected",
   "error": "Error",
   "failedToLoadSavedAccount": "Failed to load saved account. Please log in again.",
-  "ok": "Ok"
+  "ok": "Ok",
+  "importFile": "Import file",
+  "fileReadSuccess": "File read successfully",
+  "noFileSelected": "No file selected",
+  "fileImportError": "Error importing file",
+  "noFileImportedYet": "No file imported yet"
 }

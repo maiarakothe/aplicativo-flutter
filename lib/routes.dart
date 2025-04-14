@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teste/pages/file_page.dart';
 import 'package:teste/pages/product_list.dart';
 import 'package:teste/pages/product_registration.dart';
 import 'package:teste/pages/profile_page.dart';
@@ -15,6 +16,8 @@ class Routes {
   static const String productList = '/product_list';
   static const String profilePage = '/profile_page';
   static const String userPage = '/users';
+  static const String filePage = '/file';
+
 
   static Route<dynamic> generateRoute(RouteSettings settings, void Function(Locale) changeLanguage) {
     switch (settings.name) {
@@ -37,6 +40,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => ProfilePage(changeLanguage: changeLanguage));
       case userPage:
         return MaterialPageRoute(builder: (_) => UsersPage(changeLanguage: changeLanguage));
+      case filePage:
+        return MaterialPageRoute(builder: (_) => FilePage(changeLanguage: changeLanguage));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
