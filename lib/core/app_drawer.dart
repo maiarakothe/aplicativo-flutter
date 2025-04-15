@@ -20,7 +20,8 @@ class AppDrawer extends StatelessWidget {
         await prefs.clear();
 
         if (!context.mounted) return;
-        Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, Routes.login, (route) => false);
       } catch (e) {
         debugPrint('Erro ao deslogar: $e');
         if (!context.mounted) return;
@@ -35,23 +36,24 @@ class AppDrawer extends StatelessWidget {
     final local = AppLocalizations.of(context);
     return await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(local.confirmLogout),
-        content: Text(local.areYouSureLogout),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(local.cancel),
+      builder: (context) =>
+          AlertDialog(
+            title: Text(local.confirmLogout),
+            content: Text(local.areYouSureLogout),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(local.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(
+                  local.logout,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              local.logout,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
     ) ??
         false;
   }
@@ -63,18 +65,27 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       child: Container(
         width: 250,
-        color: Theme.of(context).drawerTheme.backgroundColor ??
-            Theme.of(context).scaffoldBackgroundColor,
+        color: Theme
+            .of(context)
+            .drawerTheme
+            .backgroundColor ??
+            Theme
+                .of(context)
+                .scaffoldBackgroundColor,
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
           children: [
             DrawerHeader(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.account_circle, size: 64),
+                  const Icon(Icons.business, size: 64),
                   const SizedBox(height: 8),
-                  Text(widget.selectedAccount?.name ?? '', style: const TextStyle(fontSize: 18)),
+                  Text(
+                    widget.selectedAccount?.name ?? '',
+                    style: const TextStyle(fontSize: 18),
+                  ),
                 ],
               ),
             ),
