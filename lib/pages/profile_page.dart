@@ -1,3 +1,4 @@
+import 'package:awidgets/general/a_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:teste/services/auth_service.dart';
@@ -65,9 +66,9 @@ class _ProfilePageState extends State<ProfilePage> {
       onSubmit: (Map<String, dynamic> data) async {
         try {
           await _userAPI.updateUser(
-            name: data['name'],
-            newPassword: data['new_password'],
-            oldPassword: data['old_password'],
+              name: data['name'],
+              oldPassword: '',
+              newPassword: '',
           );
 
           if (!mounted) return;
@@ -97,7 +98,52 @@ class _ProfilePageState extends State<ProfilePage> {
           required: true,
           initialValue: _profileData?.name ?? '',
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
+        AButton(
+          landingIcon:Icons.lock,
+          text: localizations.changePassword,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          onPressed: () => _showPasswordEditDialog(localizations),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showPasswordEditDialog(AppLocalizations localizations) async {
+    await AFormDialog.show<Map<String, dynamic>>(
+      context,
+      title: localizations.changePassword,
+      persistent: true,
+      submitText: localizations.confirm,
+      fromJson: (json) => json as Map<String, dynamic>,
+      onSubmit: (Map<String, dynamic> data) async {
+        try {
+          await _userAPI.updateUser(
+            name: _profileData?.name ?? '',
+            oldPassword: data['old_password'],
+            newPassword: data['new_password'],
+          );
+
+          if (!mounted) return;
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(localizations.passwordUpdated),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } catch (e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(localizations.somethingWentWrong),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return null;
+      },
+      fields: [
         AFieldPassword(
           identifier: 'old_password',
           label: localizations.oldPassword,
@@ -133,13 +179,11 @@ class _ProfilePageState extends State<ProfilePage> {
             items: const [
               DropdownMenuItem(
                 value: Locale('en'),
-                child: Text('English',
-                    style: TextStyle(color: Colors.white)),
+                child: Text('English', style: TextStyle(color: Colors.white)),
               ),
               DropdownMenuItem(
                 value: Locale('pt'),
-                child: Text('Português',
-                    style: TextStyle(color: Colors.white)),
+                child: Text('Português', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -184,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: DefaultColors.backgroundButton,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24,),
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                 textStyle: const TextStyle(fontSize: 20),
               ),
               child: Text(AppLocalizations.of(context).editProfile),

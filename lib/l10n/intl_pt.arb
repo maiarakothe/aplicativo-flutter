@@ -94,5 +94,7 @@
   "fileReadSuccess": "Arquivo lido com sucesso",
   "noFileSelected": "Nenhum arquivo selecionado",
   "fileImportError": "Erro ao importar arquivo",
-  "noFileImportedYet": "Nenhum arquivo importado ainda"
+  "noFileImportedYet": "Nenhum arquivo importado ainda",
+  "changePassword": "Alterar Senha",
+  "passwordUpdated": "Senha atualizada com sucesso"
 }

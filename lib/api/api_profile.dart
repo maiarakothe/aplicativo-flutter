@@ -15,16 +15,16 @@ class UserAPI extends BaseModuleAPI {
 
   Future<void> updateUser({
     required String name,
-    required String newPassword,
-    required String oldPassword,
+    String newPassword = '',
+    String oldPassword = '',
   }) async {
     await requestWrapper(
           () => api.dio.patch(
         '/user/update',
         data: jsonEncode({
           'name': name,
-          'new_password': newPassword,
-          'old_password': oldPassword,
+          'new_password': newPassword.isNotEmpty ? newPassword : null,
+          'old_password': oldPassword.isNotEmpty ? oldPassword : null,
         }),
       ),
     );
