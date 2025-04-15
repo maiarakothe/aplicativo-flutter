@@ -19,7 +19,7 @@ class FilePage extends StatefulWidget {
 }
 
 class _FilePageState extends State<FilePage> {
-  List<List<dynamic>>? fileData;
+  List<Map<String, dynamic>>? fileSheets;
 
   Future<void> _importFile() async {
     try {
@@ -33,23 +33,33 @@ class _FilePageState extends State<FilePage> {
         final file = result.files.single;
         final extension = file.extension;
 
-        List<List<dynamic>> importedData = [];
+        fileSheets = [];
 
         if (extension == 'xlsx') {
           final excel = Excel.decodeBytes(file.bytes!);
           for (var table in excel.tables.keys) {
-            for (var row in excel.tables[table]!.rows) {
-              importedData.add(row.map((cell) => cell?.value).toList());
-            }
+            final rows = excel.tables[table]!.rows
+                .map((row) => row.map((cell) => cell?.value ?? "").toList())
+                .toList();
+
+            fileSheets!.add({
+              'sheetName': table,
+              'rows': rows,
+            });
           }
         } else if (extension == 'csv') {
           final csvString = utf8.decode(file.bytes!);
-          importedData = const CsvToListConverter().convert(csvString);
+          final csvRows = const CsvToListConverter().convert(csvString);
+
+          fileSheets = [
+            {
+              'sheetName': 'CSV',
+              'rows': csvRows,
+            }
+          ];
         }
 
-        setState(() {
-          fileData = importedData;
-        });
+        setState(() {});
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.fileReadSuccess)),
@@ -102,27 +112,66 @@ class _FilePageState extends State<FilePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child:
-              AButton(
-                text: AppLocalizations.of(context).importFile,
-                landingIcon: Icons.file_upload,
-                onPressed: _importFile,
-                color: DefaultColors.circleAvatar,
-                fontWeight: FontWeight.bold,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 12),
-              ),
+            child: AButton(
+              text: AppLocalizations.of(context).importFile,
+              landingIcon: Icons.file_upload,
+              onPressed: _importFile,
+              color: DefaultColors.circleAvatar,
+              fontWeight: FontWeight.bold,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
           ),
           const Divider(),
           Expanded(
-            child: fileData == null
+            child: fileSheets == null
                 ? Center(child: Text(AppLocalizations.of(context).noFileImportedYet))
                 : ListView.builder(
-              itemCount: fileData!.length,
-              itemBuilder: (context, index) {
-                final row = fileData![index];
-                return ListTile(
-                  title: Text(row.join(" | ")),
+              itemCount: fileSheets!.length,
+              itemBuilder: (context, sheetIndex) {
+                final sheet = fileSheets![sheetIndex];
+                final sheetName = sheet['sheetName'];
+                final rows = sheet['rows'] as List<List<dynamic>>;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      child: Text(
+                        'Planilha: $sheetName',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: rows.isNotEmpty
+                            ? rows[0].map<DataColumn>((cell) {
+                          return DataColumn(
+                            label: Text(
+                              cell.toString(),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        }).toList()
+                            : [],
+                        rows: rows.length > 1
+                            ? rows.sublist(1).map<DataRow>((row) {
+                          return DataRow(
+                            cells: row.map<DataCell>((cell) {
+                              return DataCell(Text(cell.toString()));
+                            }).toList(),
+                          );
+                        }).toList()
+                            : [],
+                      ),
+                    ),
+                    const Divider(thickness: 2),
+                  ],
                 );
               },
             ),
