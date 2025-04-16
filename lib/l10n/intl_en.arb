@@ -96,5 +96,10 @@
   "fileImportError": "Error importing file",
   "noFileImportedYet": "No file imported yet",
   "changePassword": "Change Password",
-  "passwordUpdated": "Password updated successfully"
+  "passwordUpdated": "Password updated successfully",
+  "noValidProducts": "No valid products found.",
+  "importCompleteSuccess": "{success} products successfully imported",
+  "confirmUploadTitle": "Confirm Upload",
+  "confirmUploadContent": "The following products will be uploaded:",
+  "noValidProductsContent": "The file does not contain any valid products."
 }

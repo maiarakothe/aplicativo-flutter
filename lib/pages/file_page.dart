@@ -5,7 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import '../api/api.dart';
+import '../api/api_product.dart';
+import '../configs.dart';
 import '../core/colors.dart';
 import '../core/responsive_scaffold.dart';
 import '../theme_toggle_button.dart';
@@ -19,62 +21,162 @@ class FilePage extends StatefulWidget {
 }
 
 class _FilePageState extends State<FilePage> {
-  List<Map<String, dynamic>>? fileSheets;
+  List<Map<String, dynamic>> validatedProducts = [];
 
   Future<void> _importFile() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['csv', 'xlsx'],
-        withData: true,
-      );
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv', 'xlsx'],
+    );
 
-      if (result != null && result.files.single.bytes != null) {
-        final file = result.files.single;
-        final extension = file.extension;
+    if (result == null) return;
 
-        fileSheets = [];
+    PlatformFile file = result.files.first;
+    final extension = file.extension ?? '';
+    validatedProducts.clear();
 
-        if (extension == 'xlsx') {
-          final excel = Excel.decodeBytes(file.bytes!);
-          for (var table in excel.tables.keys) {
-            final rows = excel.tables[table]!.rows
-                .map((row) => row.map((cell) => cell?.value ?? "").toList())
-                .toList();
+    if (extension == 'xlsx') {
+      final excel = Excel.decodeBytes(file.bytes!);
+      for (var table in excel.tables.keys) {
+        final rows = excel.tables[table]!.rows
+            .map((row) => row.map((cell) => cell?.value ?? "").toList())
+            .toList();
 
-            fileSheets!.add({
-              'sheetName': table,
-              'rows': rows,
-            });
+        if (rows.isEmpty) continue;
+
+        final headers = rows[0].map((e) => e.toString().toLowerCase()).toList();
+        final nameIndex = headers.indexOf('nome');
+        final priceIndex = headers.indexOf('preço');
+        final urlIndex = headers.indexOf('url');
+
+        if (nameIndex == -1 || priceIndex == -1 || urlIndex == -1) continue;
+
+        for (int i = 1; i < rows.length; i++) {
+          final row = rows[i];
+          if (row.length <= urlIndex) continue;
+
+          final name = row[nameIndex]?.toString().trim();
+          final price = double.tryParse(row[priceIndex]?.toString() ?? '');
+          final url = row[urlIndex]?.toString().trim();
+
+          if (name != null && name.isNotEmpty && price != null && url != null && url.isNotEmpty) {
+            validatedProducts.add({'name': name, 'value': price, 'url': url});
           }
-        } else if (extension == 'csv') {
-          final csvString = utf8.decode(file.bytes!);
-          final csvRows = const CsvToListConverter().convert(csvString);
-
-          fileSheets = [
-            {
-              'sheetName': 'CSV',
-              'rows': csvRows,
-            }
-          ];
         }
-
-        setState(() {});
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.fileReadSuccess)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.noFileSelected)),
-        );
       }
-    } catch (e) {
-      debugPrint("Erro ao importar arquivo: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.fileImportError)),
-      );
+    } else if (extension == 'csv') {
+      final csvString = utf8.decode(file.bytes!);
+      final csvRows = const CsvToListConverter().convert(csvString);
+
+      if (csvRows.isEmpty) return;
+
+      final headers = csvRows[0].map((e) => e.toString().toLowerCase()).toList();
+      final nameIndex = headers.indexOf('nome');
+      final priceIndex = headers.indexOf('preço');
+      final urlIndex = headers.indexOf('url');
+
+      if (nameIndex == -1 || priceIndex == -1 || urlIndex == -1) return;
+
+      for (int i = 1; i < csvRows.length; i++) {
+        final row = csvRows[i];
+        if (row.length <= urlIndex) continue;
+
+        final name = row[nameIndex]?.toString().trim();
+        final price = double.tryParse(row[priceIndex]?.toString() ?? '');
+        final url = row[urlIndex]?.toString().trim();
+
+        if (name != null && name.isNotEmpty && price != null && url != null && url.isNotEmpty) {
+          validatedProducts.add({'name': name, 'value': price, 'url': url});
+        }
+      }
     }
+
+    if (validatedProducts.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).noValidProducts)),
+      );
+      return;
+    }
+
+    _showConfirmationDialog();
+  }
+
+  Future<void> _uploadProducts() async {
+    final api = ProductAPI(API());
+    int success = 0;
+    int fail = 0;
+
+    for (var product in validatedProducts) {
+      try {
+        await api.createProduct(
+          name: product['name'],
+          value: product['value'],
+          url: product['url'],
+          accountId: selectedAccount!.id,
+        );
+        success++;
+      } catch (e) {
+        fail++;
+        debugPrint("Error uploading product: $e");
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context).importCompleteSuccess(success)),
+      ),
+    );
+
+
+    setState(() {});
+  }
+
+  void _showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(AppLocalizations.of(context).confirmUploadTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(AppLocalizations.of(context).confirmUploadContent),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 200,
+              child: SingleChildScrollView(
+                child: DataTable(
+                  columns: [
+                    DataColumn(label: Text(AppLocalizations.of(context).name)),
+                    DataColumn(label: Text(AppLocalizations.of(context).price)),
+                    DataColumn(label: Text(AppLocalizations.of(context).image)),
+                  ],
+                  rows: validatedProducts.map((product) {
+                    return DataRow(cells: [
+                      DataCell(Text(product['name'])),
+                      DataCell(Text(product['value'].toStringAsFixed(2))),
+                      DataCell(Image.network(product['url'], height: 40)),
+                    ]);
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: Text(AppLocalizations.of(context).cancel),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text(AppLocalizations.of(context).confirm),
+            onPressed: () {
+              Navigator.pop(context);
+              _uploadProducts();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -114,7 +216,7 @@ class _FilePageState extends State<FilePage> {
             padding: const EdgeInsets.all(16.0),
             child: AButton(
               text: AppLocalizations.of(context).importFile,
-              landingIcon: Icons.file_upload,
+              landingIcon: Icons.upload_file,
               onPressed: _importFile,
               color: DefaultColors.circleAvatar,
               fontWeight: FontWeight.bold,
@@ -122,62 +224,29 @@ class _FilePageState extends State<FilePage> {
             ),
           ),
           const Divider(),
-          Expanded(
-            child: fileSheets == null
-                ? Center(child: Text(AppLocalizations.of(context).noFileImportedYet))
-                : ListView.builder(
-              itemCount: fileSheets!.length,
-              itemBuilder: (context, sheetIndex) {
-                final sheet = fileSheets![sheetIndex];
-                final sheetName = sheet['sheetName'];
-                final rows = sheet['rows'] as List<List<dynamic>>;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
-                      child: Text(
-                        'Planilha: $sheetName',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: rows.isNotEmpty
-                            ? rows[0].map<DataColumn>((cell) {
-                          return DataColumn(
-                            label: Text(
-                              cell.toString(),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          );
-                        }).toList()
-                            : [],
-                        rows: rows.length > 1
-                            ? rows.sublist(1).map<DataRow>((row) {
-                          return DataRow(
-                            cells: row.map<DataCell>((cell) {
-                              return DataCell(Text(cell.toString()));
-                            }).toList(),
-                          );
-                        }).toList()
-                            : [],
-                      ),
-                    ),
-                    const Divider(thickness: 2),
+          if (validatedProducts.isNotEmpty)
+            Expanded(
+              child: SingleChildScrollView(
+                child: DataTable(
+                  columns: [
+                    DataColumn(label: Text(AppLocalizations.of(context).name)),
+                    DataColumn(label: Text(AppLocalizations.of(context).price)),
+                    DataColumn(label: Text(AppLocalizations.of(context).image)),
                   ],
-                );
-              },
+                  rows: validatedProducts.map((product) {
+                    return DataRow(cells: [
+                      DataCell(Text(product['name'])),
+                      DataCell(Text(product['value'].toStringAsFixed(2))),
+                      DataCell(Image.network(product['url'], height: 40)),
+                    ]);
+                  }).toList(),
+                ),
+              ),
             ),
-          ),
+          const SizedBox(height: 20),
         ],
-      ),
+      )
     );
   }
 }
+

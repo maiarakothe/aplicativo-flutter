@@ -96,5 +96,10 @@
   "fileImportError": "Erro ao importar arquivo",
   "noFileImportedYet": "Nenhum arquivo importado ainda",
   "changePassword": "Alterar Senha",
-  "passwordUpdated": "Senha atualizada com sucesso"
+  "passwordUpdated": "Senha atualizada com sucesso",
+  "noValidProducts": "Nenhum produto válido encontrado.",
+  "importCompleteSuccess": "{success} produtos importados com sucesso",
+  "confirmUploadTitle": "Confirmar Envio",
+  "confirmUploadContent": "Os seguintes produtos serão enviados:",
+  "noValidProductsContent": "O arquivo não contém produtos válidos."
 }
