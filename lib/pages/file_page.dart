@@ -92,9 +92,7 @@ class _FilePageState extends State<FilePage> {
     }
 
     if (validatedProducts.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).noValidProducts)),
-      );
+      _showNoValidProductsDialog();
       return;
     }
 
@@ -104,7 +102,6 @@ class _FilePageState extends State<FilePage> {
   Future<void> _uploadProducts() async {
     final api = ProductAPI(API());
     int success = 0;
-    int fail = 0;
 
     for (var product in validatedProducts) {
       try {
@@ -116,19 +113,34 @@ class _FilePageState extends State<FilePage> {
         );
         success++;
       } catch (e) {
-        fail++;
-        debugPrint("Error uploading product: $e");
+        debugPrint("Erro ao importar: $e");
       }
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).importCompleteSuccess(success)),
+          content: Text(AppLocalizations.of(context).importCompleteSuccess(success)),
+          backgroundColor: Colors.green
       ),
     );
 
-
     setState(() {});
+  }
+
+  void _showNoValidProductsDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(AppLocalizations.of(context).noValidProductsTitle),
+        content: Text(AppLocalizations.of(context).noValidProductsContent),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context).ok),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showConfirmationDialog() {
@@ -139,7 +151,7 @@ class _FilePageState extends State<FilePage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(AppLocalizations.of(context).confirmUploadContent),
+            Text(AppLocalizations.of(context).foundProducts(validatedProducts.length)),
             const SizedBox(height: 10),
             SizedBox(
               height: 200,
@@ -245,8 +257,7 @@ class _FilePageState extends State<FilePage> {
             ),
           const SizedBox(height: 20),
         ],
-      )
+      ),
     );
   }
 }
-

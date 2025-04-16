@@ -99,7 +99,9 @@
   "passwordUpdated": "Password updated successfully",
   "noValidProducts": "No valid products found.",
   "importCompleteSuccess": "{success} products successfully imported",
-  "confirmUploadTitle": "Confirm Upload",
+  "confirmUploadTitle": "Confirm sending to product list",
   "confirmUploadContent": "The following products will be uploaded:",
-  "noValidProductsContent": "The file does not contain any valid products."
+  "noValidProductsTitle": "No valid products found",
+  "noValidProductsContent": "The spreadsheet data does not contain the expected columns (name, price, url) or contains invalid values.",
+  "foundProducts": "Found {count} products to import"
 }

@@ -99,7 +99,9 @@
   "passwordUpdated": "Senha atualizada com sucesso",
   "noValidProducts": "Nenhum produto válido encontrado.",
   "importCompleteSuccess": "{success} produtos importados com sucesso",
-  "confirmUploadTitle": "Confirmar Envio",
+  "confirmUploadTitle": "Confirmar envio para a lista dos produtos",
   "confirmUploadContent": "Os seguintes produtos serão enviados:",
-  "noValidProductsContent": "O arquivo não contém produtos válidos."
+  "noValidProductsTitle": "Nenhum produto válido encontrado",
+  "noValidProductsContent": "Os dados da planilha não possuem colunas esperadas (nome, preço, url) ou os valores são inválidos.",
+  "foundProducts": "Encontrados {count} produtos para importar"
 }
