@@ -103,5 +103,6 @@
   "confirmUploadContent": "Os seguintes produtos serão enviados:",
   "noValidProductsTitle": "Nenhum produto válido encontrado",
   "noValidProductsContent": "Os dados da planilha não possuem colunas esperadas (nome, preço, url) ou os valores são inválidos.",
-  "foundProducts": "Encontrados {count} produtos para importar"
+  "foundProducts": "Encontrados {count} produtos para importar",
+  "importedDataMessage": "Os dados abaixo foram importados para a lista de produtos"
 }

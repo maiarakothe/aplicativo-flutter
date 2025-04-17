@@ -103,5 +103,6 @@
   "confirmUploadContent": "The following products will be uploaded:",
   "noValidProductsTitle": "No valid products found",
   "noValidProductsContent": "The spreadsheet data does not contain the expected columns (name, price, url) or contains invalid values.",
-  "foundProducts": "Found {count} products to import"
+  "foundProducts": "Found {count} products to import",
+  "importedDataMessage": "The data below has been imported to the product list"
 }

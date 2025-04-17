@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:awidgets/general/a_button.dart';
-import 'package:excel/excel.dart';
+import 'package:awidgets/general/a_dialog.dart';
+import 'package:excel/excel.dart' as ex;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
@@ -36,7 +37,7 @@ class _FilePageState extends State<FilePage> {
     validatedProducts.clear();
 
     if (extension == 'xlsx') {
-      final excel = Excel.decodeBytes(file.bytes!);
+      final excel = ex.Excel.decodeBytes(file.bytes!);
       for (var table in excel.tables.keys) {
         final rows = excel.tables[table]!.rows
             .map((row) => row.map((cell) => cell?.value ?? "").toList())
@@ -128,66 +129,83 @@ class _FilePageState extends State<FilePage> {
   }
 
   void _showNoValidProductsDialog() {
-    showDialog(
+    ADialogV2.show<void>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(AppLocalizations.of(context).noValidProductsTitle),
-        content: Text(AppLocalizations.of(context).noValidProductsContent),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context).ok),
+      title: AppLocalizations.of(context).noValidProductsTitle,
+      content: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+          child: Text(AppLocalizations.of(context).noValidProductsContent),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: AButton(
+              text: AppLocalizations.of(context).ok,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   void _showConfirmationDialog() {
-    showDialog(
+    ADialogV2.show<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(AppLocalizations.of(context).confirmUploadTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(AppLocalizations.of(context).foundProducts(validatedProducts.length)),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 200,
-              child: SingleChildScrollView(
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text(AppLocalizations.of(context).name)),
-                    DataColumn(label: Text(AppLocalizations.of(context).price)),
-                    DataColumn(label: Text(AppLocalizations.of(context).image)),
-                  ],
-                  rows: validatedProducts.map((product) {
-                    return DataRow(cells: [
-                      DataCell(Text(product['name'])),
-                      DataCell(Text(product['value'].toStringAsFixed(2))),
-                      DataCell(Image.network(product['url'], height: 40)),
-                    ]);
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
+      title: AppLocalizations.of(context).confirmUploadTitle,
+      content: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(AppLocalizations.of(context).foundProducts(validatedProducts.length)),
         ),
-        actions: [
-          TextButton(
-            child: Text(AppLocalizations.of(context).cancel),
-            onPressed: () => Navigator.pop(context),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 300,
+          child: SingleChildScrollView(
+            child: DataTable(
+              columns: [
+                DataColumn(label: Text(AppLocalizations.of(context).name)),
+                DataColumn(label: Text(AppLocalizations.of(context).price)),
+                DataColumn(label: Text(AppLocalizations.of(context).image)),
+              ],
+              rows: validatedProducts.map((product) {
+                return DataRow(cells: [
+                  DataCell(Text(product['name'])),
+                  DataCell(Text(product['value'].toStringAsFixed(2))),
+                  DataCell(Image.network(product['url'], height: 40)),
+                ]);
+              }).toList(),
+            ),
           ),
-          TextButton(
-            child: Text(AppLocalizations.of(context).confirm),
-            onPressed: () {
-              Navigator.pop(context);
-              _uploadProducts();
-            },
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              AButton(
+                text: AppLocalizations
+                    .of(context)
+                    .cancel,
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              const SizedBox(width: 10),
+              AButton(
+                text: AppLocalizations.of(context).confirm,
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                  _uploadProducts();
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
@@ -238,20 +256,49 @@ class _FilePageState extends State<FilePage> {
           const Divider(),
           if (validatedProducts.isNotEmpty)
             Expanded(
-              child: SingleChildScrollView(
-                child: DataTable(
-                  columns: [
-                    DataColumn(label: Text(AppLocalizations.of(context).name)),
-                    DataColumn(label: Text(AppLocalizations.of(context).price)),
-                    DataColumn(label: Text(AppLocalizations.of(context).image)),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).importedDataMessage,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columnSpacing: 70.0,
+                              columns: [
+                                DataColumn(label: Text(AppLocalizations.of(context).name)),
+                                DataColumn(label: Text(AppLocalizations.of(context).price)),
+                                DataColumn(label: Text(AppLocalizations.of(context).image)),
+                              ],
+                              rows: validatedProducts.map((product) {
+                                return DataRow(cells: [
+                                  DataCell(Text(product['name'])),
+                                  DataCell(Text(product['value'].toStringAsFixed(2))),
+                                  DataCell(Image.network(product['url'], height: 40)),
+                                ]);
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
-                  rows: validatedProducts.map((product) {
-                    return DataRow(cells: [
-                      DataCell(Text(product['name'])),
-                      DataCell(Text(product['value'].toStringAsFixed(2))),
-                      DataCell(Image.network(product['url'], height: 40)),
-                    ]);
-                  }).toList(),
                 ),
               ),
             ),
