@@ -58,7 +58,6 @@ class _LoginPageState extends State<LoginPage> {
 
       navigator.pushNamedAndRemoveUntil(
           Routes.productList, (route) => false);
-
     } catch (e) {
       String errorMessage = "Erro ao tentar fazer login.";
       if (e is DioException) {
@@ -225,118 +224,133 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 60),
-              Image.asset(
-                "assets/mobilelogin.png",
-                width: 200,
-                height: 200,
-              ),
-              SizedBox(height: 5),
-              AForm<LoginData>(
-                fromJson: (json) => LoginData.fromJson(json),
-                showDefaultAction: false,
-                submitText: AppLocalizations.of(context).login,
-                onSubmit: (LoginData data) async {
-                  _login(data);
-                  return null;
-                },
-                fields: [
-                  AFieldEmail(
-                    identifier: 'email',
-                    label: localizations.email,
-                    required: true,
-                  ),
-                  SizedBox(height: 10),
-                  AFieldPassword(
-                    identifier: 'password',
-                    label: localizations.password,
-                    minLength: 8,
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _stayConnected,
-                        onChanged: (value) {
-                          setState(() => _stayConnected = value ?? false);
-                        },
-                      ),
-                      Text(AppLocalizations.of(context).stayConnected,),
-                      Spacer(),
-                      TextButton(
-                        onPressed: () {
-                          _showForgotPasswordDialog(context);
-                        },
-                        child: Text(localizations.forgotPassword),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Builder(
-                    builder: (context) {
-                      return Center(
-                        child: AButton(
-                          onPressed: _isLoading
-                              ? null
-                              : () {
-                            final formState = AForm.maybeOf(context);
-                            if (formState == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content:
-                                    Text(localizations.formNotFound),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else {
-                              formState.onSubmit();
-                            }
-                          },
-                          text: localizations.login,
-                          loading: _isLoading,
-                          textColor: DefaultColors.textColorButton,
-                          fontSize: 19,
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.register);
-                      },
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: DefaultColors.snackBar,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: AppLocalizations.of(context).noAccount,
-                            ),
-                            TextSpan(
-                              text: AppLocalizations.of(context).signUp,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+      body: Center(
+        child: Container(
+          width: 500,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: DefaultColors.backgroundColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
             ],
           ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 20),
+                Image.asset(
+                  "assets/mobilelogin.png",
+                  width: 200,
+                  height: 200,
+                ),
+                SizedBox(height: 10),
+                AForm<LoginData>(
+                  fromJson: (json) => LoginData.fromJson(json),
+                  showDefaultAction: false,
+                  submitText: AppLocalizations.of(context).login,
+                  onSubmit: (LoginData data) async {
+                    _login(data);
+                    return null;
+                  },
+                  fields: [
+                    AFieldEmail(
+                      identifier: 'email',
+                      label: localizations.email,
+                      required: true,
+                    ),
+                    SizedBox(height: 10),
+                    AFieldPassword(
+                      identifier: 'password',
+                      label: localizations.password,
+                      minLength: 8,
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _stayConnected,
+                          onChanged: (value) {
+                            setState(() => _stayConnected = value ?? false);
+                          },
+                        ),
+                        Text(AppLocalizations.of(context).stayConnected),
+                        Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            _showForgotPasswordDialog(context);
+                          },
+                          child: Text(localizations.forgotPassword),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Builder(
+                      builder: (context) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: AButton(
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                              final formState = AForm.maybeOf(context);
+                              if (formState == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(localizations.formNotFound),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                formState.onSubmit();
+                              }
+                            },
+                            text: localizations.login,
+                            loading: _isLoading,
+                            textColor: DefaultColors.textColorButton,
+                            fontSize: 19,
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Center(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, Routes.register);
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: DefaultColors.snackBar,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: AppLocalizations.of(context).noAccount,
+                              ),
+                              TextSpan(
+                                text: AppLocalizations.of(context).signUp,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
         ),
       ),
     );

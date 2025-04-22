@@ -105,6 +105,19 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Center(
         child: Container(
+          width: 500,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: DefaultColors.backgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
           child: AForm<RegisterData>(
             fromJson: (json) => RegisterData.fromJson(json as Map<String, dynamic>),
             showDefaultAction: false,
@@ -121,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Icon(Icons.person, size: 120, color: Color(0xFF5D4037)),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               AFieldName(
                 identifier: 'name',
                 label: localizations.name,
@@ -141,7 +154,8 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 20),
               Builder(
                 builder: (context) {
-                  return Center(
+                  return SizedBox(
+                    width: double.infinity,
                     child: AButton(
                       onPressed: () {
                         final formState = AForm.maybeOf(context);
@@ -165,6 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   );
                 },
               ),
+              SizedBox(height: 10),
               Center(
                 child: TextButton(
                   onPressed: () {

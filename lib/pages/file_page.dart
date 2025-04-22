@@ -188,9 +188,7 @@ class _FilePageState extends State<FilePage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               AButton(
-                text: AppLocalizations
-                    .of(context)
-                    .cancel,
+                text: AppLocalizations.of(context).cancel,
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               const SizedBox(width: 10),
